@@ -267,7 +267,7 @@ def create_donor_contribution_chart(donations_df: pd.DataFrame) -> None:
         
     except Exception as e:
         st.error(f"שגיאה ביצירת גרף תרומות: {str(e)}")
-        logging.error(f"Error creating donor contribution chart: {str(e)}")
+        logging.error(f"Error creating donor contribution chart: {str(e)}") 
 
 def create_forecast_chart(forecast: dict) -> None:
     """Create a forecast chart"""

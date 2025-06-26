@@ -46,6 +46,8 @@ from streamlit_agraph import agraph, Node, Edge, Config
 import tempfile
 import json
 import re
+from data_loading import load_data
+from google_sheets_io import write_sheet
 
 # Configure logging
 logging.basicConfig(
@@ -397,161 +399,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data
-def load_cached_data():
-    """Load and cache data from Excel files"""
-    try:
-        logging.info("Loading data...")
-        
-        # Check if files exist
-        if not os.path.exists('omri.xlsx'):
-            error_msg = "קובץ omri.xlsx לא נמצא"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-            
-        if not os.path.exists('almanot.xlsx'):
-            error_msg = "קובץ almanot.xlsx לא נמצא"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-            
-        # Load data
-        try:
-            # Load expenses data
-            expenses_df = pd.read_excel('omri.xlsx', sheet_name='Expenses', engine='openpyxl')
-            expenses_df = expenses_df.dropna(subset=['תאריך', 'שם', 'שקלים'])  # Remove rows with missing values
-            expenses_df = expenses_df[expenses_df['שקלים'] != 0]  # Remove rows with zero amounts
-            expenses_df['שקלים'] = expenses_df['שקלים'].abs()  # Convert to positive for display
-            logging.info(f"קובץ Expenses נטען בהצלחה")
-            
-            # Load donations data
-            donations_df = pd.read_excel('omri.xlsx', sheet_name='Donations', engine='openpyxl')
-            donations_df = donations_df.dropna(subset=['תאריך', 'שם', 'שקלים'])  # Remove rows with missing values
-            donations_df = donations_df[donations_df['שקלים'] != 0]  # Remove rows with zero amounts
-            logging.info(f"קובץ Donations נטען בהצלחה")
-            
-            # Load investors data
-            investors_df = pd.read_excel('omri.xlsx', sheet_name='Investors', engine='openpyxl')
-            investors_df = investors_df.dropna(subset=['תאריך', 'שם', 'שקלים'])  # Remove rows with missing values
-            investors_df = investors_df[investors_df['שקלים'] != 0]  # Remove rows with zero amounts
-            logging.info(f"קובץ Investors נטען בהצלחה")
-            
-            # Combine all data into one dataframe
-            omri_df = pd.concat([expenses_df, donations_df, investors_df], ignore_index=True)
-            logging.info(f"נוצר DataFrame מאוחד עם {len(omri_df)} שורות")
-            
-        except Exception as e:
-            error_msg = f"שגיאה בטעינת קובץ omri.xlsx: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-            
-        try:
-            # Load widows data
-            almanot_df = pd.read_excel('almanot.xlsx', engine='openpyxl')
-            
-            # Check required columns
-            required_columns = ['שם ', 'סכום חודשי', 'חודש התחלה']
-            missing_columns = [col for col in required_columns if col not in almanot_df.columns]
-            if missing_columns:
-                error_msg = f"חסרות עמודות בקובץ almanot.xlsx: {', '.join(missing_columns)}"
-                logging.error(error_msg)
-                st.error(error_msg)
-                return None, None, None, None, None
-            
-            # Convert problematic columns to string to avoid type conflicts
-            string_columns = ['טלפון', 'תעודת זהות', 'מייל', 'תורם', 'איש קשר לתרומה', 'הערות']
-            for col in string_columns:
-                if col in almanot_df.columns:
-                    almanot_df[col] = almanot_df[col].astype(str)
-            
-            # Remove rows with missing values
-            almanot_df = almanot_df.dropna(subset=['שם ', 'סכום חודשי', 'חודש התחלה'])
-            logging.info(f"קובץ almanot.xlsx נטען בהצלחה")
-            
-        except Exception as e:
-            error_msg = f"שגיאה בטעינת קובץ almanot.xlsx: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-        
-        # Convert date columns
-        try:
-            omri_df['תאריך'] = pd.to_datetime(omri_df['תאריך'], errors='coerce')
-            logging.info("עמודת תאריך הומרה בהצלחה")
-        except Exception as e:
-            error_msg = f"שגיאה בהמרת עמודת תאריך: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-            
-        try:
-            almanot_df['חודש התחלה'] = pd.to_datetime(almanot_df['חודש התחלה'], errors='coerce')
-            logging.info("עמודת חודש התחלה הומרה בהצלחה")
-        except Exception as e:
-            error_msg = f"שגיאה בהמרת עמודת חודש התחלה: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-        
-        # Convert numeric columns
-        try:
-            omri_df['שקלים'] = pd.to_numeric(omri_df['שקלים'], errors='coerce')
-            logging.info("עמודת שקלים הומרה למספרים")
-        except Exception as e:
-            error_msg = f"שגיאה בהמרת עמודת שקלים למספרים: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-            
-        try:
-            almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
-            logging.info("עמודת סכום חודשי הומרה למספרים")
-        except Exception as e:
-            error_msg = f"שגיאה בהמרת עמודת סכום חודשי למספרים: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-        
-        # Create donations dataframe
-        try:
-            donations_df = omri_df[omri_df['שקלים'] > 0].copy()
-            logging.info(f"נוצר DataFrame תרומות עם {len(donations_df)} שורות")
-        except Exception as e:
-            error_msg = f"שגיאה ביצירת DataFrame תרומות: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-        
-        # Create expenses dataframe - use the original Expenses sheet
-        try:
-            expenses_df = pd.read_excel('omri.xlsx', sheet_name='Expenses', engine='openpyxl')
-            expenses_df = expenses_df.dropna(subset=['תאריך', 'שם', 'שקלים'])  # Remove rows with missing values
-            expenses_df = expenses_df[expenses_df['שקלים'] != 0]  # Remove rows with zero amounts
-            expenses_df['שקלים'] = expenses_df['שקלים'].abs()  # Convert to positive for display
-            logging.info(f"נוצר DataFrame הוצאות עם {len(expenses_df)} שורות")
-        except Exception as e:
-            error_msg = f"שגיאה ביצירת DataFrame הוצאות: {str(e)}"
-            logging.error(error_msg)
-            st.error(error_msg)
-            return None, None, None, None, None
-        
-        logging.info("כל הנתונים נטענו בהצלחה")
-        return omri_df, almanot_df, donations_df, expenses_df, investors_df
-        
-    except Exception as e:
-        error_msg = f"שגיאה כללית בטעינת הנתונים: {str(e)}"
-        logging.error(error_msg)
-        logging.error(traceback.format_exc())
-        st.error(error_msg)
-        return None, None, None, None, None
-
 def save_expenses_data(expenses_df):
     """Save expenses data to Excel file"""
     try:
-        with pd.ExcelWriter("omri.xlsx", engine="openpyxl", mode="a") as writer:
-            expenses_df.to_excel(writer, sheet_name="Expenses", index=False)
+        write_sheet("Expenses", expenses_df)
         st.session_state.changes_made['expenses'] = False
         st.success("הוצאות נשמרו בהצלחה!")
     except Exception as e:
@@ -560,8 +411,7 @@ def save_expenses_data(expenses_df):
 def save_donations_data(donations_df):
     """Save donations data to Excel file"""
     try:
-        with pd.ExcelWriter("omri.xlsx", engine="openpyxl", mode="a") as writer:
-            donations_df.to_excel(writer, sheet_name="Donations", index=False)
+        write_sheet("Donations", donations_df)
         st.session_state.changes_made['donations'] = False
         st.success("תרומות נשמרו בהצלחה!")
     except Exception as e:
@@ -570,11 +420,20 @@ def save_donations_data(donations_df):
 def save_widows_data(almanot_df):
     """Save widows data to Excel file"""
     try:
-        almanot_df.to_excel("almanot.xlsx", index=False)
+        write_sheet("Widows", almanot_df)
         st.session_state.changes_made['widows'] = False
         st.success("נתוני אלמנות נשמרו בהצלחה!")
     except Exception as e:
         st.error(f"שגיאה בשמירת נתוני אלמנות: {str(e)}")
+
+def save_investors_data(investors_df):
+    """Save investors data to Excel file"""
+    try:
+        write_sheet("Investors", investors_df)
+        st.session_state.changes_made['investors'] = False
+        st.success("נתוני משקיעים נשמרו בהצלחה!")
+    except Exception as e:
+        st.error(f"שגיאה בשמירת נתוני משקיעים: {str(e)}")
 
 def get_edge_color(amount):
     """מחזיר צבע קשר לפי סכום התרומה"""
@@ -661,10 +520,10 @@ def main():
             }
         
         # Load data
-        omri_df, almanot_df, donations_df, expenses_df, investors_df = load_cached_data()
+        expenses_df, donations_df, almanot_df, investors_df = load_data()
         
         # Check if data was loaded successfully
-        if omri_df is None or almanot_df is None or donations_df is None or expenses_df is None or investors_df is None:
+        if expenses_df is None or donations_df is None or almanot_df is None or investors_df is None:
             st.error("לא ניתן להמשיך ללא נתונים תקינים")
             return
         
@@ -684,8 +543,8 @@ def main():
         # Add monthly_budget to budget_status if it doesn't exist
         if 'monthly_budget' not in budget_status:
             try:
-                monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum()
-                monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum()
+                monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m') if pd.notna(expenses_df['תאריך']).any() else 'Unknown')['שקלים'].sum()
+                monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m') if pd.notna(donations_df['תאריך']).any() else 'Unknown')['שקלים'].sum()
                 
                 monthly_budget_data = []
                 all_months = sorted(set(monthly_expenses.index) | set(monthly_donations.index))
@@ -784,20 +643,6 @@ def main():
                 coverage = (total_don / sum_exp * 100) if sum_exp > 0 else 0
                 st.metric("יחס כיסוי", f"{coverage:.1f}%")
             
-            # Budget status indicator
-            if available >= 0:
-                status_color = "green"
-                status_text = "עודף תקציב"
-            else:
-                status_color = "red"
-                status_text = "גירעון תקציב"
-            
-            st.markdown(f"""
-                <div style='text-align: center; padding: 15px; background-color: {status_color}; color: white; border-radius: 10px; font-size: 1.2rem; font-weight: bold; margin: 2rem 0;'>
-                    {status_text}: ₪{abs(available):,.0f}
-                </div>
-            """, unsafe_allow_html=True)
-            
             # Add spacing
             st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
             
@@ -835,13 +680,21 @@ def main():
                 st.markdown("<h3 style='color: #4b5563; margin-bottom: 1rem;'>תרומות אחרונות</h3>", unsafe_allow_html=True)
                 recent_donations = donations_df.sort_values('תאריך', ascending=False).head(5)
                 for _, donation in recent_donations.iterrows():
-                    st.write(f"**{donation['שם']}** - ₪{donation['שקלים']:,.0f} ({donation['תאריך'].strftime('%d/%m/%Y')})")
+                    donation_date = donation['תאריך']
+                    if pd.notna(donation_date):
+                        st.write(f"**{donation['שם']}** - ₪{donation['שקלים']:,.0f} ({donation_date.strftime('%d/%m/%Y')})")
+                    else:
+                        st.write(f"**{donation['שם']}** - ₪{donation['שקלים']:,.0f} (תאריך לא מוגדר)")
             
             with col2:
                 st.markdown("<h3 style='color: #4b5563; margin-bottom: 1rem;'>הוצאות אחרונות</h3>", unsafe_allow_html=True)
                 recent_expenses = expenses_df.sort_values('תאריך', ascending=False).head(5)
                 for _, expense in recent_expenses.iterrows():
-                    st.write(f"**{expense['שם']}** - ₪{expense['שקלים']:,.0f} ({expense['תאריך'].strftime('%d/%m/%Y')})")
+                    expense_date = expense['תאריך']
+                    if pd.notna(expense_date):
+                        st.write(f"**{expense['שם']}** - ₪{expense['שקלים']:,.0f} ({expense_date.strftime('%d/%m/%Y')})")
+                    else:
+                        st.write(f"**{expense['שם']}** - ₪{expense['שקלים']:,.0f} (תאריך לא מוגדר)")
             
             # Add spacing
             st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
@@ -892,23 +745,7 @@ def main():
                 st.metric("יתרה", f"₪{budget_status['balance']:,.2f}")
             with col4:
                 st.metric("יחס כיסוי", f"{budget_status['coverage_ratio']:.1f}%")
-            
-            # Display budget status indicator
-            status_color = {
-                "מצוין": "#10b981",  # Green
-                "טוב": "#3b82f6",    # Blue
-                "מספק": "#f59e0b",   # Orange
-                "דורש תשומת לב": "#ef4444",  # Red
-                "קריטי": "#dc2626",  # Dark red
-                "מצב חירום": "#991b1b"  # Very dark red
-            }.get(budget_status['status'], "gray")
-            
-            st.markdown(f"""
-                <div style='text-align: center; padding: 15px; background-color: {status_color}; color: white; border-radius: 10px; font-size: 1.2rem; font-weight: bold; margin: 2rem 0;'>
-                    סטטוס תקציב: {budget_status['status']}
-                </div>
-            """, unsafe_allow_html=True)
-            
+            # Remove colored status box
             # Add spacing
             st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
             
@@ -1112,9 +949,9 @@ def main():
                 if st.button("שמור שינויים", type="primary"):
                     try:
                         with pd.ExcelWriter("omri.xlsx", engine="openpyxl") as writer:
-                            expenses_df.to_excel(writer, sheet_name="Expenses", index=False)
-                            edited_donations.to_excel(writer, sheet_name="Donations", index=False)
-                            edited_investors.to_excel(writer, sheet_name="Investors", index=False)
+                            write_sheet('Expenses', expenses_df)
+                            write_sheet('Donations', edited_donations)
+                            write_sheet('Investors', edited_investors)
                         
                         # Reset all change flags
                         for key in st.session_state.changes_made:
@@ -1222,7 +1059,7 @@ def main():
             
             # Display monthly donations
             st.markdown("<h2 style='color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 2rem;'>תרומות חודשיות</h2>", unsafe_allow_html=True)
-            monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+            monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m') if pd.notna(donations_df['תאריך']).any() else 'Unknown')['שקלים'].sum().reset_index()
             monthly_donations.columns = ['חודש', 'סכום']
             monthly_donations = monthly_donations.sort_values('חודש', ascending=False)
             st.dataframe(
@@ -1249,7 +1086,7 @@ def main():
                 if st.button("שמור שינויים", type="primary"):
                     try:
                         with pd.ExcelWriter("omri.xlsx", engine="openpyxl", mode="a") as writer:
-                            edited_donations.to_excel(writer, sheet_name="Donations", index=False)
+                            write_sheet('Donations', edited_donations)
                         
                         # Reset changes flag
                         st.session_state.changes_made['donations'] = False
@@ -1285,8 +1122,18 @@ def main():
                         st.write(f"**מספר תרומות:** {donor['מספר תרומות']}")
                         st.write(f"**תרומה ממוצעת:** ₪{donor['תרומה ממוצעת']:,.0f}")
                     with col2:
-                        st.write(f"**תרומה ראשונה:** {donor['תרומה ראשונה'].strftime('%d/%m/%Y')}")
-                        st.write(f"**תרומה אחרונה:** {donor['תרומה אחרונה'].strftime('%d/%m/%Y')}")
+                        # Handle NaT values in date fields
+                        first_donation = donor['תרומה ראשונה']
+                        if pd.notna(first_donation):
+                            st.write(f"**תרומה ראשונה:** {first_donation.strftime('%d/%m/%Y')}")
+                        else:
+                            st.write(f"**תרומה ראשונה:** לא מוגדר")
+                        
+                        last_donation = donor['תרומה אחרונה']
+                        if pd.notna(last_donation):
+                            st.write(f"**תרומה אחרונה:** {last_donation.strftime('%d/%m/%Y')}")
+                        else:
+                            st.write(f"**תרומה אחרונה:** לא מוגדר")
                     
                     # Display donor's donations history
                     st.subheader("היסטוריית תרומות")
@@ -1294,7 +1141,7 @@ def main():
                     st.dataframe(
                         donor_history.style.format({
                             "שקלים": "₪{:,.0f}",
-                            "תאריך": lambda x: x.strftime("%d/%m/%Y")
+                            "תאריך": lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else "לא מוגדר"
                         }),
                         use_container_width=True
                     )
@@ -1377,7 +1224,7 @@ def main():
             if st.session_state.changes_made['widows']:
                 if st.button("שמור שינויים", type="primary"):
                     try:
-                        edited_almanot.to_excel("almanot.xlsx", index=False)
+                        write_sheet('Widows', edited_almanot)
                         
                         # Reset changes flag
                         st.session_state.changes_made['widows'] = False
@@ -1834,7 +1681,7 @@ def main():
                                     target=widow_nodes[widow_name],
                                     color=edge_color,
                                     width=edge_width,
-                                    title=f"{donor_name} → {widow_name}: {donation_k:.1f}k ₪ ({last_date.strftime('%d/%m/%Y')})"
+                                    title=f"{donor_name} → {widow_name}: {donation_k:.1f}k ₪ ({last_date.strftime('%d/%m/%Y') if pd.notna(last_date) else 'תאריך לא מוגדר'})"
                                 )
                             )
                             connections_count += 1

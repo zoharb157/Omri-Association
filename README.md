@@ -1,84 +1,117 @@
-# מערכת ניהול עמותת עמרי (Omri Association Management System)
+# מערכת ניהול עמותת עמרי
 
-מערכת דשבורד לניהול עמותת עמרי המאפשרת מעקב אחר הוצאות, תרומות, משקיעים ואלמנות.
+מערכת ניהול מקיפה לעמותת עמרי המאפשרת ניהול תורמים, אלמנות, הוצאות ותקציב.
+
+## תכונות עיקריות
+
+- 📊 **דשבורד אינטראקטיבי** עם סטטיסטיקות בזמן אמת
+- 👥 **ניהול תורמים** - מעקב אחר תרומות והיסטוריית תרומות
+- 👩 **ניהול אלמנות** - מעקב אחר פרטי אלמנות ותמיכה חודשית
+- 💰 **ניהול תקציב** - מעקב אחר הוצאות ותחזיות תקציב
+- 📈 **דוחות מתקדמים** - דוחות חודשיים, תורמים ואלמנות
+- 🔗 **מפת קשרים** - ויזואליזציה של קשרי תורם-אלמנה
+- ⚠️ **התראות חכמות** - התראות על בעיות תקציב ואיכות נתונים
 
 ## התקנה והפעלה
 
 ### דרישות מערכת
-- Python 3.8 או גרסה חדשה יותר
-- pip (מנהל החבילות של Python)
+- Python 3.8+
+- Google Cloud Project עם Google Sheets API מופעל
+- Service Account Key מ-Google Cloud Console
 
 ### התקנת תלויות
 ```bash
 pip install -r requirements.txt
 ```
 
-### הכנת קבצי נתונים
-יש להכין שני קבצי Excel:
+### הגדרת Google Sheets
 
-1. **omri.xlsx** - קובץ עם שלושה גיליונות:
-   - **Expenses** - הוצאות (עמודות: תאריך, שם, שקלים, קטגוריה, הערות)
-   - **Donations** - תרומות (עמודות: תאריך, שם, שקלים, הערות)
-   - **Investors** - משקיעים (עמודות: תאריך, שם, שקלים, הערות)
+1. **יצירת Google Cloud Project:**
+   - עבור ל-[Google Cloud Console](https://console.cloud.google.com/)
+   - צור פרויקט חדש או בחר קיים
+   - הפעל את Google Sheets API
 
-2. **almanot.xlsx** - קובץ אלמנות (עמודות: שם, מייל, טלפון, תעודת זהות, מספר ילדים, חודש התחלה, סכום חודשי, חלים, הערות, תורם, איש קשר לתרומה)
+2. **יצירת Service Account:**
+   - עבור ל-IAM & Admin > Service Accounts
+   - צור Service Account חדש
+   - הורד את קובץ ה-JSON key
+
+3. **הגדרת Spreadsheet:**
+   - צור Google Spreadsheet חדש
+   - שתף אותו עם כתובת המייל של ה-Service Account (עם הרשאות עריכה)
+   - העתק את ה-Spreadsheet ID מה-URL
+
+4. **הגדרת הקבצים:**
+   - שמור את קובץ ה-JSON key בשם `service_account.json` בתיקיית הפרויקט
+   - עדכן את ה-Spreadsheet ID בקובץ `google_sheets_io.py`
+
+5. **יצירת גיליונות:**
+   צור את הגיליונות הבאים ב-Spreadsheet:
+   - **Expenses** - הוצאות (עמודות: תאריך, שם, שקלים)
+   - **Donations** - תרומות (עמודות: תאריך, שם, שקלים)
+   - **Investors** - משקיעים (עמודות: תאריך, שם, שקלים)
+   - **Widows** - אלמנות (עמודות: שם, מייל, טלפון, תעודת זהות, מספר ילדים, חודש התחלה, סכום חודשי, חללים, הערות, תורם, איש קשר לתרומה)
 
 ### הפעלת המערכת
 ```bash
 streamlit run dashboard.py
 ```
 
-המערכת תיפתח בדפדפן בכתובת: http://localhost:8501
+או הפעל את הקובץ `run_dashboard.bat` (Windows).
 
-## תכונות המערכת
+## מבנה הפרויקט
+
+```
+Omri-Association/
+├── dashboard.py              # הקובץ הראשי של הדשבורד
+├── google_sheets_io.py       # פונקציות לקריאה וכתיבה ל-Google Sheets
+├── data_loading.py           # טעינת נתונים
+├── data_processing.py        # עיבוד נתונים וסטטיסטיקות
+├── data_visualization.py     # יצירת גרפים וויזואליזציות
+├── reports.py                # יצירת דוחות PDF
+├── alerts.py                 # מערכת התראות
+├── requirements.txt          # תלויות Python
+├── service_account.json      # מפתח Google Service Account (לא נכלל ב-Git)
+└── README.md                 # קובץ זה
+```
+
+## שימוש במערכת
 
 ### דף הבית
-- סטטיסטיקות כלליות
-- סטטוס תקציב חודשי
-- מגמות חודשיות
-- גרפים השוואתיים
-- עריכת נתונים
+- סקירה כללית של הסטטיסטיקות
+- פעולות מהירות ליצירת דוחות
+- התראות על בעיות
 
 ### ניהול תקציב
-- סטטיסטיקות תקציב
-- גרף תקציב חודשי
-- פירוט תקציב חודשי
-- עריכת הוצאות
+- עריכת הוצאות ותרומות
+- תחזיות תקציב ל-36 חודשים
 - התראות תקציב
-- קטגוריות הוצאות
-- תחזית תקציב
 
 ### ניהול תורמים
+- מעקב אחר תורמים ותרומות
 - סטטיסטיקות תורמים
-- תורמים מובילים
-- גרף תרומות לפי תורם
-- תרומות חודשיות
-- עריכת תרומות
-- התראות תרומות
-- פרטי תורמים
+- היסטוריית תרומות
 
 ### ניהול אלמנות
-- סטטיסטיקות אלמנות
-- התפלגות תמיכה
-- גרף תמיכה באלמנות
-- תחזית תקציב ל-36 חודשים
-- תמיכה חודשית
-- עריכת אלמנות
-- התראות אלמנות
-- פרטי אלמנות
+- עריכת פרטי אלמנות
+- מעקב אחר תמיכה חודשית
+- קשרי תורם-אלמנה
 
-## התראות המערכת
-המערכת מציגה התראות אוטומטיות עבור:
-- אחוז כיסוי תקציב נמוך
-- יתרה שלילית
-- נתונים חסרים או לא תקינים
-- ערכים חריגים
+### דוחות
+- דוח חודשי מלא
+- דוח תורמים
+- דוח אלמנות
+- דוח תקציב
 
-## שמירת נתונים
-המערכת מאפשרת עריכה ישירה של הנתונים ושמירה אוטומטית לקבצי Excel.
+### מפת קשרים
+- ויזואליזציה של קשרי תורם-אלמנה
+- עריכת קשרים
+- ניתוח קשרים
 
 ## תמיכה טכנית
-במקרה של בעיות, בדקו:
-1. שכל קבצי Excel נמצאים בתיקייה הנכונה
-2. שעמודות הנתונים תואמות למצופה
-3. שכל התלויות הותקנו כראוי
+
+לבעיות טכניות או שאלות, אנא פנה לצוות הפיתוח.
+
+## רישיון
+
+פרויקט זה מיועד לשימוש פנימי של עמותת עמרי בלבד.

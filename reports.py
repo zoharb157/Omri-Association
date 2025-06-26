@@ -152,7 +152,6 @@ def generate_widows_report(widows_df):
         if 'שם ' in widows_df.columns and 'סכום חודשי' in widows_df.columns:
             widows_sorted = widows_df.sort_values('סכום חודשי', ascending=False)
             logger.info(f"Processing {len(widows_sorted)} widows")
-            
             for _, row in widows_sorted.iterrows():
                 try:
                     clean_name = clean_text_for_pdf(row["שם "])
@@ -161,7 +160,6 @@ def generate_widows_report(widows_df):
                 except Exception as row_error:
                     logger.error(f"Error processing row: {row_error}")
                     pdf.cell(0, 10, f'Error processing widow data', 0, 1, 'L')
-            
             # Add total support
             pdf.set_font('Arial', 'B', 14)
             total_support = widows_df['סכום חודשי'].sum()
@@ -328,4 +326,4 @@ def generate_budget_report(expenses_df, donations_df):
         import traceback
         logger.error(f"Traceback: {traceback.format_exc()}")
         st.error(f"Error generating budget report: {str(e)}")
-        return None
+        return None 
