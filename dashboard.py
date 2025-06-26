@@ -1614,7 +1614,7 @@ def main():
                         )
                     )
                 
-                # הדפסת כל הצמתים שנוצרים
+                # הדפסת מידע על חיבורים וגודל צמתים (לבדיקה)
                 print("DEBUG: Nodes created:")
                 for node in nodes:
                     warn = ""
@@ -1715,16 +1715,18 @@ def main():
                 # הצגת הגרף
                 agraph(nodes=nodes, edges=edges, config=config)
                 
-                # כפתור להפעלת/כיבוי מצב עריכה
-                col1, col2, col3 = st.columns([1, 2, 1])
-                with col2:
-                    edit_mode = st.toggle("✏️ מצב עריכה", key="edit_mode_toggle")
-                    if edit_mode:
-                        st.info("🔧 **מצב עריכה פעיל**: גרור צמתים ליצירת קשרים חדשים, לחץ על קשרים לעריכה, או לחץ על צמתים למחיקה.")
-                    else:
-                        st.info("👆 **מצב צפייה**: לחץ על צמתים וקשרים לפרטים נוספים.")
+                # הסתרת הודעות ברירת מחדל של הספרייה
+                st.markdown("""
+                <style>
+                /* הסתרת הודעות עזרה ברירת מחדל של streamlit-agraph */
+                .stInfo, .stMarkdown {
+                    display: none !important;
+                }
+                </style>
+                """, unsafe_allow_html=True)
                 
                 # כפתורי פעולה מהירה במצב עריכה
+                edit_mode = False  # מצב עריכה כבוי כברירת מחדל
                 if edit_mode:
                     st.markdown("### ⚡ פעולות מהירות")
                     col1, col2, col3, col4 = st.columns(4)
@@ -1765,254 +1767,8 @@ def main():
                             st.session_state.edit_mode_toggle = False
                             st.rerun()
                 
-                # הוראות שימוש
-                with st.expander("📖 הוראות שימוש במערכת העריכה"):
-                    st.markdown("""
-                    ### איך לערוך קשרים ישירות על הגרף:
-                    
-                    **🔧 מצב עריכה:**
-                    1. **הפעל את כפתור "מצב עריכה"** למעלה
-                    2. **גרור צמתים** - גרור תורם לאלמנה ליצירת קשר חדש
-                    3. **לחץ על קשרים** - לעריכת סכום התרומה
-                    4. **הדגשת אלמנות זמינות** - אלמנות ללא תורם יודגשו בצבע שונה
-                    
-                    **👆 מצב צפייה:**
-                    - לחץ על צמתים וקשרים לפרטים נוספים
-                    - השתמש בחיפוש למעלה להדגשת צמתים
-                    
-                    **💾 שמירה ידנית:**
-                    - השינויים נשמרים רק בלחיצה על "שמור שינויים"
-                    - השתמש ב"ביטול עריכה" לביטול כל השינויים
-                    - התרומות מתעדכנות ב-`omri.xlsx`
-                    - הקשרים מתעדכנים ב-`almanot.xlsx`
-                    
-                    **⚠️ הגבלות:**
-                    - לא ניתן ליצור צמתים חדשים
-                    - לא ניתן לחבר לאלמנה שכבר יש לה תורם
-                    - לא ניתן למחוק צמתים קיימים
-                    """)
-                
-                # JavaScript לטיפול באירועי עריכה
-                if edit_mode:
-                    st.markdown("""
-                    <script>
-                    // פונקציה לטיפול באירועי עריכה
-                    function setupGraphEditing() {
-                        // רשימת אלמנות עם תורמים (למניעת חיבורים כפולים)
-                        const widowsWithDonors = new Set();
-                        network.body.data.edges.forEach(edge => {
-                            if (edge.to.startsWith('widow_')) {
-                                widowsWithDonors.add(edge.to);
-                            }
-                        });
-                        
-                        // הדגשת אלמנות זמינות (ללא תורם)
-                        network.body.data.nodes.forEach(node => {
-                            if (node.id.startsWith('widow_') && !widowsWithDonors.has(node.id)) {
-                                // הדגשת אלמנות זמינות בצבע שונה
-                                node.color = '#10b981'; // צבע ירוק לאלמנות זמינות
-                                node.size = node.size + 5;
-                                network.body.data.nodes.update(node);
-                            }
-                        });
-                        
-                        // אירוע יצירת קשר חדש
-                        network.on('addEdge', function(data) {
-                            const fromNode = data.from;
-                            const toNode = data.to;
-                            
-                            // בדיקה שהקשר הוא בין תורם לאלמנה
-                            if (fromNode.startsWith('donor_') && toNode.startsWith('widow_')) {
-                                const donorName = fromNode.replace('donor_', '');
-                                const widowName = toNode.replace('widow_', '');
-                                
-                                // בדיקה שהאלמנה לא מחוברת כבר
-                                if (widowsWithDonors.has(toNode)) {
-                                    alert('אלמנה זו כבר מחוברת לתורם אחר!');
-                                    network.body.data.edges.remove(data.id);
-                                    return;
-                                }
-                                
-                                // הצגת דיאלוג לבחירת סכום
-                                const amount = prompt('בחר סכום התרומה (בשקלים):', '1000');
-                                if (amount && !isNaN(amount)) {
-                                    // עדכון הקשר עם הסכום החדש
-                                    const edge = network.body.data.edges.get(data.id);
-                                    if (edge) {
-                                        edge.title = donorName + ' → ' + widowName + ': ' + (amount/1000) + 'k ₪';
-                                        edge.color = amount >= 2000 ? '#3b82f6' : '#fbbf24';
-                                        edge.width = Math.max(1, Math.min(8, amount / 1000 / 10));
-                                        network.body.data.edges.update(edge);
-                                        
-                                        // עדכון צבע התורם לכחול (עם קשרים)
-                                        const donorNode = network.body.data.nodes.get(fromNode);
-                                        if (donorNode) {
-                                            donorNode.color = '#2563eb';
-                                            network.body.data.nodes.update(donorNode);
-                                        }
-                                        
-                                        // עדכון צבע האלמנה לאדום (עם קשרים)
-                                        const widowNode = network.body.data.nodes.get(toNode);
-                                        if (widowNode) {
-                                            widowNode.color = '#f43f5e';
-                                            widowNode.size = Math.max(20, widowNode.size - 5);
-                                            network.body.data.nodes.update(widowNode);
-                                        }
-                                        
-                                        // הוספה לרשימת אלמנות עם תורמים
-                                        widowsWithDonors.add(toNode);
-                                    }
-                                    
-                                    // שליחת הנתונים לשרת
-                                    fetch('/update_connection', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            donor: donorName,
-                                            widow: widowName,
-                                            amount: parseInt(amount),
-                                            action: 'add'
-                                        })
-                                    }).then(() => {
-                                        console.log('Connection updated successfully');
-                                    });
-                                } else {
-                                    // ביטול הקשר אם לא נבחר סכום
-                                    network.body.data.edges.remove(data.id);
-                                }
-                            }
-                        });
-                        
-                        // אירוע מחיקת קשר
-                        network.on('deleteEdge', function(data) {
-                            const edgeId = data.edges[0];
-                            const edge = network.body.data.edges.get(edgeId);
-                            
-                            if (edge) {
-                                const fromNode = edge.from;
-                                const toNode = edge.to;
-                                
-                                if (fromNode.startsWith('donor_') && toNode.startsWith('widow_')) {
-                                    const donorName = fromNode.replace('donor_', '');
-                                    const widowName = toNode.replace('widow_', '');
-                                    
-                                    if (confirm('האם אתה בטוח שברצונך למחוק את הקשר הזה?')) {
-                                        // הסרה מרשימת אלמנות עם תורמים
-                                        widowsWithDonors.delete(toNode);
-                                        
-                                        // עדכון צבע האלמנה לירוק (זמינה)
-                                        const widowNode = network.body.data.nodes.get(toNode);
-                                        if (widowNode) {
-                                            widowNode.color = '#10b981';
-                                            widowNode.size = widowNode.size + 5;
-                                            network.body.data.nodes.update(widowNode);
-                                        }
-                                        
-                                        fetch('/update_connection', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            body: JSON.stringify({
-                                                donor: donorName,
-                                                widow: widowName,
-                                                action: 'delete'
-                                            })
-                                        }).then(() => {
-                                            console.log('Connection deleted successfully');
-                                        });
-                                    }
-                                }
-                            }
-                        });
-                        
-                        // אירוע עריכת קשר
-                        network.on('editEdge', function(data) {
-                            const edge = data.edge;
-                            const fromNode = edge.from;
-                            const toNode = edge.to;
-                            
-                            if (fromNode.startsWith('donor_') && toNode.startsWith('widow_')) {
-                                const donorName = fromNode.replace('donor_', '');
-                                const widowName = toNode.replace('widow_', '');
-                                
-                                const newAmount = prompt('ערוך סכום התרומה (בשקלים):', '1000');
-                                if (newAmount && !isNaN(newAmount)) {
-                                    edge.title = donorName + ' → ' + widowName + ': ' + (newAmount/1000) + 'k ₪';
-                                    edge.color = newAmount >= 2000 ? '#3b82f6' : '#fbbf24';
-                                    edge.width = Math.max(1, Math.min(8, newAmount / 1000 / 10));
-                                    network.body.data.edges.update(edge);
-                                    
-                                    fetch('/update_connection', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            donor: donorName,
-                                            widow: widowName,
-                                            amount: parseInt(newAmount),
-                                            action: 'edit'
-                                        })
-                                    }).then(() => {
-                                        console.log('Connection edited successfully');
-                                    });
-                                }
-                            }
-                        });
-                    }
-                    
-                    // הפעלת הפונקציה כשהדף נטען
-                    document.addEventListener('DOMContentLoaded', setupGraphEditing);
-                    </script>
-                    """, unsafe_allow_html=True)
-                
-                # טיפול בעדכוני קשרים
-                if 'pending_connection_update' in st.session_state:
-                    update_data = st.session_state.pending_connection_update
-                    donor_name = update_data.get('donor')
-                    widow_name = update_data.get('widow')
-                    action = update_data.get('action')
-                    amount = update_data.get('amount', 1000)
-                    
-                    if action == 'add':
-                        # הוספה לרשימת השינויים הזמניים
-                        if 'temp_changes' not in st.session_state:
-                            st.session_state.temp_changes = []
-                        st.session_state.temp_changes.append({
-                            'action': 'add',
-                            'donor': donor_name,
-                            'widow': widow_name,
-                            'amount': amount
-                        })
-                        st.success(f"✅ קשר חדש נוסף: {donor_name} → {widow_name} ({amount:,} ₪)")
-                    elif action == 'edit':
-                        # עדכון ברשימת השינויים הזמניים
-                        if 'temp_changes' not in st.session_state:
-                            st.session_state.temp_changes = []
-                        st.session_state.temp_changes.append({
-                            'action': 'edit',
-                            'donor': donor_name,
-                            'widow': widow_name,
-                            'amount': amount
-                        })
-                        st.success(f"✅ קשר עודכן: {donor_name} → {widow_name} ({amount:,} ₪)")
-                    elif action == 'delete':
-                        # הוספת מחיקה לרשימת השינויים הזמניים
-                        if 'temp_changes' not in st.session_state:
-                            st.session_state.temp_changes = []
-                        st.session_state.temp_changes.append({
-                            'action': 'delete',
-                            'donor': donor_name,
-                            'widow': widow_name
-                        })
-                        st.success(f"✅ קשר נמחק: {donor_name} → {widow_name}")
-                    
-                    # ניקוי הנתונים הזמניים
-                    del st.session_state.pending_connection_update
-                    st.rerun()
+                # הוראות שימוש (הוסר לפי בקשת המשתמש)
+
             except Exception as e:
                 logging.error(f"Error creating network graph: {str(e)}")
                 logging.error(traceback.format_exc())
