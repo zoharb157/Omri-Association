@@ -661,16 +661,6 @@ def main():
             # Add spacing
             st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
             
-            # Charts
-            st.markdown("<h2 style='color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 2rem;'>גרפים</h2>", unsafe_allow_html=True)
-            col1, col2 = st.columns(2)
-            with col1:
-                create_monthly_trends(expenses_df, donations_df)
-            with col2:
-                create_comparison_chart(expenses_df, donations_df)
-            
-            # Add spacing
-            st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
             
             # Recent Activity
             st.markdown("<h2 style='color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 2rem;'>פעילות אחרונה</h2>", unsafe_allow_html=True)
