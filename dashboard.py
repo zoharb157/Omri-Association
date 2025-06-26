@@ -1420,31 +1420,7 @@ def main():
                     """יצירת מיפוי אוטומטי בין שמות תורמים"""
                     mapping = {}
                     
-                    # רשימת מיפויים ידניים ידועים
-                    manual_mappings = {
-                        'פלייטיקה': 'פלייטק',
-                        'שפע זיכיונות ': 'שפע זיכיונות',
-                        'סופר פליי ': 'סופר פליי',
-                        'מייקרוסופט ': 'מייקרוסופט',
-                        'ווקמי בעמ\xa0': 'ווקמי בעמ',
-                        'א.ל. סקיישילד': 'סקיישילד',
-                        'ישי מור': 'ישי מר',
-                        'פרידלנד מאיר': 'מאיר פרידלנד',
-                        'מולודצקי איליה': 'אליה מולודצקי',
-                        'יהלומי יורם דבש': 'יורם דבש',
-                        'הלפרין קובי': 'קובי הלפרין',
-                        'איליון דינמיקס': 'איליון',
-                        'פאראגון פתרונות': 'פאראגון',
-                        'שפע זיכיונות ': 'שפע זיכיונות',
-                        'פלייטק+גלים': 'גלים',
-                        'יתרת זכות': 'יתרת זכות',
-                        'יונתן ארז': 'יונתן ארז',
-                        'דורון נאור': 'דורון נאור'
-                    }
-                    
-                    # הוספת מיפויים ידניים
-                    for old_name, new_name in manual_mappings.items():
-                        mapping[old_name] = new_name
+                    # אין יותר מיפוי ידני - משתמשים רק בנתונים האמיתיים
                     
                     return mapping
                 
@@ -1493,10 +1469,12 @@ def main():
                     widow_name = widow_row['שם ']
                     donor_name = widow_row['תורם']
                     
-                    widow_to_donor_mapping[widow_name] = donor_name
-                    if donor_name not in donor_connections:
-                        donor_connections[donor_name] = 0
-                    donor_connections[donor_name] += 1
+                    # וודא שהתורם קיים בקובץ התרומות
+                    if donor_name in donations_df_clean['שם'].values:
+                        widow_to_donor_mapping[widow_name] = donor_name
+                        if donor_name not in donor_connections:
+                            donor_connections[donor_name] = 0
+                        donor_connections[donor_name] += 1
                 
                 # בדיקה אילו תורמים יש להם תרומות בפועל
                 donors_with_actual_donations = set(donations_df_clean['שם'].unique())
