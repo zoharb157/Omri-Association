@@ -23,3 +23,13 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Excel files (sample data)
+*.xlsx
+
+# Test and temporary files
+test_connection.py
+create_sample_data.py
+
+# Service account credentials (should not be committed)
+service_account.json

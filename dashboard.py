@@ -717,19 +717,13 @@ def main():
                 status_color = "red"
                 status_text = "גירעון"
             
-            col1, col2, col3, col4 = st.columns(4)
+            col1, col2, col3 = st.columns(3)
             with col1:
                 st.metric("סך תרומות", f"₪{total_donations:,.0f}")
             with col2:
                 st.metric("סך הוצאות", f"₪{total_expenses:,.0f}")
             with col3:
                 st.metric("יתרה זמינה", f"₪{available_budget:,.0f}")
-            with col4:
-                st.markdown(f"""
-                    <div style='text-align: center; padding: 1rem; background-color: {status_color}20; border: 2px solid {status_color}; border-radius: 10px;'>
-                        <h3 style='color: {status_color}; margin: 0;'>{status_text}</h3>
-                    </div>
-                """, unsafe_allow_html=True)
             
             # Add spacing
             st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
@@ -854,8 +848,8 @@ def main():
             # Report Generation
             st.markdown("<h3 style='color: #4b5563; margin-bottom: 1rem;'>יצירת דוחות</h3>", unsafe_allow_html=True)
             
-            col1, col2 = st.columns(2)
-            with col1:
+                    col1, col2 = st.columns(2)
+                    with col1:
                 if st.button("📊 דוח חודשי מפורט", use_container_width=True):
                     filename = generate_monthly_report(expenses_df, donations_df, almanot_df)
                     if filename:
@@ -1058,6 +1052,117 @@ def main():
                     connected_widows = len(valid_donor_widow_pairs)
                     st.info(f"מציג {len(all_donors)} תורמים ו-{len(almanot_df)} אלמנות. {connected_donors} תורמים מחוברים ל-{connected_widows} אלמנות.")
                     
+                    # Add connection management section BEFORE the graph
+                    st.markdown("<h3 style='color: #4b5563; margin-top: 2rem; margin-bottom: 1rem;'>ניהול קשרים</h3>", unsafe_allow_html=True)
+                    
+                    # Initialize session state for showing sections
+                    if 'show_create_connection' not in st.session_state:
+                        st.session_state.show_create_connection = False
+                    if 'show_remove_connection' not in st.session_state:
+                        st.session_state.show_remove_connection = False
+                    
+                    # Main buttons row
+                    col1, col2, col3 = st.columns([1, 1, 2])
+                    
+            with col1:
+                        if st.button("➕ צור קשר חדש", key="show_create_btn", use_container_width=True):
+                            st.session_state.show_create_connection = not st.session_state.show_create_connection
+                            st.session_state.show_remove_connection = False
+                            st.rerun()
+                    
+            with col2:
+                        if st.button("➖ הסר קשר קיים", key="show_remove_btn", use_container_width=True):
+                            st.session_state.show_remove_connection = not st.session_state.show_remove_connection
+                            st.session_state.show_create_connection = False
+                            st.rerun()
+                    
+                    # Show create connection section
+                    if st.session_state.show_create_connection:
+                        st.markdown("---")
+                        st.markdown("**יצירת קשר חדש**")
+                        
+                        # Get available donors and widows
+                        available_donors = list(all_donors)
+                        available_widows = almanot_df['שם '].dropna().unique().tolist()
+                        
+                        # Filter out widows that already have donors
+                        widows_with_donors = valid_donor_widow_pairs['שם '].unique()
+                        available_widows = [w for w in available_widows if w not in widows_with_donors]
+                        
+                        if available_donors and available_widows:
+                            selected_donor = st.selectbox("בחר תורם:", available_donors, key="new_connection_donor")
+                            selected_widow = st.selectbox("בחר אלמנה:", available_widows, key="new_connection_widow")
+                            connection_amount = st.number_input("סכום חודשי (₪):", min_value=0, value=1000, step=100, key="new_connection_amount")
+                            
+                            if st.button("יצור קשר", key="create_connection"):
+                                try:
+                                    # Update the widow's donor information
+                                    almanot_df.loc[almanot_df['שם '] == selected_widow, 'תורם'] = selected_donor
+                                    almanot_df.loc[almanot_df['שם '] == selected_widow, 'סכום חודשי'] = connection_amount
+                                    
+                                    # Mark that there are unsaved changes
+                                    st.session_state.unsaved_changes = True
+                                    
+                                    show_success_message(f"קשר נוצר בהצלחה בין {selected_donor} ל-{selected_widow}")
+                                    st.rerun()
+                                except Exception as e:
+                                    st.error(f"שגיאה ביצירת הקשר: {str(e)}")
+                        else:
+                            if not available_donors:
+                                st.warning("אין תורמים זמינים")
+                            if not available_widows:
+                                st.warning("אין אלמנות זמינות ליצירת קשר")
+                    
+                    # Show remove connection section
+                    if st.session_state.show_remove_connection:
+                        st.markdown("---")
+                        st.markdown("**הסרת קשר קיים**")
+                        
+                        if len(valid_donor_widow_pairs) > 0:
+                            # Create a list of existing connections
+                            existing_connections = []
+                            for _, row in valid_donor_widow_pairs.iterrows():
+                                existing_connections.append(f"{row['תורם']} → {row['שם ']}")
+                            
+                            selected_connection = st.selectbox("בחר קשר להסרה:", existing_connections, key="remove_connection")
+                            
+                            if st.button("הסר קשר", key="remove_connection_btn"):
+                                try:
+                                    # Parse the selected connection
+                                    donor_name, widow_name = selected_connection.split(" → ")
+                                    
+                                    # Remove the connection
+                                    almanot_df.loc[almanot_df['שם '] == widow_name, 'תורם'] = ''
+                                    almanot_df.loc[almanot_df['שם '] == widow_name, 'סכום חודשי'] = 0
+                                    
+                                    # Mark that there are unsaved changes
+                                    st.session_state.unsaved_changes = True
+                                    
+                                    show_success_message(f"קשר הוסר בהצלחה בין {donor_name} ל-{widow_name}")
+                                    st.rerun()
+                                except Exception as e:
+                                    st.error(f"שגיאה בהסרת הקשר: {str(e)}")
+                        else:
+                            st.info("אין קשרים קיימים להסרה")
+                    
+                    # Add save button only if there are unsaved changes
+                    if 'unsaved_changes' not in st.session_state:
+                        st.session_state.unsaved_changes = False
+                    
+                    if st.session_state.unsaved_changes:
+                        st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
+                        st.warning("⚠️ יש שינויים שלא נשמרו!")
+                        if st.button("💾 שמור שינויים ל-Google Sheets", key="save_changes", type="primary", use_container_width=True):
+                            try:
+                                # Save the updated data to Google Sheets
+                                save_widows_data(almanot_df)
+                                st.session_state.unsaved_changes = False
+                                show_success_message("✅ כל השינויים נשמרו בהצלחה ל-Google Sheets!")
+                            except Exception as e:
+                                st.error(f"❌ שגיאה בשמירת השינויים: {str(e)}")
+                    
+                    # Display the network graph AFTER the connection management
+                    st.markdown("<h3 style='color: #4b5563; margin-top: 2rem; margin-bottom: 1rem;'>מפת הקשרים</h3>", unsafe_allow_html=True)
                     agraph(nodes=nodes, edges=edges, config=config)
                 else:
                     st.info("אין נתונים להצגה במפת הקשרים")
