@@ -51,9 +51,9 @@ def check_data_quality_alerts(expenses_df: pd.DataFrame, donations_df: pd.DataFr
             if amount_col in df.columns and df[amount_col].isnull().any():
                 alerts.append(f"חסרים ערכים בעמודת {amount_col} בקובץ {name}")
                 
-            # Check for zero or negative values
-            if amount_col in df.columns and (df[amount_col] <= 0).any():
-                alerts.append(f"נמצאו ערכים אפס או שליליים בעמודת {amount_col} בקובץ {name}")
+            # Check for negative values only (not zero)
+            if amount_col in df.columns and (df[amount_col] < 0).any():
+                alerts.append(f"נמצאו ערכים שליליים בעמודת {amount_col} בקובץ {name}")
                 
     except Exception as e:
         logging.error(f"Error checking data quality alerts: {str(e)}")
