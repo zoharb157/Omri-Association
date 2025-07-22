@@ -521,16 +521,25 @@ def main():
                 'widows': False
             }
         
-        # Load data
-        expenses_df, donations_df, almanot_df, investors_df = load_data()
-        
+        # Load data ONCE per session and keep in session_state
+        if 'expenses_df' not in st.session_state or 'donations_df' not in st.session_state or 'almanot_df' not in st.session_state or 'investors_df' not in st.session_state:
+            expenses_df, donations_df, almanot_df, investors_df = load_data()
+            st.session_state.expenses_df = expenses_df
+            st.session_state.donations_df = donations_df
+            st.session_state.almanot_df = almanot_df
+            st.session_state.investors_df = investors_df
+        else:
+            expenses_df = st.session_state.expenses_df
+            donations_df = st.session_state.donations_df
+            almanot_df = st.session_state.almanot_df
+            investors_df = st.session_state.investors_df
+
         # Log data loading results
         logging.info("=== DATA LOADING DEBUG INFO ===")
         logging.info(f"Expenses DataFrame: {'Loaded' if expenses_df is not None else 'Failed to load'}")
         logging.info(f"Donations DataFrame: {'Loaded' if donations_df is not None else 'Failed to load'}")
         logging.info(f"Almanot DataFrame: {'Loaded' if almanot_df is not None else 'Failed to load'}")
         logging.info(f"Investors DataFrame: {'Loaded' if investors_df is not None else 'Failed to load'}")
-        
         if expenses_df is not None:
             logging.info(f"Expenses shape: {expenses_df.shape}, columns: {list(expenses_df.columns)}")
         if donations_df is not None:
@@ -1072,13 +1081,13 @@ def main():
                         if st.button("➕ צור קשר חדש", key="show_create_btn", use_container_width=True):
                             st.session_state.show_create_connection = not st.session_state.show_create_connection
                             st.session_state.show_remove_connection = False
-                            st.rerun()
+                            # No rerun here
                     
                     with col2:
                         if st.button("➖ הסר קשר קיים", key="show_remove_btn", use_container_width=True):
                             st.session_state.show_remove_connection = not st.session_state.show_remove_connection
                             st.session_state.show_create_connection = False
-                            st.rerun()
+                            # No rerun here
                     
                     # Show create connection section
                     if st.session_state.show_create_connection:
@@ -1100,13 +1109,10 @@ def main():
                             
                             if st.button("יצור קשר", key="create_connection"):
                                 try:
-                                    # Update the widow's donor information
-                                    almanot_df.loc[almanot_df['שם '] == selected_widow, 'תורם'] = selected_donor
-                                    almanot_df.loc[almanot_df['שם '] == selected_widow, 'סכום חודשי'] = connection_amount
-                                    
-                                    # Mark that there are unsaved changes
+                                    # Update the widow's donor information in session_state only
+                                    st.session_state.almanot_df.loc[st.session_state.almanot_df['שם '] == selected_widow, 'תורם'] = selected_donor
+                                    st.session_state.almanot_df.loc[st.session_state.almanot_df['שם '] == selected_widow, 'סכום חודשי'] = connection_amount
                                     st.session_state.unsaved_changes = True
-                                    
                                     show_success_message(f"קשר נוצר בהצלחה בין {selected_donor} ל-{selected_widow}")
                                     st.rerun()
                                 except Exception as e:
@@ -1126,22 +1132,16 @@ def main():
                             # Create a list of existing connections
                             existing_connections = []
                             for _, row in valid_donor_widow_pairs.iterrows():
-                                existing_connections.append(f"{row['תורם']} → {row['שם ']}")
+                                existing_connections.append(f"{row['תורם']} → {row['שם ']}" )
                             
                             selected_connection = st.selectbox("בחר קשר להסרה:", existing_connections, key="remove_connection")
                             
                             if st.button("הסר קשר", key="remove_connection_btn"):
                                 try:
-                                    # Parse the selected connection
                                     donor_name, widow_name = selected_connection.split(" → ")
-                                    
-                                    # Remove the connection
-                                    almanot_df.loc[almanot_df['שם '] == widow_name, 'תורם'] = ''
-                                    almanot_df.loc[almanot_df['שם '] == widow_name, 'סכום חודשי'] = 0
-                                    
-                                    # Mark that there are unsaved changes
+                                    st.session_state.almanot_df.loc[st.session_state.almanot_df['שם '] == widow_name, 'תורם'] = ''
+                                    st.session_state.almanot_df.loc[st.session_state.almanot_df['שם '] == widow_name, 'סכום חודשי'] = 0
                                     st.session_state.unsaved_changes = True
-                                    
                                     show_success_message(f"קשר הוסר בהצלחה בין {donor_name} ל-{widow_name}")
                                     st.rerun()
                                 except Exception as e:
@@ -1159,9 +1159,10 @@ def main():
                         if st.button("💾 שמור שינויים ל-Google Sheets", key="save_changes", type="primary", use_container_width=True):
                             try:
                                 # Save the updated data to Google Sheets
-                                save_widows_data(almanot_df)
+                                save_widows_data(st.session_state.almanot_df)
                                 st.session_state.unsaved_changes = False
                                 show_success_message("✅ כל השינויים נשמרו בהצלחה ל-Google Sheets!")
+                                st.rerun()
                             except Exception as e:
                                 st.error(f"❌ שגיאה בשמירת השינויים: {str(e)}")
                     
