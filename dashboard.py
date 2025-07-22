@@ -40,7 +40,7 @@ import tempfile
 import json
 import re
 from data_loading import load_data
-from google_sheets_io import write_sheet
+from google_sheets_io import write_sheet, check_service_account_validity
 from alerts import check_budget_alerts, check_data_quality_alerts, check_widows_alerts, check_donations_alerts
 
 # Configure logging
@@ -505,6 +505,10 @@ def main():
         
         st.markdown("<h1 style='text-align: center; color: #1f77b4; margin-bottom: 2rem;'>מערכת ניהול עמותת עמרי</h1>", unsafe_allow_html=True)
         
+        # Check service account validity before loading data
+        if not check_service_account_validity():
+            st.stop()
+
         # Display success messages
         display_success_messages()
         
@@ -847,9 +851,9 @@ def main():
             
             # Report Generation
             st.markdown("<h3 style='color: #4b5563; margin-bottom: 1rem;'>יצירת דוחות</h3>", unsafe_allow_html=True)
-            
-                    col1, col2 = st.columns(2)
-                    with col1:
+
+            col1, col2 = st.columns(2)
+            with col1:
                 if st.button("📊 דוח חודשי מפורט", use_container_width=True):
                     filename = generate_monthly_report(expenses_df, donations_df, almanot_df)
                     if filename:
@@ -873,7 +877,7 @@ def main():
                                 file_name=filename,
                                 mime="application/pdf"
                             )
-                
+            
             with col2:
                 if st.button("👩 דוח אלמנות מפורט", use_container_width=True):
                     filename = generate_widows_report(almanot_df)
@@ -1064,13 +1068,13 @@ def main():
                     # Main buttons row
                     col1, col2, col3 = st.columns([1, 1, 2])
                     
-            with col1:
+                    with col1:
                         if st.button("➕ צור קשר חדש", key="show_create_btn", use_container_width=True):
                             st.session_state.show_create_connection = not st.session_state.show_create_connection
                             st.session_state.show_remove_connection = False
                             st.rerun()
                     
-            with col2:
+                    with col2:
                         if st.button("➖ הסר קשר קיים", key="show_remove_btn", use_container_width=True):
                             st.session_state.show_remove_connection = not st.session_state.show_remove_connection
                             st.session_state.show_create_connection = False

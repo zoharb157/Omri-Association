@@ -3,6 +3,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from typing import Optional
 import os
+import streamlit as st
 
 # Define the scope
 SCOPES = [
@@ -31,6 +32,113 @@ try:
         print("Warning: service_account.json not found. Falling back to Excel files.")
 except Exception as e:
     print(f"Warning: Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+
+
+def show_service_account_upload():
+    """Show UI for uploading/pasting a new Google service account key, validate, and save if valid."""
+    st.markdown("""
+### לא נמצא מפתח Google Sheets תקין
+
+1. לחץ על הכפתור כדי לפתוח את עמוד יצירת המפתח ב-Google Cloud:
+""")
+    st.link_button("פתח עמוד יצירת מפתח ב-Google Cloud", "https://console.cloud.google.com/iam-admin/serviceaccounts")
+    st.markdown("""
+2. צור מפתח חדש (JSON) והעתק את כל התוכן.
+3. הדבק את תוכן המפתח כאן:
+""")
+    key_input = st.text_area("הדבק כאן את תוכן קובץ המפתח (JSON)", height=300)
+    if st.button("בדוק ושמור מפתח חדש"):
+        import json
+        from google.auth.exceptions import DefaultCredentialsError
+        import io
+        try:
+            key_data = json.loads(key_input)
+            # בדיקה בסיסית
+            required_fields = ["type", "private_key", "client_email", "token_uri"]
+            for field in required_fields:
+                if field not in key_data or not key_data[field]:
+                    st.error(f"המפתח חסר שדה חובה: {field}")
+                    return False
+            # בדוק את המפתח מול Google
+            from google.oauth2.service_account import Credentials
+            from google.auth.transport.requests import Request
+            creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
+            creds.refresh(Request())
+            # אם הגענו לכאן – המפתח תקין
+            with open(SERVICE_ACCOUNT_FILE, 'w', encoding='utf-8') as f:
+                json.dump(key_data, f, ensure_ascii=False, indent=2)
+            st.success("✅ המפתח נשמר בהצלחה! המערכת תיטען מחדש.")
+            st.rerun()
+        except Exception as e:
+            st.error(f"המפתח לא תקין או לא ניתן לאימות מול Google.\n\nשגיאה: {e}")
+        return False
+
+
+def check_service_account_validity():
+    """Check if the service account key is valid and display a user-friendly error if not, including setup instructions."""
+    import json
+    from google.auth.exceptions import DefaultCredentialsError
+    from google.auth.transport.requests import Request
+    try:
+        if not os.path.exists(SERVICE_ACCOUNT_FILE):
+            show_service_account_upload()
+            return False
+        with open(SERVICE_ACCOUNT_FILE, 'r', encoding='utf-8') as f:
+            key_data = json.load(f)
+        # Basic checks
+        required_fields = ["type", "private_key", "client_email", "token_uri"]
+        for field in required_fields:
+            if field not in key_data or not key_data[field]:
+                show_service_account_upload()
+                return False
+        # Try to create credentials and get a token
+        creds = Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE,
+            scopes=SCOPES
+        )
+        # Try to get a token (will fail if key is invalid/expired)
+        creds.refresh(Request())
+        return True
+    except Exception as e:
+        show_service_account_upload()
+        return False
+
+
+def show_google_sheets_setup_instructions():
+    """Display the most important Google Sheets setup instructions for non-technical users."""
+    st.markdown("""
+### איך להפעיל את המערכת עם Google Sheets?
+
+1. **הורד מפתח חדש:**
+   - היכנס ל-Google Cloud Console > IAM & Admin > Service Accounts
+   - בחר את החשבון (או צור חדש)
+   - עבור ל-Keys > Add Key > Create new key > JSON
+   - הורד את הקובץ ושמור אותו בשם `service_account.json` בתיקיית המערכת
+
+2. **שתף את הגיליון עם המייל של הסרוויס:**
+   - פתח את Google Sheets
+   - לחץ על 'שתף' והוסף את כתובת המייל של הסרוויס (מופיעה למטה)
+   - תן הרשאת עריכה
+
+3. **הרץ שוב את המערכת**
+
+---
+    """)
+    # Try to show the service account email if possible
+    try:
+        if os.path.exists(SERVICE_ACCOUNT_FILE):
+            import json
+            with open(SERVICE_ACCOUNT_FILE, 'r', encoding='utf-8') as f:
+                key_data = json.load(f)
+            email = key_data.get("client_email", None)
+            if email:
+                st.info(f"""**כתובת המייל של הסרוויס:**
+```
+{email}
+```
+[העתק/י את הכתובת והוסף/י אותה לשיתוף הגיליון]""")
+    except Exception:
+        pass
 
 
 def _fix_headers(headers):
