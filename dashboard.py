@@ -508,7 +508,7 @@ def main():
         # Check service account validity before loading data
         if not check_service_account_validity():
             st.stop()
-
+        
         # Display success messages
         display_success_messages()
         
@@ -523,7 +523,7 @@ def main():
         
         # Load data ONCE per session and keep in session_state
         if 'expenses_df' not in st.session_state or 'donations_df' not in st.session_state or 'almanot_df' not in st.session_state or 'investors_df' not in st.session_state:
-            expenses_df, donations_df, almanot_df, investors_df = load_data()
+        expenses_df, donations_df, almanot_df, investors_df = load_data()
             st.session_state.expenses_df = expenses_df
             st.session_state.donations_df = donations_df
             st.session_state.almanot_df = almanot_df
@@ -533,7 +533,7 @@ def main():
             donations_df = st.session_state.donations_df
             almanot_df = st.session_state.almanot_df
             investors_df = st.session_state.investors_df
-
+        
         # Log data loading results
         logging.info("=== DATA LOADING DEBUG INFO ===")
         logging.info(f"Expenses DataFrame: {'Loaded' if expenses_df is not None else 'Failed to load'}")
@@ -860,9 +860,9 @@ def main():
             
             # Report Generation
             st.markdown("<h3 style='color: #4b5563; margin-bottom: 1rem;'>יצירת דוחות</h3>", unsafe_allow_html=True)
-
-            col1, col2 = st.columns(2)
-            with col1:
+            
+                    col1, col2 = st.columns(2)
+                    with col1:
                 if st.button("📊 דוח חודשי מפורט", use_container_width=True):
                     filename = generate_monthly_report(expenses_df, donations_df, almanot_df)
                     if filename:
@@ -886,7 +886,7 @@ def main():
                                 file_name=filename,
                                 mime="application/pdf"
                             )
-            
+                
             with col2:
                 if st.button("👩 דוח אלמנות מפורט", use_container_width=True):
                     filename = generate_widows_report(almanot_df)
@@ -1077,13 +1077,13 @@ def main():
                     # Main buttons row
                     col1, col2, col3 = st.columns([1, 1, 2])
                     
-                    with col1:
+            with col1:
                         if st.button("➕ צור קשר חדש", key="show_create_btn", use_container_width=True):
                             st.session_state.show_create_connection = not st.session_state.show_create_connection
                             st.session_state.show_remove_connection = False
                             # No rerun here
                     
-                    with col2:
+            with col2:
                         if st.button("➖ הסר קשר קיים", key="show_remove_btn", use_container_width=True):
                             st.session_state.show_remove_connection = not st.session_state.show_remove_connection
                             st.session_state.show_create_connection = False
