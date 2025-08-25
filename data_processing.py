@@ -15,8 +15,28 @@ def calculate_monthly_averages(df: pd.DataFrame, value_column: str = 'שקלים
             'total_months': 0
         }
     try:
-        # Group by month and calculate totals
-        monthly_totals = df.groupby(df['תאריך'].dt.strftime('%Y-%m'))[value_column].sum()
+        # Group by month and calculate totals - ensure dates are properly converted
+        try:
+            df_copy = df.copy()
+            df_copy['תאריך'] = pd.to_datetime(df_copy['תאריך'], errors='coerce')
+            # Filter out rows with invalid dates
+            valid_df = df_copy.dropna(subset=['תאריך'])
+            if valid_df.empty:
+                return {
+                    'monthly_avg': 0,
+                    'min_monthly': 0,
+                    'max_monthly': 0,
+                    'total_months': 0
+                }
+            monthly_totals = valid_df.groupby(valid_df['תאריך'].dt.strftime('%Y-%m'))[value_column].sum()
+        except Exception as e:
+            logging.warning(f"Could not calculate monthly totals: {e}")
+            return {
+                'monthly_avg': 0,
+                'min_monthly': 0,
+                'max_monthly': 0,
+                'total_months': 0
+            }
         
         # Calculate statistics
         monthly_avg = monthly_totals.mean() if len(monthly_totals) > 0 else 0
@@ -89,12 +109,36 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
         # Calculate balance
         balance = total_donations - total_expenses
         
-        # Calculate monthly averages
-        monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum()
-        monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum()
+        # Calculate monthly averages - ensure dates are properly converted
+        monthly_expenses = {}
+        monthly_donations = {}
         
-        # Calculate coverage ratio
-        coverage_ratio = (total_donations / total_expenses * 100) if total_expenses > 0 else 0
+        if 'תאריך' in expenses_df.columns and 'שקלים' in expenses_df.columns:
+            try:
+                # Convert to datetime if not already
+                expenses_df_copy = expenses_df.copy()
+                expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce')
+                # Filter out rows with invalid dates
+                valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
+                if not valid_expenses.empty:
+                    monthly_expenses = valid_expenses.groupby(valid_expenses['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().to_dict()
+            except Exception as e:
+                logging.warning(f"Could not calculate monthly expenses: {e}")
+        
+        if 'תאריך' in donations_df.columns and 'שקלים' in donations_df.columns:
+            try:
+                # Convert to datetime if not already
+                donations_df_copy = donations_df.copy()
+                donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce')
+                # Filter out rows with invalid dates
+                valid_donations = donations_df_copy.dropna(subset=['תאריך'])
+                if not valid_donations.empty:
+                    monthly_donations = valid_donations.groupby(valid_donations['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().to_dict()
+            except Exception as e:
+                logging.warning(f"Could not calculate monthly donations: {e}")
+        
+        # Calculate utilization percentage (how much of donations have been spent)
+        utilization_percentage = (total_expenses / total_donations * 100) if total_donations > 0 else 0
         
         # Determine status based on balance (surplus/deficit) instead of coverage ratio
         if balance >= 0:
@@ -119,10 +163,10 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             'total_expenses': total_expenses,
             'total_donations': total_donations,
             'balance': balance,
-            'coverage_ratio': coverage_ratio,
+            'utilization_percentage': utilization_percentage,
             'status': status,
-            'monthly_expenses': monthly_expenses.to_dict(),
-            'monthly_donations': monthly_donations.to_dict()
+            'monthly_expenses': monthly_expenses,
+            'monthly_donations': monthly_donations
         }
         
     except Exception as e:
@@ -131,7 +175,7 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             'total_expenses': 0,
             'total_donations': 0,
             'balance': 0,
-            'coverage_ratio': 0,
+            'utilization_percentage': 0,
             'status': "שגיאה",
             'monthly_expenses': {},
             'monthly_donations': {}
@@ -246,16 +290,33 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
     try:
         # Basic statistics
         total_widows = df['שם '].nunique() if 'שם ' in df.columns else 0
-        total_support = df[value_column].sum()
         
-        # Count widows by support amount (only 1000 or 2000)
-        support_1000_count = int((df[value_column] == 1000).sum())
-        support_2000_count = int((df[value_column] == 2000).sum())
+        # Ensure value_column contains numeric data
+        try:
+            # Convert to numeric, handling any non-numeric values
+            numeric_values = pd.to_numeric(df[value_column], errors='coerce').fillna(0)
+            total_support = numeric_values.sum()
+            
+            # Count widows by support amount (only 1000 or 2000)
+            support_1000_count = int((numeric_values == 1000).sum())
+            support_2000_count = int((numeric_values == 2000).sum())
+        except Exception as e:
+            logging.warning(f"Error processing support values: {e}")
+            total_support = 0
+            support_1000_count = 0
+            support_2000_count = 0
         
         # Support distribution
         if 'שם ' in df.columns:
-            support_distribution = df.groupby('שם ')[value_column].sum().sort_values(ascending=False)
-            support_distribution = support_distribution.to_dict()
+            try:
+                # Use numeric values for distribution
+                df_copy = df.copy()
+                df_copy[value_column] = numeric_values
+                support_distribution = df_copy.groupby('שם ')[value_column].sum().sort_values(ascending=False)
+                support_distribution = support_distribution.to_dict()
+            except Exception as e:
+                logging.warning(f"Error calculating support distribution: {e}")
+                support_distribution = {}
         else:
             support_distribution = {}
         

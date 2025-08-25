@@ -11,17 +11,21 @@ def check_budget_alerts(budget_status: dict, donations_df: pd.DataFrame = None) 
         if not isinstance(budget_status, dict):
             return alerts
             
-        # Check coverage ratio
-        coverage_ratio = budget_status.get('coverage_ratio', 0)
-        if coverage_ratio < 80:
-            alerts.append(f"אחוז כיסוי נמוך: {coverage_ratio:.1f}%")
-        elif coverage_ratio < 60:
-            alerts.append(f"אחוז כיסוי קריטי: {coverage_ratio:.1f}%")
+        # Check utilization percentage
+        utilization_percentage = budget_status.get('utilization_percentage', 0)
+        if utilization_percentage > 90:
+            alerts.append(f"אחוז ניצול גבוה: {utilization_percentage:.1f}%")
+        elif utilization_percentage > 80:
+            alerts.append(f"אחוז ניצול טוב: {utilization_percentage:.1f}%")
+        elif utilization_percentage < 30:
+            alerts.append(f"אחוז ניצול נמוך: {utilization_percentage:.1f}%")
             
         # Check balance
         balance = budget_status.get('balance', 0)
         if balance < 0:
             alerts.append(f"יתרה שלילית: ₪{balance:,.0f}")
+        elif balance > 100000:
+            alerts.append(f"יתרה חיובית גבוהה: ₪{balance:,.0f}")
             
         # Check status
         status = budget_status.get('status', '')
@@ -97,10 +101,12 @@ def check_donations_alerts(donor_stats: dict) -> List[str]:
         
         if total_donations == 0:
             alerts.append("אין נתוני תרומות")
-        elif avg_donation < 1000:
+        elif avg_donation < 500:
             alerts.append(f"תרומה ממוצעת נמוכה: ₪{avg_donation:,.0f}")
-        elif avg_donation > 10000:
-            alerts.append(f"תרומה ממוצעת גבוהה: ₪{avg_donation:,.0f}")
+        elif avg_donation > 100000:
+            alerts.append(f"תרומה ממוצעת גבוהה מאוד: ₪{avg_donation:,.0f}")
+        elif avg_donation >= 5000:
+            alerts.append(f"תרומה ממוצעת טובה: ₪{avg_donation:,.0f}")
             
     except Exception as e:
         logging.error(f"Error checking donations alerts: {str(e)}")

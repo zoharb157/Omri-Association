@@ -18,9 +18,25 @@ def create_comparison_chart(expenses_df: pd.DataFrame, donations_df: pd.DataFram
             st.error("חסרות עמודות נדרשות")
             return
             
-        # Calculate monthly totals
-        monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
-        monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+        # Calculate monthly totals - ensure dates are properly converted
+        try:
+            expenses_df_copy = expenses_df.copy()
+            expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce')
+            valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
+            
+            donations_df_copy = donations_df.copy()
+            donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce')
+            valid_donations = donations_df_copy.dropna(subset=['תאריך'])
+            
+            if valid_expenses.empty or valid_donations.empty:
+                st.warning("אין נתונים תאריכים תקינים להצגה")
+                return
+                
+            monthly_expenses = valid_expenses.groupby(valid_expenses['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+            monthly_donations = valid_donations.groupby(valid_donations['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+        except Exception as e:
+            st.error(f"שגיאה בעיבוד תאריכים: {str(e)}")
+            return
         
         # Create the chart
         fig = go.Figure()
@@ -66,20 +82,36 @@ def create_comparison_chart(expenses_df: pd.DataFrame, donations_df: pd.DataFram
         st.error(f"שגיאה ביצירת גרף השוואה: {str(e)}")
         logging.error(f"Error creating comparison chart: {str(e)}")
 
-def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame) -> None:
+def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame):
     """Create monthly trends chart"""
     try:
         if not isinstance(expenses_df, pd.DataFrame) or not isinstance(donations_df, pd.DataFrame):
-            st.error("הנתונים חייבים להיות DataFrame")
-            return
+            logging.error("Data must be DataFrames")
+            return None
             
         if 'תאריך' not in expenses_df.columns or 'שקלים' not in expenses_df.columns or 'תאריך' not in donations_df.columns or 'שקלים' not in donations_df.columns:
-            st.error("חסרות עמודות נדרשות")
-            return
+            logging.error("Missing required columns")
+            return None
             
-        # Calculate monthly totals
-        monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
-        monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+        # Calculate monthly totals - ensure dates are properly converted
+        try:
+            expenses_df_copy = expenses_df.copy()
+            expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce')
+            valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
+            
+            donations_df_copy = donations_df.copy()
+            donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce')
+            valid_donations = donations_df_copy.dropna(subset=['תאריך'])
+            
+            if valid_expenses.empty or valid_donations.empty:
+                logging.warning("No valid date data to display")
+                return None
+                
+            monthly_expenses = valid_expenses.groupby(valid_expenses['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+            monthly_donations = valid_donations.groupby(valid_donations['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+        except Exception as e:
+            logging.error(f"Error processing dates: {str(e)}")
+            return None
         
         # Create the chart
         fig = go.Figure()
@@ -118,16 +150,16 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
             )
         )
         
-        st.plotly_chart(fig, use_container_width=True, key=f'monthly_trends_{uuid.uuid4().hex[:8]}')
+        return fig
         
     except Exception as e:
-        st.error(f"שגיאה ביצירת גרף מגמות: {str(e)}")
         logging.error(f"Error creating monthly trends chart: {str(e)}")
+        return None
 
-def create_budget_distribution_chart(df: pd.DataFrame) -> None:
+def create_budget_distribution_chart(df: pd.DataFrame):
     if not isinstance(df, pd.DataFrame) or 'שם' not in df.columns or 'שקלים' not in df.columns or df.empty:
-        st.error("נתונים לא תקינים או חסרים")
-        return
+        logging.error("Invalid or missing data")
+        return None
     try:
         # Group by name and calculate totals
         budget_data = df.groupby('שם')['שקלים'].sum().reset_index()
@@ -172,16 +204,16 @@ def create_budget_distribution_chart(df: pd.DataFrame) -> None:
             hovertemplate='קטגוריה: %{label}<br>סכום: ₪%{value:,.0f}<br>אחוז: %{percent:.1%}<extra></extra>'
         )
         
-        st.plotly_chart(fig, use_container_width=True, key=f'budget_distribution_{uuid.uuid4().hex[:8]}')
+        return fig
         
     except Exception as e:
         logging.error(f"Error creating budget distribution chart: {str(e)}")
-        st.error("שגיאה ביצירת גרף התפלגות תקציב")
+        return None
 
-def create_widows_support_chart(df: pd.DataFrame) -> None:
+def create_widows_support_chart(df: pd.DataFrame):
     if not isinstance(df, pd.DataFrame) or 'שם ' not in df.columns or 'סכום חודשי' not in df.columns or df.empty:
-        st.error("נתונים לא תקינים או חסרים")
-        return
+        logging.error("Invalid or missing data")
+        return None
     try:
         # Group by name and calculate totals
         support_data = df.groupby('שם ')['סכום חודשי'].sum().reset_index()
@@ -223,22 +255,22 @@ def create_widows_support_chart(df: pd.DataFrame) -> None:
         # Format y-axis ticks
         fig.update_yaxes(tickformat=",.0f")
         
-        st.plotly_chart(fig, use_container_width=True, key=f'widows_support_chart_{uuid.uuid4().hex[:8]}')
+        return fig
         
     except Exception as e:
         logging.error(f"Error creating widows support chart: {str(e)}")
-        st.error("שגיאה ביצירת גרף תמיכה באלמנות")
+        return None
 
-def create_donor_contribution_chart(donations_df: pd.DataFrame) -> None:
+def create_donor_contribution_chart(donations_df: pd.DataFrame):
     """Create a chart showing donor contributions"""
     try:
         if not isinstance(donations_df, pd.DataFrame):
-            st.error("הנתונים חייבים להיות DataFrame")
-            return
+            logging.error("Data must be DataFrame")
+            return None
             
         if 'שם' not in donations_df.columns or 'שקלים' not in donations_df.columns:
-            st.error("חסרות עמודות נדרשות")
-            return
+            logging.error("Missing required columns")
+            return None
             
         # Calculate total donations by donor
         donor_totals = donations_df.groupby('שם')['שקלים'].sum().sort_values(ascending=False)
@@ -263,11 +295,11 @@ def create_donor_contribution_chart(donations_df: pd.DataFrame) -> None:
             showlegend=False
         )
         
-        st.plotly_chart(fig, use_container_width=True, key=f'donor_contribution_{uuid.uuid4().hex[:8]}')
+        return fig
         
     except Exception as e:
-        st.error(f"שגיאה ביצירת גרף תרומות: {str(e)}")
-        logging.error(f"Error creating donor contribution chart: {str(e)}") 
+        logging.error(f"Error creating donor contribution chart: {str(e)}")
+        return None
 
 def create_forecast_chart(forecast: dict) -> None:
     """Create a forecast chart"""

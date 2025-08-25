@@ -1,56 +1,87 @@
 import pandas as pd
 import streamlit as st
 import os
-from google_sheets_io import read_sheet
+import gspread
+from google.oauth2.service_account import Credentials
+
+# Define the scope
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
+
+# Path to your service account file
+SERVICE_ACCOUNT_FILE = 'service_account.json'
+
+# Spreadsheet ID
+SPREADSHEET_ID = '1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo'
 
 def load_data():
-    """Load data from Google Sheets"""
+    """Load data directly from Google Sheets"""
     try:
+        # Authenticate
+        creds = Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE,
+            scopes=SCOPES
+        )
+        gc = gspread.authorize(creds)
+        
+        # Open spreadsheet
+        sh = gc.open_by_key(SPREADSHEET_ID)
+        
         # Load expenses data
-        exp = read_sheet("Expenses")
-        # הנתונים מגיעים עם עמודות: ['NaT', 'שם לקוח', 'סכום', ...]
-        # צריך למפות אותם לעמודות הנכונות
-        if 'NaT' in exp.columns and 'שם לקוח' in exp.columns and 'סכום' in exp.columns:
+        exp_worksheet = sh.worksheet("Expenses")
+        exp_values = exp_worksheet.get_all_values()
+        if len(exp_values) >= 3:
+            exp = pd.DataFrame(exp_values[2:], columns=exp_values[1])  # Skip title row, use row 1 as headers
             exp = exp.rename(columns={
                 'NaT': 'תאריך',
                 'שם לקוח': 'שם', 
                 'סכום': 'שקלים'
             })
-        exp = clean_dataframe(exp)
+            exp = clean_dataframe(exp)
+        else:
+            exp = pd.DataFrame(columns=['תאריך', 'שם', 'שקלים'])
         
         # Load donations data
-        don = read_sheet("Donations")
-        # הנתונים מגיעים עם עמודות: ['NaT', 'שם התורם', 'סכום', ...]
-        if 'NaT' in don.columns and 'שם התורם' in don.columns and 'סכום' in don.columns:
+        don_worksheet = sh.worksheet("Donations")
+        don_values = don_worksheet.get_all_values()
+        if len(don_values) >= 3:
+            don = pd.DataFrame(don_values[2:], columns=don_values[1])
             don = don.rename(columns={
                 'NaT': 'תאריך',
                 'שם התורם': 'שם',
                 'סכום': 'שקלים'
             })
-        don = clean_dataframe(don)
+            don = clean_dataframe(don)
+        else:
+            don = pd.DataFrame(columns=['תאריך', 'שם', 'שקלים'])
         
         # Load investors data
-        inv = read_sheet("Investors")
-        # הנתונים מגיעים עם עמודות: ['NaT', 'שם התורם', 'סכום', ...]
-        if 'NaT' in inv.columns and 'שם התורם' in inv.columns and 'סכום' in inv.columns:
+        inv_worksheet = sh.worksheet("Investors")
+        inv_values = inv_worksheet.get_all_values()
+        if len(inv_values) >= 3:
+            inv = pd.DataFrame(inv_values[2:], columns=inv_values[1])
             inv = inv.rename(columns={
                 'NaT': 'תאריך',
                 'שם התורם': 'שם',
                 'סכום': 'שקלים'
             })
-        inv = clean_dataframe(inv)
+            inv = clean_dataframe(inv)
+        else:
+            inv = pd.DataFrame(columns=['תאריך', 'שם', 'שקלים'])
         
         # Combine donations and investors
         donations_df = pd.concat([don, inv], ignore_index=True)
         
         # Load widows data
-        alman = read_sheet("Widows")
-        # הנתונים מגיעים עם עמודות: ['שם', 'מייל', 'טלפון', ...]
-        # וודא שיש עמודת 'סכום חודשי'
-        if 'סכום חודשי' not in alman.columns:
-            st.warning("לא נמצאה עמודת 'סכום חודשי' בקובץ האלמנות. נוצרת עמודה עם ערך ברירת מחדל 0.")
-            alman["סכום חודשי"] = 0
-        alman = clean_widows_data(alman)
+        alman_worksheet = sh.worksheet("Almanot")  # Use Almanot instead of Widows
+        alman_values = alman_worksheet.get_all_values()
+        if len(alman_values) >= 2:
+            alman = pd.DataFrame(alman_values[1:], columns=alman_values[0])  # Use first row as headers
+            alman = clean_widows_data(alman)
+        else:
+            alman = pd.DataFrame(columns=['שם ', 'סכום חודשי', 'חודש התחלה', 'מייל', 'טלפון', 'תעודת זהות', 'מספר ילדים', 'חללים', 'הערות', 'תורם', 'איש קשר לתרומה'])
         
         return exp, donations_df, alman, inv
         
