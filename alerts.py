@@ -51,9 +51,18 @@ def check_data_quality_alerts(expenses_df: pd.DataFrame, donations_df: pd.DataFr
                 alerts.append(f"נתוני {name} לא תקינים")
                 continue
                 
-            # Check for missing values
-            if amount_col in df.columns and df[amount_col].isnull().any():
-                alerts.append(f"חסרים ערכים בעמודת {amount_col} בקובץ {name}")
+            # Check for missing values - but be more specific about what constitutes "missing"
+            if amount_col in df.columns:
+                null_count = df[amount_col].isnull().sum()
+                empty_count = (df[amount_col] == '').sum() if amount_col in df.columns else 0
+                total_count = len(df)
+                
+                # Only alert if there are significant missing values (more than 10% of rows)
+                if null_count > 0 and (null_count / total_count) > 0.1:
+                    alerts.append(f"חסרים ערכים בעמודת {amount_col} בקובץ {name} ({null_count}/{total_count} שורות)")
+                elif null_count > 0:
+                    # Just log for debugging, don't show as alert
+                    logging.info(f"Minor missing values in {amount_col} column of {name}: {null_count}/{total_count}")
                 
             # Check for negative values only (not zero)
             if amount_col in df.columns and (df[amount_col] < 0).any():
