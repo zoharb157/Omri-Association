@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  omri-dashboard:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - DASHBOARD_PORT=8501
+      - DASHBOARD_HOST=0.0.0.0
+    volumes:
+      - ./service_account.json:/app/service_account.json:ro
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - omri-dashboard
+    restart: unless-stopped
