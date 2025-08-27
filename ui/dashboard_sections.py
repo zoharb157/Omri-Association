@@ -340,15 +340,7 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         # Identify unconnected donors
         unconnected_donors = all_donors - connected_donors
         
-        # Debug: Show monthly support values and data quality
-        st.info(f"🔍 ערכים בעמודת סכום חודשי: {almanot_df['סכום חודשי'].value_counts(dropna=False).to_dict()}")
-        st.info(f"🔍 סה״כ שורות: {len(almanot_df)}, ערכים לא ריקים: {almanot_df['סכום חודשי'].notna().sum()}")
-        
-        # Show sample of problematic rows
-        problematic_rows = almanot_df[almanot_df['סכום חודשי'].isna() | (almanot_df['סכום חודשי'] == '') | (almanot_df['סכום חודשי'] == 0)]
-        if not problematic_rows.empty:
-            st.warning(f"⚠️ נמצאו {len(problematic_rows)} שורות עם ערכים חסרים או שגויים בעמודת סכום חודשי")
-            st.dataframe(problematic_rows[['שם ', 'סכום חודשי', 'תורם']].head(5))
+
         
         # Add nodes with area constraints for natural floating
         
