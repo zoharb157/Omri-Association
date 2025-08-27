@@ -221,7 +221,6 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         # Clean monthly support data - ensure all values are numeric and NaN is treated as 0
         if 'סכום חודשי' in almanot_df.columns:
             almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce').fillna(0)
-            st.info(f"✅ נוקו נתוני תמיכה חודשית - {len(almanot_df)} אלמנות עם ערכים תקינים")
         
         # Create nodes and edges for the network
         nodes = []
