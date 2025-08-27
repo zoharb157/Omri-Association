@@ -123,17 +123,7 @@ def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
     """Create the donors management section"""
     create_section_header("👥 ניהול תורמים")
     
-    donor_metrics = [
-        {'label': 'סה״כ תורמים', 'value': f"{donor_stats.get('total_donors', 0):,}"},
-        {'label': 'סה״כ תרומות', 'value': f"₪{donor_stats.get('total_donations', 0):,.0f}"},
-        {'label': 'תרומה ממוצעת', 'value': f"₪{donor_stats.get('avg_donation', 0):,.0f}"},
-        {'label': 'תרומה גבוהה ביותר', 'value': f"₪{donor_stats.get('max_donation', 0):,.0f}"}
-    ]
-    
-    create_metric_row(donor_metrics, 4)
-    add_spacing(2)
-    
-    # Donor Charts
+    # Donor Charts (no duplicate metrics)
     try:
         donor_fig = create_donor_contribution_chart(donations_df)
         if donor_fig:
@@ -150,17 +140,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     """Create the widows management section"""
     create_section_header("👩 ניהול אלמנות")
     
-    widow_metrics = [
-        {'label': 'סה״כ אלמנות', 'value': f"{widow_stats.get('total_widows', 0):,}"},
-        {'label': 'סך תמיכה חודשית', 'value': f"₪{float(widow_stats.get('total_support', 0)) if widow_stats.get('total_support') is not None else 0:,.0f}"},
-        {'label': 'מספר ילדים ממוצע', 'value': f"{almanot_df['מספר ילדים'].mean() if 'מספר ילדים' in almanot_df.columns else 0:.1f}"},
-        {'label': 'תמיכה חודשית ממוצעת', 'value': f"₪{almanot_df['סכום חודשי'].mean() if 'סכום חודשי' in almanot_df.columns else 0:.0f}"}
-    ]
-    
-    create_metric_row(widow_metrics, 4)
-    add_spacing(2)
-    
-    # Widow Charts
+    # Widow Charts (no duplicate metrics)
     try:
         widows_fig = create_widows_support_chart(almanot_df)
         if widows_fig:
@@ -190,7 +170,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
             
     except Exception as e:
         st.error("שגיאה בטעינת טבלת אלמנות")
-        logging.error(f"Widows table error: {e}")
+        logging.error(f"Widow charts error: {e}")
     
     add_spacing(3)
 
@@ -198,28 +178,7 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
     """Create the network visualization section"""
     create_section_header("🕸️ מפת קשרים")
     
-    # Immediate error checking and debugging
-    st.info("🔍 בדיקה מיידית של הנתונים...")
-    
-    # Check if DataFrames are empty or None
-    if almanot_df is None or almanot_df.empty:
-        st.error("❌ נתוני אלמנות ריקים או לא זמינים")
-        st.write(f"almanot_df type: {type(almanot_df)}")
-        st.write(f"almanot_df empty: {almanot_df.empty if almanot_df is not None else 'None'}")
-        return
-    
-    if donations_df is None or donations_df.empty:
-        st.error("❌ נתוני תרומות ריקים או לא זמינים")
-        return
-    
-    if investors_df is None or investors_df.empty:
-        st.error("❌ נתוני משקיעים ריקים או לא זמינים")
-        return
-    
-    # Check DataFrame columns
-    st.info(f"📊 עמודות אלמנות: {list(almanot_df.columns)}")
-    st.info(f"📊 עמודות תרומות: {list(donations_df.columns)}")
-    st.info(f"📊 עמודות משקיעים: {list(investors_df.columns)}")
+
     
     # Add network editor toggle
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -237,59 +196,6 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
             logging.error(f"Network editor import error: {e}")
     
     try:
-        # Data validation and quality check
-        st.info("🔍 בדיקת איכות נתונים...")
-        
-        # Check for required columns
-        required_columns = ['שם ', 'סכום חודשי', 'תורם']
-        missing_columns = [col for col in required_columns if col not in almanot_df.columns]
-        if missing_columns:
-            st.error(f"❌ עמודות חסרות: {missing_columns}")
-            return
-        
-        # Check data types and values
-        st.info(f"📊 סוגי נתונים: {almanot_df.dtypes.to_dict()}")
-        st.info(f"📊 מספר שורות: {len(almanot_df)}")
-        
-        # Detailed data inspection for monthly amounts
-        st.subheader("🔍 בדיקה מפורטת של עמודת סכום חודשי")
-        
-        # Show raw values before processing
-        st.info("📋 ערכים גולמיים בעמודת סכום חודשי:")
-        raw_monthly = almanot_df['סכום חודשי'].value_counts(dropna=False).head(10)
-        st.write(raw_monthly)
-        
-        # Show sample of rows with different monthly amount values
-        st.info("📋 דוגמאות שורות עם ערכים שונים:")
-        sample_data = almanot_df[['שם ', 'סכום חודשי', 'תורם']].head(10)
-        st.dataframe(sample_data)
-        
-        # Show statistics
-        st.info("📊 סטטיסטיקות עמודת סכום חודשי:")
-        st.write(f"ערכים לא ריקים: {almanot_df['סכום חודשי'].notna().sum()}")
-        st.write(f"ערכים ריקים: {almanot_df['סכום חודשי'].isna().sum()}")
-        st.write(f"ערכים שווים ל-0: {(almanot_df['סכום חודשי'] == 0).sum()}")
-        st.write(f"ערכים גדולים מ-0: {(almanot_df['סכום חודשי'] > 0).sum()}")
-        
-        # Data cleaning options
-        st.subheader("🧹 אפשרויות ניקוי נתונים")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔧 ניקוי אוטומטי של ערכים חסרים", help="מחליף ערכים חסרים ב-0"):
-                # Create a copy for cleaning
-                cleaned_df = almanot_df.copy()
-                cleaned_df['סכום חודשי'] = cleaned_df['סכום חודשי'].fillna(0)
-                cleaned_df['סכום חודשי'] = cleaned_df['סכום חודשי'].replace('', 0)
-                cleaned_df['סכום חודשי'] = pd.to_numeric(cleaned_df['סכום חודשי'], errors='coerce').fillna(0)
-                st.success(f"✅ נוקו {cleaned_df['סכום חודשי'].isna().sum()} ערכים חסרים")
-                # Use cleaned data for network
-                almanot_df = cleaned_df
-        
-        with col2:
-            if st.button("📊 הצג נתונים מנוקים", help="מציג את הנתונים אחרי ניקוי"):
-                st.dataframe(almanot_df[['שם ', 'סכום חודשי', 'תורם']].head(15))
-        
         # Create nodes and edges for the network
         nodes = []
         edges = []
