@@ -198,14 +198,15 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
 
 def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):
     """Create the network visualization section"""
-    create_section_header("🕸️ מפת קשרים")
     
-
-    
-    # Add network editor toggle - small, standard button
-    col1, col2, col3 = st.columns([2, 1, 2])
+    # Header with edit button integrated
+    col1, col2, col3 = st.columns([3, 1, 1])
+    with col1:
+        create_section_header("🕸️ מפת קשרים")
     with col2:
         show_editor = st.button("🔧 ערוך", use_container_width=False, type="secondary", help="ערוך את מפת הקשרים")
+    with col3:
+        st.write("")  # Empty space for balance
     
     # Show network editor only if user chooses to edit
     if show_editor:
