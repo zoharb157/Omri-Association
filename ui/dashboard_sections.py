@@ -279,16 +279,24 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         # Debug: Show what data we have
         st.info(f"🔍 נתוני רשת: {len(donations_df)} תרומות, {len(almanot_df)} אלמנות, {len(investors_df)} משקיעים")
         
-        # Get all valid donors
+        # Get all valid donors with normalized names
         all_donors = set()
+        donor_name_mapping = {}  # Map normalized names to original names
+        
         if 'שם' in donations_df.columns:
             donors_from_donations = donations_df['שם'].dropna().unique()
-            all_donors.update(donors_from_donations)
+            for donor in donors_from_donations:
+                normalized = str(donor).strip()  # Remove extra spaces
+                all_donors.add(normalized)
+                donor_name_mapping[normalized] = str(donor)
             st.info(f"📊 תורמים מתרומות: {len(donors_from_donations)}")
         
         if 'שם' in investors_df.columns:
             investors_names = investors_df['שם'].dropna().unique()
-            all_donors.update(investors_names)
+            for investor in investors_names:
+                normalized = str(investor).strip()  # Remove extra spaces
+                all_donors.add(normalized)
+                donor_name_mapping[normalized] = str(investor)
             st.info(f"📊 תורמים ממשקיעים: {len(investors_names)}")
         
         st.info(f"📊 סה״כ תורמים: {len(all_donors)}")
@@ -299,7 +307,7 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         unconnected_donors = set()
         unconnected_widows = set()
         
-        # First pass: identify connected pairs
+        # First pass: identify connected pairs with fuzzy matching
         if 'שם ' in almanot_df.columns:
             st.info(f"📊 עמודות אלמנות: {list(almanot_df.columns)}")
             for _, widow in almanot_df.iterrows():
@@ -308,14 +316,30 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                     donor = widow.get('תורם')
                     monthly_support = widow.get('סכום חודשי', 0)
                     
-                    if pd.notna(donor) and donor in all_donors and monthly_support > 0:
+                    # Try to find matching donor with fuzzy matching
+                    matched_donor = None
+                    if pd.notna(donor):
+                        donor_str = str(donor).strip()
+                        # Exact match first
+                        if donor_str in all_donors:
+                            matched_donor = donor_str
+                        else:
+                            # Try partial matching
+                            for potential_donor in all_donors:
+                                if (donor_str in potential_donor or 
+                                    potential_donor in donor_str or
+                                    donor_str.lower() == potential_donor.lower()):
+                                    matched_donor = potential_donor
+                                    break
+                    
+                    if matched_donor and monthly_support > 0:
                         # Connected pair
-                        connected_donors.add(donor)
+                        connected_donors.add(matched_donor)
                         connected_widows.add(widow_name)
                         
                         # Add edge
                         edges.append({
-                            'from': donor,
+                            'from': matched_donor,
                             'to': widow_name,
                             'arrows': 'to',
                             'label': f"₪{monthly_support:,.0f}"
@@ -328,6 +352,13 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
         # Identify unconnected donors
         unconnected_donors = all_donors - connected_donors
+        
+        # Show matching results
+        st.success(f"✅ התאמות שנמצאו: {len(connected_donors)} תורמים מחוברים ל-{len(connected_widows)} אלמנות")
+        if connected_donors:
+            st.info(f"🔗 תורמים מחוברים: {', '.join(sorted(connected_donors)[:5])}{'...' if len(connected_donors) > 5 else ''}")
+        if connected_widows:
+            st.info(f"👩 אלמנות מחוברות: {', '.join(sorted(connected_widows)[:5])}{'...' if len(connected_widows) > 5 else ''}")
         
         # Add nodes with area constraints for natural floating
         st.info(f"🔍 יצירת צמתים: {len(unconnected_widows)} אלמנות לא מחוברות, {len(connected_donors)} תורמים מחוברים, {len(connected_widows)} אלמנות מחוברות, {len(unconnected_donors)} תורמים לא מחוברים")
