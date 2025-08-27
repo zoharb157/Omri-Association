@@ -12,7 +12,7 @@ from google_sheets_io import read_sheet, check_service_account_validity
 from data_processing import calculate_monthly_budget, calculate_donor_statistics, calculate_widow_statistics
 from alerts import check_budget_alerts, check_data_quality_alerts, check_widows_alerts, check_donations_alerts
 from ui.dashboard_layout import create_dashboard_header, create_main_tabs, create_recent_activity_section, create_reports_section, add_spacing
-from ui.dashboard_sections import create_overview_section, create_budget_section, create_donors_section, create_widows_section, create_network_section
+from ui.dashboard_sections import create_overview_section, create_budget_section, create_donors_section, create_widows_section, create_widows_table_section, create_network_section
 
 def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load all dashboard data from Google Sheets with enhanced loading states and error handling"""
