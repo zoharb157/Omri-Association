@@ -196,45 +196,7 @@ def render_network_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, al
     """Render the network tab content"""
     create_network_section(expenses_df, donations_df, almanot_df, investors_df)
 
-def render_settings_tab():
-    """Render the settings tab content"""
-    try:
-        from config import show_config_ui
-        from theme_manager import show_theme_selector
-        
-        # Show theme selector first
-        show_theme_selector()
-        st.markdown("---")
-        
-        # Show system configuration
-        show_config_ui()
-    except ImportError as e:
-        st.error(f"❌ לא ניתן לטעון הגדרות מערכת: {e}")
-        st.info("אנא ודא שקובצי config.py ו-theme_manager.py קיימים")
-
-def render_monitoring_tab():
-    """Render the monitoring tab content"""
-    try:
-        from monitoring import show_monitoring_dashboard
-        show_monitoring_dashboard()
-    except ImportError:
-        st.error("❌ לא ניתן לטעון מערכת ניטור")
-        st.info("אנא ודא שקובץ monitoring.py קיים")
-    except Exception as e:
-        st.error(f"❌ שגיאה בטעינת ניטור: {e}")
-        st.info("ייתכן שחסרים חבילות נדרשות (psutil)")
-
-def render_testing_tab():
-    """Render the testing tab content"""
-    try:
-        from tests import show_test_dashboard
-        show_test_dashboard()
-    except ImportError:
-        st.error("❌ לא ניתן לטעון מערכת בדיקות")
-        st.info("אנא ודא שקובץ tests.py קיים")
-    except Exception as e:
-        st.error(f"❌ שגיאה בטעינת בדיקות: {e}")
-        st.info("ייתכן שחסרות חבילות נדרשות")
+# Removed unused tab render functions for cleaner code
 
 def run_dashboard():
     """Main dashboard execution function with authentication"""
@@ -282,7 +244,7 @@ def run_dashboard():
         budget_status, donor_stats, widow_stats = process_dashboard_data(expenses_df, donations_df, almanot_df)
         
         # Create tabs
-        tab1, tab2, tab3, tab4, tab5 = create_main_tabs()
+        tab1, tab2 = create_main_tabs()
         
         # Render Home Tab
         with tab1:
@@ -291,39 +253,6 @@ def run_dashboard():
         # Render Network Tab
         with tab2:
             render_network_tab(expenses_df, donations_df, almanot_df, investors_df)
-        
-        # Render Settings Tab (only for admin users)
-        with tab3:
-            try:
-                from auth import has_permission
-                if has_permission('settings'):
-                    render_settings_tab()
-                else:
-                    st.warning("⚠️ אין לך הרשאה לגשת להגדרות")
-            except ImportError:
-                render_settings_tab()
-        
-        # Render Monitoring Tab (only for admin users)
-        with tab4:
-            try:
-                from auth import has_permission
-                if has_permission('admin'):
-                    render_monitoring_tab()
-                else:
-                    st.warning("⚠️ אין לך הרשאה לגשת לניטור מערכת")
-            except ImportError:
-                render_monitoring_tab()
-        
-        # Render Testing Tab (only for admin users)
-        with tab5:
-            try:
-                from auth import has_permission
-                if has_permission('admin'):
-                    render_testing_tab()
-                else:
-                    st.warning("⚠️ אין לך הרשאה לגשת לבדיקות מערכת")
-            except ImportError:
-                render_testing_tab()
         
         logging.info("=== DASHBOARD RENDERING COMPLETED ===")
         

@@ -10,7 +10,7 @@ from typing import Dict, Any
 
 def create_main_tabs():
     """Create the main tab structure"""
-    return st.tabs(["🏠 דף הבית", "🕸️ מפת קשרים", "⚙️ הגדרות", "📊 ניטור", "🧪 בדיקות"])
+    return st.tabs(["🏠 דף הבית", "🕸️ מפת קשרים"])
 
 def create_dashboard_header():
     """Create the main dashboard header with refresh button and system status"""
