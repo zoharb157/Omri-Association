@@ -287,6 +287,45 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         st.info(f"📊 סוגי נתונים: {almanot_df.dtypes.to_dict()}")
         st.info(f"📊 מספר שורות: {len(almanot_df)}")
         
+        # Detailed data inspection for monthly amounts
+        st.subheader("🔍 בדיקה מפורטת של עמודת סכום חודשי")
+        
+        # Show raw values before processing
+        st.info("📋 ערכים גולמיים בעמודת סכום חודשי:")
+        raw_monthly = almanot_df['סכום חודשי'].value_counts(dropna=False).head(10)
+        st.write(raw_monthly)
+        
+        # Show sample of rows with different monthly amount values
+        st.info("📋 דוגמאות שורות עם ערכים שונים:")
+        sample_data = almanot_df[['שם ', 'סכום חודשי', 'תורם']].head(10)
+        st.dataframe(sample_data)
+        
+        # Show statistics
+        st.info("📊 סטטיסטיקות עמודת סכום חודשי:")
+        st.write(f"ערכים לא ריקים: {almanot_df['סכום חודשי'].notna().sum()}")
+        st.write(f"ערכים ריקים: {almanot_df['סכום חודשי'].isna().sum()}")
+        st.write(f"ערכים שווים ל-0: {(almanot_df['סכום חודשי'] == 0).sum()}")
+        st.write(f"ערכים גדולים מ-0: {(almanot_df['סכום חודשי'] > 0).sum()}")
+        
+        # Data cleaning options
+        st.subheader("🧹 אפשרויות ניקוי נתונים")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔧 ניקוי אוטומטי של ערכים חסרים", help="מחליף ערכים חסרים ב-0"):
+                # Create a copy for cleaning
+                cleaned_df = almanot_df.copy()
+                cleaned_df['סכום חודשי'] = cleaned_df['סכום חודשי'].fillna(0)
+                cleaned_df['סכום חודשי'] = cleaned_df['סכום חודשי'].replace('', 0)
+                cleaned_df['סכום חודשי'] = pd.to_numeric(cleaned_df['סכום חודשי'], errors='coerce').fillna(0)
+                st.success(f"✅ נוקו {cleaned_df['סכום חודשי'].isna().sum()} ערכים חסרים")
+                # Use cleaned data for network
+                almanot_df = cleaned_df
+        
+        with col2:
+            if st.button("📊 הצג נתונים מנוקים", help="מציג את הנתונים אחרי ניקוי"):
+                st.dataframe(almanot_df[['שם ', 'סכום חודשי', 'תורם']].head(15))
+        
         # Create nodes and edges for the network
         nodes = []
         edges = []
