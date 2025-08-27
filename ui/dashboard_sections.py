@@ -257,6 +257,29 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
     """Create the network visualization section"""
     create_section_header("🕸️ מפת קשרים")
     
+    # Immediate error checking and debugging
+    st.info("🔍 בדיקה מיידית של הנתונים...")
+    
+    # Check if DataFrames are empty or None
+    if almanot_df is None or almanot_df.empty:
+        st.error("❌ נתוני אלמנות ריקים או לא זמינים")
+        st.write(f"almanot_df type: {type(almanot_df)}")
+        st.write(f"almanot_df empty: {almanot_df.empty if almanot_df is not None else 'None'}")
+        return
+    
+    if donations_df is None or donations_df.empty:
+        st.error("❌ נתוני תרומות ריקים או לא זמינים")
+        return
+    
+    if investors_df is None or investors_df.empty:
+        st.error("❌ נתוני משקיעים ריקים או לא זמינים")
+        return
+    
+    # Check DataFrame columns
+    st.info(f"📊 עמודות אלמנות: {list(almanot_df.columns)}")
+    st.info(f"📊 עמודות תרומות: {list(donations_df.columns)}")
+    st.info(f"📊 עמודות משקיעים: {list(investors_df.columns)}")
+    
     # Add network editor toggle
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
