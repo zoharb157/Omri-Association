@@ -309,7 +309,16 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                 widow_name = widow['שם ']
                 if pd.notna(widow_name):
                     donor = widow.get('תורם')
-                    monthly_support = widow.get('סכום חודשי', 0)
+                    monthly_support = widow.get('סכום חודשי')
+                    
+                    # Handle missing monthly support values properly
+                    if pd.isna(monthly_support) or monthly_support == '' or monthly_support == 0:
+                        monthly_support = 0
+                    else:
+                        try:
+                            monthly_support = float(monthly_support)
+                        except (ValueError, TypeError):
+                            monthly_support = 0
                     
                     # Try to find matching donor with fuzzy matching
                     matched_donor = None
@@ -377,6 +386,9 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
         # Identify unconnected donors
         unconnected_donors = all_donors - connected_donors
+        
+        # Debug: Show monthly support values
+        st.info(f"🔍 ערכים בעמודת סכום חודשי: {almanot_df['סכום חודשי'].value_counts(dropna=False).to_dict()}")
         
         # Add nodes with area constraints for natural floating
         
