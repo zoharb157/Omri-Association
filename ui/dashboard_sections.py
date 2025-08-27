@@ -199,10 +199,10 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
 def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):
     """Create the network visualization section"""
     
-    # Header with edit button integrated
-    col1, col2, col3 = st.columns([3, 1, 1])
+    # Header with edit button only
+    col1, col2, col3 = st.columns([4, 1, 1])
     with col1:
-        create_section_header("🕸️ מפת קשרים")
+        st.write("")  # Empty space
     with col2:
         show_editor = st.button("🔧 ערוך", use_container_width=False, type="secondary", help="ערוך את מפת הקשרים")
     with col3:
