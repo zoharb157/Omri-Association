@@ -170,26 +170,27 @@ def create_alerts_section(budget_status: Dict, expenses_df: pd.DataFrame, donati
 
 def render_home_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, 
                    budget_status: Dict, donor_stats: Dict, widow_stats: Dict):
-    """Render the home tab content"""
-    # Overview Section
-    create_overview_section(expenses_df, donations_df, donor_stats, widow_stats)
+    """Render the home tab content in logical order"""
     
-    # Recent Activity Section
-    create_recent_activity_section(expenses_df, donations_df)
-    
-    # Alerts Section
+    # 1. ALERTS & NOTIFICATIONS (Top priority - immediate attention needed)
     create_alerts_section(budget_status, expenses_df, donations_df, almanot_df, donor_stats, widow_stats)
     
-    # Budget Section
+    # 2. OVERVIEW & KEY METRICS (Executive summary - most important numbers)
+    create_overview_section(expenses_df, donations_df, donor_stats, widow_stats)
+    
+    # 3. BUDGET MANAGEMENT (Financial overview - core business metrics)
     create_budget_section(expenses_df, donations_df, budget_status)
     
-    # Donors Section
+    # 4. RECENT ACTIVITY (Operational insights - what's happening now)
+    create_recent_activity_section(expenses_df, donations_df)
+    
+    # 5. DONORS SECTION (Revenue sources - who supports the organization)
     create_donors_section(donations_df, donor_stats)
     
-    # Widows Section
+    # 6. WIDOWS SECTION (Beneficiaries - who receives support)
     create_widows_section(almanot_df, widow_stats)
     
-    # Reports Section
+    # 7. REPORTS & EXPORTS (Data access - for analysis and record keeping)
     create_reports_section(expenses_df, donations_df, almanot_df)
 
 def render_network_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):

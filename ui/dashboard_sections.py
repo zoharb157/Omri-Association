@@ -14,11 +14,12 @@ from data_visualization import create_monthly_trends, create_budget_distribution
 from ui.dashboard_layout import create_section_header, create_metric_row, create_three_column_layout, add_spacing
 
 def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, donor_stats: Dict, widow_stats: Dict):
-    """Create the dashboard overview section"""
+    """Create the dashboard overview section with key metrics"""
     create_section_header("📊 סקירה כללית")
     
-    # General Statistics
-    general_metrics = [
+    # 1. FINANCIAL OVERVIEW (Most important - money flow)
+    st.markdown("#### 💰 סקירה פיננסית")
+    financial_metrics = [
         {
             'label': 'סך תרומות',
             'value': f"₪{pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum():,.0f}",
@@ -41,11 +42,12 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
         }
     ]
     
-    create_metric_row(general_metrics, 4)
+    create_metric_row(financial_metrics, 4)
     add_spacing(2)
     
-    # Key Metrics
-    key_metrics = [
+    # 2. ORGANIZATIONAL METRICS (People and impact)
+    st.markdown("#### 👥 מדדים ארגוניים")
+    org_metrics = [
         {
             'label': 'מספר תורמים',
             'value': f"{donor_stats.get('total_donors', 0):,}",
@@ -58,68 +60,7 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
         }
     ]
     
-    create_metric_row(key_metrics, 2)
-    add_spacing(2)
-    
-    # Data Export Section
-    st.markdown("#### 📥 ייצוא נתונים")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("📊 ייצוא סקירה כללית", use_container_width=True):
-            try:
-                # Create summary data
-                summary_data = {
-                    'סך תרומות': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum()],
-                    'סך הוצאות': [pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
-                    'יתרה זמינה': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() - pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
-                    'מספר תורמים': [donor_stats.get('total_donors', 0)],
-                    'מספר אלמנות': [widow_stats.get('total_widows', 0)]
-                }
-                
-                summary_df = pd.DataFrame(summary_data)
-                csv = summary_df.to_csv(index=False, encoding='utf-8-sig')
-                st.download_button(
-                    label="💾 הורד CSV",
-                    data=csv,
-                    file_name=f"omri_summary_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
-                    mime="text/csv"
-                )
-            except Exception as e:
-                st.error(f"שגיאה בייצוא: {e}")
-    
-    with col2:
-        if st.button("👥 ייצוא נתוני תורמים", use_container_width=True):
-            try:
-                if not donations_df.empty:
-                    csv = donations_df.to_csv(index=False, encoding='utf-8-sig')
-                    st.download_button(
-                        label="💾 הורד CSV",
-                        data=csv,
-                        file_name=f"omri_donors_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
-                        mime="text/csv"
-                    )
-                else:
-                    st.warning("אין נתוני תורמים לייצוא")
-            except Exception as e:
-                st.error(f"שגיאה בייצוא: {e}")
-    
-    with col3:
-        if st.button("👩 ייצוא נתוני אלמנות", use_container_width=True):
-            try:
-                if not almanot_df.empty:
-                    csv = almanot_df.to_csv(index=False, encoding='utf-8-sig')
-                    st.download_button(
-                        label="💾 הורד CSV",
-                        data=csv,
-                        file_name=f"omri_widows_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
-                        mime="text/csv"
-                    )
-                else:
-                    st.warning("אין נתוני אלמנות לייצוא")
-            except Exception as e:
-                st.error(f"שגיאה בייצוא: {e}")
-    
+    create_metric_row(org_metrics, 2)
     add_spacing(2)
 
 def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, budget_status: Dict):

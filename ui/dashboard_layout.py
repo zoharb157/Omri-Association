@@ -103,9 +103,72 @@ def create_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.D
             st.error("שגיאה בטעינת הוצאות אחרונות")
 
 def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame):
-    """Create the reports section"""
-    create_section_header("📋 דוחות")
+    """Create the reports and data export section"""
+    create_section_header("📋 דוחות וייצוא נתונים")
     
+    # Data Export Section (Quick access to raw data)
+    st.markdown("#### 📥 ייצוא נתונים גולמיים")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("📊 ייצוא סקירה כללית", use_container_width=True):
+            try:
+                # Create summary data
+                summary_data = {
+                    'סך תרומות': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum()],
+                    'סך הוצאות': [pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
+                    'יתרה זמינה': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() - pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
+                    'מספר תורמים': [len(donations_df['שם'].unique()) if 'שם' in donations_df.columns else 0],
+                    'מספר אלמנות': [len(almanot_df['שם '].unique()) if 'שם ' in almanot_df.columns else 0]
+                }
+                
+                summary_df = pd.DataFrame(summary_data)
+                csv = summary_df.to_csv(index=False, encoding='utf-8-sig')
+                st.download_button(
+                    label="💾 הורד CSV",
+                    data=csv,
+                    file_name=f"omri_summary_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                    mime="text/csv"
+                )
+            except Exception as e:
+                st.error(f"שגיאה בייצוא: {e}")
+    
+    with col2:
+        if st.button("👥 ייצוא נתוני תורמים", use_container_width=True):
+            try:
+                if not donations_df.empty:
+                    csv = donations_df.to_csv(index=False, encoding='utf-8-sig')
+                    st.download_button(
+                        label="💾 הורד CSV",
+                        data=csv,
+                        file_name=f"omri_donors_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.warning("אין נתוני תורמים לייצוא")
+            except Exception as e:
+                st.error(f"שגיאה בייצוא: {e}")
+    
+    with col3:
+        if st.button("👩 ייצוא נתוני אלמנות", use_container_width=True):
+            try:
+                if not almanot_df.empty:
+                    csv = almanot_df.to_csv(index=False, encoding='utf-8-sig')
+                    st.download_button(
+                        label="💾 הורד CSV",
+                        data=csv,
+                        file_name=f"omri_widows_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.warning("אין נתוני אלמנות לייצוא")
+            except Exception as e:
+                st.error(f"שגיאה בייצוא: {e}")
+    
+    add_spacing(2)
+    
+    # Detailed Reports Section
+    st.markdown("#### 📊 דוחות מפורטים")
     col1, col2 = create_two_column_layout()
     
     with col1:
