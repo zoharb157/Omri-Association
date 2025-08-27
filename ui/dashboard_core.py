@@ -32,27 +32,22 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
                 almanot_df is not None and investors_df is not None):
                 return expenses_df, donations_df, almanot_df, investors_df
         
-        # Load fresh data with loading indicators
-        with st.spinner('🔄 טוען נתונים מ-Google Sheets...'):
-            expenses_df = read_sheet("Expenses")
-            if expenses_df is None:
-                st.warning("⚠️ לא ניתן לטעון נתוני הוצאות")
-                expenses_df = pd.DataFrame()
-            
-            donations_df = read_sheet("Donations")
-            if donations_df is None:
-                st.warning("⚠️ לא ניתן לטעון נתוני תרומות")
-                donations_df = pd.DataFrame()
-            
-            investors_df = read_sheet("Investors")
-            if investors_df is None:
-                st.warning("⚠️ לא ניתן לטעון נתוני משקיעים")
-                investors_df = pd.DataFrame()
-            
-            almanot_df = read_sheet("Widows")
-            if almanot_df is None:
-                st.warning("⚠️ לא ניתן לטעון נתוני אלמנות")
-                almanot_df = pd.DataFrame()
+        # Load fresh data (silent loading)
+        expenses_df = read_sheet("Expenses")
+        if expenses_df is None:
+            expenses_df = pd.DataFrame()
+        
+        donations_df = read_sheet("Donations")
+        if donations_df is None:
+            donations_df = pd.DataFrame()
+        
+        investors_df = read_sheet("Investors")
+        if investors_df is None:
+            investors_df = pd.DataFrame()
+        
+        almanot_df = read_sheet("Widows")
+        if almanot_df is None:
+            almanot_df = pd.DataFrame()
         
         # Store in session state
         st.session_state.expenses_df = expenses_df
@@ -83,31 +78,25 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
 def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame) -> Tuple[Dict, Dict, Dict]:
     """Process dashboard data and calculate statistics with enhanced error handling"""
     try:
-        with st.spinner('🔄 מעבד נתונים...'):
-            # Fix data types with validation
-            for df_name, df in [('expenses_df', expenses_df), ('donations_df', donations_df)]:
-                if df is not None and not df.empty:
-                    if 'שקלים' in df.columns:
-                        df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
-                    if 'תאריך' in df.columns:
-                        df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
-            
-            if almanot_df is not None and not almanot_df.empty:
-                if 'מספר ילדים' in almanot_df.columns:
-                    almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
-                if 'סכום חודשי' in almanot_df.columns:
-                    almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
-                    # Don't fill NaN with 0 - preserve the actual data state
-            
-            # Calculate statistics with progress indicators
-            st.text('📊 מחשב סטטיסטיקות תקציב...')
-            budget_status = calculate_monthly_budget(expenses_df, donations_df)
-            
-            st.text('👥 מחשב סטטיסטיקות תורמים...')
-            donor_stats = calculate_donor_statistics(donations_df)
-            
-            st.text('👩 מחשב סטטיסטיקות אלמנות...')
-            widow_stats = calculate_widow_statistics(almanot_df)
+        # Fix data types with validation (silent processing)
+        for df_name, df in [('expenses_df', expenses_df), ('donations_df', donations_df)]:
+            if df is not None and not df.empty:
+                if 'שקלים' in df.columns:
+                    df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
+                if 'תאריך' in df.columns:
+                    df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
+        
+        if almanot_df is not None and not almanot_df.empty:
+            if 'מספר ילדים' in almanot_df.columns:
+                almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
+            if 'סכום חודשי' in almanot_df.columns:
+                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
+                # Don't fill NaN with 0 - preserve the actual data state
+        
+        # Calculate statistics (silent processing)
+        budget_status = calculate_monthly_budget(expenses_df, donations_df)
+        donor_stats = calculate_donor_statistics(donations_df)
+        widow_stats = calculate_widow_statistics(almanot_df)
         
         return budget_status, donor_stats, widow_stats
         

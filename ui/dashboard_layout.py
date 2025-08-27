@@ -17,14 +17,15 @@ def create_dashboard_header():
     # Main title
     st.markdown("<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>", unsafe_allow_html=True)
     
-    # System status and refresh section
-    col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
+    # Clean, professional header with minimal status info
+    col1, col2, col3 = st.columns([3, 1, 1])
     
     with col1:
-        st.markdown("**מערכת פעילה** ✅")
+        # Empty space for clean look
+        pass
     
     with col2:
-        if st.button("🔄 רענן נתונים", use_container_width=True):
+        if st.button("🔄 רענן", use_container_width=True, help="רענן נתונים"):
             # Clear session state to force data reload
             if 'expenses_df' in st.session_state:
                 del st.session_state.expenses_df
@@ -37,32 +38,18 @@ def create_dashboard_header():
             st.rerun()
     
     with col3:
-        # Show last update time
-        if 'last_update' not in st.session_state:
-            st.session_state.last_update = pd.Timestamp.now()
-        
-        st.markdown(f"**עודכן לאחרונה:** {st.session_state.last_update.strftime('%H:%M')}")
-    
-    with col4:
-        # Show data status
-        if ('expenses_df' in st.session_state and 'donations_df' in st.session_state and 
-            'almanot_df' in st.session_state and 'investors_df' in st.session_state):
-            st.markdown("**נתונים:** ✅")
-        else:
-            st.markdown("**נתונים:** ⏳")
-    
-    # Quick theme toggle
-    try:
-        from theme_manager import get_current_theme, switch_theme
-        current_theme = get_current_theme()
-        
-        if st.button("🌙" if current_theme == 'light' else "☀️", 
-                    help="החלף עיצוב"):
-            new_theme = 'dark' if current_theme == 'light' else 'light'
-            switch_theme(new_theme)
-            st.rerun()
-    except ImportError:
-        pass  # Theme manager not available
+        # Quick theme toggle
+        try:
+            from theme_manager import get_current_theme, switch_theme
+            current_theme = get_current_theme()
+            
+            if st.button("🌙" if current_theme == 'light' else "☀️", 
+                        help="החלף עיצוב"):
+                new_theme = 'dark' if current_theme == 'light' else 'light'
+                switch_theme(new_theme)
+                st.rerun()
+        except ImportError:
+            pass  # Theme manager not available
     
     add_spacing(1)
 
