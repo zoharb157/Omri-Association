@@ -90,8 +90,8 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
             if 'מספר ילדים' in almanot_df.columns:
                 almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
             if 'סכום חודשי' in almanot_df.columns:
-                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
-                # Don't fill NaN with 0 - preserve the actual data state
+                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce').fillna(0)
+                # Fill missing values with 0 (intended behavior)
         
         # Calculate statistics (silent processing)
         budget_status = calculate_monthly_budget(expenses_df, donations_df)

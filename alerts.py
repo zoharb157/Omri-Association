@@ -57,6 +57,11 @@ def check_data_quality_alerts(expenses_df: pd.DataFrame, donations_df: pd.DataFr
                 empty_count = (df[amount_col] == '').sum() if amount_col in df.columns else 0
                 total_count = len(df)
                 
+                # Skip alert for monthly amounts - we treat missing as 0
+                if amount_col == 'סכום חודשי':
+                    logging.info(f"Monthly amounts: {null_count}/{total_count} missing values (treated as 0)")
+                    continue
+                
                 # Only alert if there are significant missing values (more than 10% of rows)
                 if null_count > 0 and (null_count / total_count) > 0.1:
                     alerts.append(f"חסרים ערכים בעמודת {amount_col} בקובץ {name} ({null_count}/{total_count} שורות)")

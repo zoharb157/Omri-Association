@@ -127,8 +127,12 @@ def clean_widows_data(alman):
         # Convert to numeric, coercing errors to NaN
         alman['סכום חודשי'] = pd.to_numeric(alman['סכום חודשי'], errors='coerce')
         
+        # Fill all missing values with 0 (this is the intended behavior)
+        alman['סכום חודשי'] = alman['סכום חודשי'].fillna(0)
+        
         # Log the cleaning results
         print(f"Cleaned monthly amounts: {alman['סכום חודשי'].value_counts(dropna=False).to_dict()}")
         print(f"Total rows: {len(alman)}, Non-null amounts: {alman['סכום חודשי'].notna().sum()}")
+        print(f"Missing values filled with 0: {(alman['סכום חודשי'] == 0).sum()}")
     
     return alman 
