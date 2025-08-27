@@ -174,7 +174,9 @@ def create_budget_distribution_chart(df: pd.DataFrame):
             names='שם',
             title='התפלגות תקציב',
             hole=0.4,
-            color_discrete_sequence=px.colors.qualitative.Set3
+            color_discrete_sequence=px.colors.qualitative.Set3,
+            width=800,  # Fixed width for better control
+            height=600   # Fixed height for better control
         )
         
         # Update layout
@@ -188,19 +190,25 @@ def create_budget_distribution_chart(df: pd.DataFrame):
             },
             showlegend=True,
             legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="center",
-                x=0.5
+                orientation="v",  # Changed to vertical to prevent overlapping
+                yanchor="top",
+                y=1.0,
+                xanchor="left",
+                x=1.05,  # Position legend to the right of the chart
+                bgcolor='rgba(255,255,255,0.8)',  # Semi-transparent background
+                bordercolor='rgba(0,0,0,0.1)',  # Light border
+                borderwidth=1,
+                font=dict(size=10),  # Smaller font to fit better
+                itemsizing='constant'  # Consistent item sizes
             ),
-            margin=dict(l=50, r=50, t=80, b=50)
+            margin=dict(l=50, r=150, t=80, b=50)  # Increased right margin for legend
         )
         
         # Update traces
         fig.update_traces(
-            textposition='inside',
+            textposition='outside',  # Changed to outside to prevent overlapping
             textinfo='percent+label',
+            textfont=dict(size=10),  # Smaller text to fit better
             hovertemplate='קטגוריה: %{label}<br>סכום: ₪%{value:,.0f}<br>אחוז: %{percent:.1%}<extra></extra>'
         )
         
