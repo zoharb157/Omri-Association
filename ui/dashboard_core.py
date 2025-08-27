@@ -15,62 +15,113 @@ from ui.dashboard_layout import create_dashboard_header, create_main_tabs, creat
 from ui.dashboard_sections import create_overview_section, create_budget_section, create_donors_section, create_widows_section, create_network_section
 
 def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Load all dashboard data from Google Sheets"""
+    """Load all dashboard data from Google Sheets with enhanced loading states and error handling"""
     try:
-        # Load data from Google Sheets
-        if 'expenses_df' not in st.session_state or 'donations_df' not in st.session_state or 'almanot_df' not in st.session_state or 'investors_df' not in st.session_state:
-            expenses_df = read_sheet("Expenses")
-            donations_df = read_sheet("Donations")
-            investors_df = read_sheet("Investors")
-            almanot_df = read_sheet("Widows")
+        # Check if data is already in session state
+        if ('expenses_df' in st.session_state and 'donations_df' in st.session_state and 
+            'almanot_df' in st.session_state and 'investors_df' in st.session_state):
             
-            st.session_state.expenses_df = expenses_df
-            st.session_state.donations_df = donations_df
-            st.session_state.almanot_df = almanot_df
-            st.session_state.investors_df = investors_df
-        else:
+            # Use cached data
             expenses_df = st.session_state.expenses_df
             donations_df = st.session_state.donations_df
             almanot_df = st.session_state.almanot_df
             investors_df = st.session_state.investors_df
+            
+            # Validate cached data
+            if (expenses_df is not None and donations_df is not None and 
+                almanot_df is not None and investors_df is not None):
+                return expenses_df, donations_df, almanot_df, investors_df
         
-        # Check if data was loaded successfully
-        if expenses_df is None or donations_df is None or almanot_df is None or investors_df is None:
-            st.error("לא ניתן להמשיך ללא נתונים תקינים")
+        # Load fresh data with loading indicators
+        with st.spinner('🔄 טוען נתונים מ-Google Sheets...'):
+            expenses_df = read_sheet("Expenses")
+            if expenses_df is None:
+                st.warning("⚠️ לא ניתן לטעון נתוני הוצאות")
+                expenses_df = pd.DataFrame()
+            
+            donations_df = read_sheet("Donations")
+            if donations_df is None:
+                st.warning("⚠️ לא ניתן לטעון נתוני תרומות")
+                donations_df = pd.DataFrame()
+            
+            investors_df = read_sheet("Investors")
+            if investors_df is None:
+                st.warning("⚠️ לא ניתן לטעון נתוני משקיעים")
+                investors_df = pd.DataFrame()
+            
+            almanot_df = read_sheet("Widows")
+            if almanot_df is None:
+                st.warning("⚠️ לא ניתן לטעון נתוני אלמנות")
+                almanot_df = pd.DataFrame()
+        
+        # Store in session state
+        st.session_state.expenses_df = expenses_df
+        st.session_state.donations_df = donations_df
+        st.session_state.almanot_df = almanot_df
+        st.session_state.investors_df = investors_df
+        
+        # Validate data integrity
+        if expenses_df.empty and donations_df.empty and almanot_df.empty:
+            st.error("❌ לא ניתן לטעון נתונים. אנא בדוק את חיבור Google Sheets")
             return None, None, None, None
             
         return expenses_df, donations_df, almanot_df, investors_df
         
     except Exception as e:
-        st.error(f"שגיאה בטעינת נתונים: {e}")
+        error_msg = f"שגיאה בטעינת נתונים: {str(e)}"
+        st.error(f"❌ {error_msg}")
         logging.error(f"Data loading error: {e}")
+        
+        # Show helpful troubleshooting tips
+        st.info("💡 טיפים לפתרון בעיות:")
+        st.info("• בדוק חיבור לאינטרנט")
+        st.info("• ודא שקובץ service_account.json קיים ותקין")
+        st.info("• בדוק הרשאות Google Sheets")
+        
         return None, None, None, None
 
 def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame) -> Tuple[Dict, Dict, Dict]:
-    """Process dashboard data and calculate statistics"""
+    """Process dashboard data and calculate statistics with enhanced error handling"""
     try:
-        # Fix data types
-        for df_name, df in [('expenses_df', expenses_df), ('donations_df', donations_df)]:
-            if 'שקלים' in df.columns:
-                df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
-            if 'תאריך' in df.columns:
-                df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
-        
-        if 'מספר ילדים' in almanot_df.columns:
-            almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
-        if 'סכום חודשי' in almanot_df.columns:
-            almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
-            # Don't fill NaN with 0 - preserve the actual data state
-        
-        # Calculate statistics
-        budget_status = calculate_monthly_budget(expenses_df, donations_df)
-        donor_stats = calculate_donor_statistics(donations_df)
-        widow_stats = calculate_widow_statistics(almanot_df)
+        with st.spinner('🔄 מעבד נתונים...'):
+            # Fix data types with validation
+            for df_name, df in [('expenses_df', expenses_df), ('donations_df', donations_df)]:
+                if df is not None and not df.empty:
+                    if 'שקלים' in df.columns:
+                        df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
+                    if 'תאריך' in df.columns:
+                        df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
+            
+            if almanot_df is not None and not almanot_df.empty:
+                if 'מספר ילדים' in almanot_df.columns:
+                    almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
+                if 'סכום חודשי' in almanot_df.columns:
+                    almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
+                    # Don't fill NaN with 0 - preserve the actual data state
+            
+            # Calculate statistics with progress indicators
+            st.text('📊 מחשב סטטיסטיקות תקציב...')
+            budget_status = calculate_monthly_budget(expenses_df, donations_df)
+            
+            st.text('👥 מחשב סטטיסטיקות תורמים...')
+            donor_stats = calculate_donor_statistics(donations_df)
+            
+            st.text('👩 מחשב סטטיסטיקות אלמנות...')
+            widow_stats = calculate_widow_statistics(almanot_df)
         
         return budget_status, donor_stats, widow_stats
         
     except Exception as e:
+        error_msg = f"שגיאה בעיבוד נתונים: {str(e)}"
+        st.error(f"❌ {error_msg}")
         logging.error(f"Data processing error: {e}")
+        
+        # Show helpful troubleshooting tips
+        st.info("💡 טיפים לפתרון בעיות:")
+        st.info("• בדוק שהנתונים לא ריקים")
+        st.info("• ודא שעמודות הנתונים קיימות")
+        st.info("• בדוק פורמט התאריכים")
+        
         # Return default values to prevent crashes
         return {
             'monthly_donations': {},
@@ -156,13 +207,76 @@ def render_network_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, al
     """Render the network tab content"""
     create_network_section(expenses_df, donations_df, almanot_df, investors_df)
 
+def render_settings_tab():
+    """Render the settings tab content"""
+    try:
+        from config import show_config_ui
+        from theme_manager import show_theme_selector
+        
+        # Show theme selector first
+        show_theme_selector()
+        st.markdown("---")
+        
+        # Show system configuration
+        show_config_ui()
+    except ImportError as e:
+        st.error(f"❌ לא ניתן לטעון הגדרות מערכת: {e}")
+        st.info("אנא ודא שקובצי config.py ו-theme_manager.py קיימים")
+
+def render_monitoring_tab():
+    """Render the monitoring tab content"""
+    try:
+        from monitoring import show_monitoring_dashboard
+        show_monitoring_dashboard()
+    except ImportError:
+        st.error("❌ לא ניתן לטעון מערכת ניטור")
+        st.info("אנא ודא שקובץ monitoring.py קיים")
+    except Exception as e:
+        st.error(f"❌ שגיאה בטעינת ניטור: {e}")
+        st.info("ייתכן שחסרים חבילות נדרשות (psutil)")
+
+def render_testing_tab():
+    """Render the testing tab content"""
+    try:
+        from tests import show_test_dashboard
+        show_test_dashboard()
+    except ImportError:
+        st.error("❌ לא ניתן לטעון מערכת בדיקות")
+        st.info("אנא ודא שקובץ tests.py קיים")
+    except Exception as e:
+        st.error(f"❌ שגיאה בטעינת בדיקות: {e}")
+        st.info("ייתכן שחסרות חבילות נדרשות")
+
 def run_dashboard():
-    """Main dashboard execution function"""
+    """Main dashboard execution function with authentication"""
     try:
         logging.info("=== STARTING DASHBOARD ===")
         
+        # Check authentication if enabled
+        try:
+            from auth import check_auth_and_redirect, show_user_info, is_authenticated
+            if not check_auth_and_redirect():
+                return  # User not authenticated, login form shown
+        except ImportError:
+            # Authentication module not available, continue without auth
+            pass
+        
+        # Apply current theme
+        try:
+            from theme_manager import apply_current_theme
+            apply_current_theme()
+        except ImportError:
+            pass  # Theme manager not available
+        
         # Create dashboard header
         create_dashboard_header()
+        
+        # Show user info in sidebar if authentication is enabled
+        try:
+            if is_authenticated():
+                show_user_info()
+        except:
+            pass
         
         # Check service account validity
         if not check_service_account_validity():
@@ -171,14 +285,15 @@ def run_dashboard():
         
         # Load data
         expenses_df, donations_df, almanot_df, investors_df = load_dashboard_data()
-        if expenses_df is None:
+        if expenses_df is None or donations_df is None or almanot_df is None or investors_df is None:
+            st.error("לא ניתן לטעון נתונים. אנא בדוק את חיבור Google Sheets")
             return
         
         # Process data
         budget_status, donor_stats, widow_stats = process_dashboard_data(expenses_df, donations_df, almanot_df)
         
         # Create tabs
-        tab1, tab2 = create_main_tabs()
+        tab1, tab2, tab3, tab4, tab5 = create_main_tabs()
         
         # Render Home Tab
         with tab1:
@@ -188,9 +303,42 @@ def run_dashboard():
         with tab2:
             render_network_tab(expenses_df, donations_df, almanot_df, investors_df)
         
+        # Render Settings Tab (only for admin users)
+        with tab3:
+            try:
+                from auth import has_permission
+                if has_permission('settings'):
+                    render_settings_tab()
+                else:
+                    st.warning("⚠️ אין לך הרשאה לגשת להגדרות")
+            except ImportError:
+                render_settings_tab()
+        
+        # Render Monitoring Tab (only for admin users)
+        with tab4:
+            try:
+                from auth import has_permission
+                if has_permission('admin'):
+                    render_monitoring_tab()
+                else:
+                    st.warning("⚠️ אין לך הרשאה לגשת לניטור מערכת")
+            except ImportError:
+                render_monitoring_tab()
+        
+        # Render Testing Tab (only for admin users)
+        with tab5:
+            try:
+                from auth import has_permission
+                if has_permission('admin'):
+                    render_testing_tab()
+                else:
+                    st.warning("⚠️ אין לך הרשאה לגשת לבדיקות מערכת")
+            except ImportError:
+                render_testing_tab()
+        
         logging.info("=== DASHBOARD RENDERING COMPLETED ===")
         
     except Exception as e:
         st.error(f"שגיאה כללית בדשבורד: {e}")
         logging.error(f"General dashboard error: {e}")
-        st.stop()
+        st.info("אנא רענן את הדף או פנה לתמיכה")

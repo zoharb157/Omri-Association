@@ -10,11 +10,61 @@ from typing import Dict, Any
 
 def create_main_tabs():
     """Create the main tab structure"""
-    return st.tabs(["🏠 דף הבית", "🕸️ מפת קשרים"])
+    return st.tabs(["🏠 דף הבית", "🕸️ מפת קשרים", "⚙️ הגדרות", "📊 ניטור", "🧪 בדיקות"])
 
 def create_dashboard_header():
-    """Create the main dashboard header"""
-    st.markdown("<h1 style='text-align: center; color: #1f77b4; margin-bottom: 2rem;'>מערכת ניהול עמותת עמרי</h1>", unsafe_allow_html=True)
+    """Create the main dashboard header with refresh button and system status"""
+    # Main title
+    st.markdown("<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>", unsafe_allow_html=True)
+    
+    # System status and refresh section
+    col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
+    
+    with col1:
+        st.markdown("**מערכת פעילה** ✅")
+    
+    with col2:
+        if st.button("🔄 רענן נתונים", use_container_width=True):
+            # Clear session state to force data reload
+            if 'expenses_df' in st.session_state:
+                del st.session_state.expenses_df
+            if 'donations_df' in st.session_state:
+                del st.session_state.donations_df
+            if 'almanot_df' in st.session_state:
+                del st.session_state.almanot_df
+            if 'investors_df' in st.session_state:
+                del st.session_state.investors_df
+            st.rerun()
+    
+    with col3:
+        # Show last update time
+        if 'last_update' not in st.session_state:
+            st.session_state.last_update = pd.Timestamp.now()
+        
+        st.markdown(f"**עודכן לאחרונה:** {st.session_state.last_update.strftime('%H:%M')}")
+    
+    with col4:
+        # Show data status
+        if ('expenses_df' in st.session_state and 'donations_df' in st.session_state and 
+            'almanot_df' in st.session_state and 'investors_df' in st.session_state):
+            st.markdown("**נתונים:** ✅")
+        else:
+            st.markdown("**נתונים:** ⏳")
+    
+    # Quick theme toggle
+    try:
+        from theme_manager import get_current_theme, switch_theme
+        current_theme = get_current_theme()
+        
+        if st.button("🌙" if current_theme == 'light' else "☀️", 
+                    help="החלף עיצוב"):
+            new_theme = 'dark' if current_theme == 'light' else 'light'
+            switch_theme(new_theme)
+            st.rerun()
+    except ImportError:
+        pass  # Theme manager not available
+    
+    add_spacing(1)
 
 def create_section_header(title: str, icon: str = ""):
     """Create a consistent section header"""

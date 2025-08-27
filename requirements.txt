@@ -9,4 +9,5 @@ arabic-reshaper
 python-bidi
 gspread>=5.10.0
 google-auth>=2.17.0
-streamlit-agraph>=0.0.45 
+streamlit-agraph>=0.0.45
+psutil>=5.9.0 

@@ -59,6 +59,67 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
     
     create_metric_row(key_metrics, 2)
     add_spacing(2)
+    
+    # Data Export Section
+    st.markdown("#### 📥 ייצוא נתונים")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("📊 ייצוא סקירה כללית", use_container_width=True):
+            try:
+                # Create summary data
+                summary_data = {
+                    'סך תרומות': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum()],
+                    'סך הוצאות': [pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
+                    'יתרה זמינה': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() - pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
+                    'מספר תורמים': [donor_stats.get('total_donors', 0)],
+                    'מספר אלמנות': [widow_stats.get('total_widows', 0)]
+                }
+                
+                summary_df = pd.DataFrame(summary_data)
+                csv = summary_df.to_csv(index=False, encoding='utf-8-sig')
+                st.download_button(
+                    label="💾 הורד CSV",
+                    data=csv,
+                    file_name=f"omri_summary_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                    mime="text/csv"
+                )
+            except Exception as e:
+                st.error(f"שגיאה בייצוא: {e}")
+    
+    with col2:
+        if st.button("👥 ייצוא נתוני תורמים", use_container_width=True):
+            try:
+                if not donations_df.empty:
+                    csv = donations_df.to_csv(index=False, encoding='utf-8-sig')
+                    st.download_button(
+                        label="💾 הורד CSV",
+                        data=csv,
+                        file_name=f"omri_donors_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.warning("אין נתוני תורמים לייצוא")
+            except Exception as e:
+                st.error(f"שגיאה בייצוא: {e}")
+    
+    with col3:
+        if st.button("👩 ייצוא נתוני אלמנות", use_container_width=True):
+            try:
+                if not almanot_df.empty:
+                    csv = almanot_df.to_csv(index=False, encoding='utf-8-sig')
+                    st.download_button(
+                        label="💾 הורד CSV",
+                        data=csv,
+                        file_name=f"omri_widows_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.warning("אין נתוני אלמנות לייצוא")
+            except Exception as e:
+                st.error(f"שגיאה בייצוא: {e}")
+    
+    add_spacing(2)
 
 def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, budget_status: Dict):
     """Create the budget management section"""
