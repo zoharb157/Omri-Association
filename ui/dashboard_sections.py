@@ -202,10 +202,10 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
     
 
     
-    # Add network editor toggle
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # Add network editor toggle - small, standard button
+    col1, col2, col3 = st.columns([2, 1, 2])
     with col2:
-        show_editor = st.button("🔧 ערוך רשת קשרים", use_container_width=True, type="secondary")
+        show_editor = st.button("🔧 ערוך", use_container_width=False, type="secondary", help="ערוך את מפת הקשרים")
     
     # Show network editor only if user chooses to edit
     if show_editor:
