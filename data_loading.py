@@ -118,14 +118,17 @@ def clean_widows_data(alman):
         alman['סכום חודשי'] = alman['סכום חודשי'].fillna('')
         alman['סכום חודשי'] = alman['סכום חודשי'].astype(str)
         
-        # Remove currency symbols and commas
-        alman['סכום חודשי'] = alman['סכום חודשי'].str.replace('₪', '').str.replace(',', '')
+        # Remove currency symbols, commas, and extra whitespace
+        alman['סכום חודשי'] = alman['סכום חודשי'].str.replace('₪', '').str.replace(',', '').str.strip()
         
-        # Convert empty strings to NaN, then to numeric (this preserves actual 0 values but converts empty to NaN)
-        alman['סכום חודשי'] = alman['סכום חודשי'].replace('', pd.NA)
+        # Handle various empty/zero cases
+        alman['סכום חודשי'] = alman['סכום חודשי'].replace(['', '0', '0.0', 'nan', 'None', 'null'], pd.NA)
+        
+        # Convert to numeric, coercing errors to NaN
         alman['סכום חודשי'] = pd.to_numeric(alman['סכום חודשי'], errors='coerce')
         
-        # Fill NaN with 0 only if that's the intended behavior
-        # alman['סכום חודשי'] = alman['סכום חודשי'].fillna(0)
+        # Log the cleaning results
+        print(f"Cleaned monthly amounts: {alman['סכום חודשי'].value_counts(dropna=False).to_dict()}")
+        print(f"Total rows: {len(alman)}, Non-null amounts: {alman['סכום חודשי'].notna().sum()}")
     
     return alman 
