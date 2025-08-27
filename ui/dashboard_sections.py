@@ -276,15 +276,22 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         nodes = []
         edges = []
         
+        # Debug: Show what data we have
+        st.info(f"🔍 נתוני רשת: {len(donations_df)} תרומות, {len(almanot_df)} אלמנות, {len(investors_df)} משקיעים")
+        
         # Get all valid donors
         all_donors = set()
         if 'שם' in donations_df.columns:
             donors_from_donations = donations_df['שם'].dropna().unique()
             all_donors.update(donors_from_donations)
+            st.info(f"📊 תורמים מתרומות: {len(donors_from_donations)}")
         
         if 'שם' in investors_df.columns:
             investors_names = investors_df['שם'].dropna().unique()
             all_donors.update(investors_names)
+            st.info(f"📊 תורמים ממשקיעים: {len(investors_names)}")
+        
+        st.info(f"📊 סה״כ תורמים: {len(all_donors)}")
         
         # Categorize nodes for layout
         connected_donors = set()
@@ -294,6 +301,7 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
         # First pass: identify connected pairs
         if 'שם ' in almanot_df.columns:
+            st.info(f"📊 עמודות אלמנות: {list(almanot_df.columns)}")
             for _, widow in almanot_df.iterrows():
                 widow_name = widow['שם ']
                 if pd.notna(widow_name):
@@ -315,11 +323,15 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                     else:
                         # Unconnected widow
                         unconnected_widows.add(widow_name)
+        else:
+            st.warning("⚠️ עמודת 'שם ' לא נמצאה בנתוני אלמנות")
         
         # Identify unconnected donors
         unconnected_donors = all_donors - connected_donors
         
         # Add nodes with area constraints for natural floating
+        st.info(f"🔍 יצירת צמתים: {len(unconnected_widows)} אלמנות לא מחוברות, {len(connected_donors)} תורמים מחוברים, {len(connected_widows)} אלמנות מחוברות, {len(unconnected_donors)} תורמים לא מחוברים")
+        
         # Left area: Unconnected widows (will float naturally in left area)
         for widow_name in sorted(unconnected_widows):
             nodes.append({
