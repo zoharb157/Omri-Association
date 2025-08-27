@@ -170,16 +170,24 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     
     add_spacing(2)
     
-    # Widows without donors
+    # Complete Widows Table
     try:
-        widows_without_donors = almanot_df[almanot_df['תורם'].isna() | (almanot_df['תורם'] == '')]
-        if len(widows_without_donors) > 0:
-            st.warning(f"⚠️ יש {len(widows_without_donors)} אלמנות ללא תורם")
-            st.dataframe(widows_without_donors[['שם ', 'מספר ילדים', 'סכום חודשי']], use_container_width=True)
+        st.markdown("#### 📋 טבלת כל האלמנות")
+        
+        # Show all widows with key information
+        display_columns = ['שם ', 'מספר ילדים', 'סכום חודשי', 'תורם']
+        available_columns = [col for col in display_columns if col in almanot_df.columns]
+        
+        if len(available_columns) > 0:
+            # Sort by monthly amount (descending) to show supported widows first
+            sorted_widows = almanot_df.sort_values('סכום חודשי', ascending=False)
+            st.dataframe(sorted_widows[available_columns], use_container_width=True)
         else:
-            st.success("כל האלמנות מחוברות לתורמים!")
+            st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
+            
     except Exception as e:
-        st.error("שגיאה בטעינת אלמנות ללא תורם")
+        st.error("שגיאה בטעינת טבלת אלמנות")
+        logging.error(f"Widows table error: {e}")
     
     add_spacing(3)
 

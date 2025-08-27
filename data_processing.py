@@ -294,7 +294,8 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
         # Ensure value_column contains numeric data
         try:
             # Convert to numeric, handling any non-numeric values
-            numeric_values = pd.to_numeric(df[value_column], errors='coerce').fillna(0)
+            numeric_values = pd.to_numeric(df[value_column], errors='coerce')
+            # Don't fill NaN with 0 - preserve the actual data state
             total_support = numeric_values.sum()
             
             # Count widows by support amount (only 1000 or 2000)

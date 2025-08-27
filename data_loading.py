@@ -97,9 +97,16 @@ def clean_dataframe(df):
     
     # Remove currency symbols and convert to float
     if 'שקלים' in df.columns:
-        df['שקלים'] = df['שקלים'].astype(str).str.replace('₪', '').str.replace(',', '').replace('', '0').astype(float)
+        df['שקלים'] = df['שקלים'].fillna('')
+        df['שקלים'] = df['שקלים'].astype(str).str.replace('₪', '').str.replace(',', '')
+        df['שקלים'] = df['שקלים'].replace('', pd.NA)
+        df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce')
+    
     if 'סכום חודשי' in df.columns:
-        df['סכום חודשי'] = df['סכום חודשי'].astype(str).str.replace('₪', '').str.replace(',', '').replace('', '0').astype(float)
+        df['סכום חודשי'] = df['סכום חודשי'].fillna('')
+        df['סכום חודשי'] = df['סכום חודשי'].astype(str).str.replace('₪', '').str.replace(',', '')
+        df['סכום חודשי'] = df['סכום חודשי'].replace('', pd.NA)
+        df['סכום חודשי'] = pd.to_numeric(df['סכום חודשי'], errors='coerce')
     
     return df
 
@@ -107,6 +114,18 @@ def clean_widows_data(alman):
     """Clean widows data"""
     # Remove currency symbols and convert to float
     if 'סכום חודשי' in alman.columns:
-        alman['סכום חודשי'] = alman['סכום חודשי'].astype(str).str.replace('₪', '').str.replace(',', '').replace('', '0').astype(float)
+        # First, handle empty strings and NaN values properly
+        alman['סכום חודשי'] = alman['סכום חודשי'].fillna('')
+        alman['סכום חודשי'] = alman['סכום חודשי'].astype(str)
+        
+        # Remove currency symbols and commas
+        alman['סכום חודשי'] = alman['סכום חודשי'].str.replace('₪', '').str.replace(',', '')
+        
+        # Convert empty strings to NaN, then to numeric (this preserves actual 0 values but converts empty to NaN)
+        alman['סכום חודשי'] = alman['סכום חודשי'].replace('', pd.NA)
+        alman['סכום חודשי'] = pd.to_numeric(alman['סכום חודשי'], errors='coerce')
+        
+        # Fill NaN with 0 only if that's the intended behavior
+        # alman['סכום חודשי'] = alman['סכום חודשי'].fillna(0)
     
     return alman 

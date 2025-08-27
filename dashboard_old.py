@@ -300,7 +300,8 @@ def main():
             if 'מספר ילדים' in almanot_df.columns:
                 almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
             if 'סכום חודשי' in almanot_df.columns:
-                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce').fillna(0)
+                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
+                # Don't fill NaN with 0 - preserve the actual data state
         except Exception as e:
             logging.error(f"Error fixing data types: {e}")
         
@@ -560,16 +561,26 @@ def main():
             
             st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
             
-            # Widows without donors
+            # Complete Widows Table
             try:
-                widows_without_donors = almanot_df[almanot_df['תורם'].isna() | (almanot_df['תורם'] == '')]
-                if len(widows_without_donors) > 0:
-                    st.warning(f"⚠️ יש {len(widows_without_donors)} אלמנות ללא תורם")
-                    st.dataframe(widows_without_donors[['שם ', 'מספר ילדים', 'סכום חודשי']], use_container_width=True)
+                st.markdown("<h3 style='color: #374151; margin-bottom: 1rem;'>📋 טבלת כל האלמנות</h3>", unsafe_allow_html=True)
+                
+                # Show all widows with key information
+                display_columns = ['שם ', 'מספר ילדים', 'סכום חודשי', 'תורם']
+                available_columns = [col for col in display_columns if col in almanot_df.columns]
+                
+                if len(available_columns) > 0:
+                    # Sort by monthly amount (descending) to show supported widows first
+                    sorted_widows = almanot_df.sort_values('סכום חודשי', ascending=False)
+                    st.dataframe(sorted_widows[available_columns], use_container_width=True)
                 else:
-                    st.success("כל האלמנות מחוברות לתורמים!")
+                    st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
+                    
             except Exception as e:
-                st.error("שגיאה בטעינת אלמנות ללא תורם")
+                st.error("שגיאה בטעינת טבלת אלמנות")
+                logging.error(f"Widows table error: {e}")
+            
+            st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
             
             st.markdown("<div style='margin: 3rem 0;'></div>", unsafe_allow_html=True)
             

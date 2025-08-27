@@ -2,6 +2,12 @@
 """
 Omri Association Management Dashboard
 A modular dashboard for managing the association's finances, donors, and widows.
+
+🚀 HOW TO RUN:
+    Option 1: ./run_dashboard.sh (recommended)
+    Option 2: python3 -m streamlit run dashboard.py
+    
+    Then open: http://localhost:8501
 """
 
 import streamlit as st
