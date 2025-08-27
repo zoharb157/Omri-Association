@@ -7,6 +7,7 @@ Handles different dashboard sections like budget, donors, widows, etc.
 import streamlit as st
 import pandas as pd
 import logging
+import re
 from typing import Dict, Any
 from data_processing import calculate_monthly_budget, calculate_donor_statistics, calculate_widow_statistics
 from data_visualization import create_monthly_trends, create_budget_distribution_chart, create_donor_contribution_chart, create_widows_support_chart
