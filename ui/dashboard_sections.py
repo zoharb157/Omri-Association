@@ -174,6 +174,28 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     
     add_spacing(3)
 
+def create_widows_table_section(almanot_df: pd.DataFrame):
+    """Create the complete widows table section"""
+    create_section_header("👩 טבלת כל האלמנות")
+    
+    try:
+        # Show all widows with key information
+        display_columns = ['שם ', 'מספר ילדים', 'סכום חודשי', 'תורם']
+        available_columns = [col for col in display_columns if col in almanot_df.columns]
+        
+        if len(available_columns) > 0:
+            # Sort by monthly amount (descending) to show supported widows first
+            sorted_widows = almanot_df.sort_values('סכום חודשי', ascending=False)
+            st.dataframe(sorted_widows[available_columns], use_container_width=True)
+        else:
+            st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
+            
+    except Exception as e:
+        st.error("שגיאה בטעינת טבלת אלמנות")
+        logging.error(f"Widows table error: {e}")
+    
+    add_spacing(3)
+
 def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):
     """Create the network visualization section"""
     create_section_header("🕸️ מפת קשרים")
@@ -196,6 +218,11 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
             logging.error(f"Network editor import error: {e}")
     
     try:
+        # Clean monthly support data - ensure all values are numeric and NaN is treated as 0
+        if 'סכום חודשי' in almanot_df.columns:
+            almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce').fillna(0)
+            st.info(f"✅ נוקו נתוני תמיכה חודשית - {len(almanot_df)} אלמנות עם ערכים תקינים")
+        
         # Create nodes and edges for the network
         nodes = []
         edges = []
@@ -234,12 +261,15 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                     donor = widow.get('תורם')
                     monthly_support = widow.get('סכום חודשי')
                     
-                    # Handle missing monthly support values properly
+                    # Handle missing monthly support values - treat NaN/non-numbers as 0
                     if pd.isna(monthly_support) or monthly_support == '' or monthly_support == 0:
                         monthly_support = 0
                     else:
                         try:
                             monthly_support = float(monthly_support)
+                            # If conversion results in NaN, treat as 0
+                            if pd.isna(monthly_support):
+                                monthly_support = 0
                         except (ValueError, TypeError):
                             monthly_support = 0
                     
