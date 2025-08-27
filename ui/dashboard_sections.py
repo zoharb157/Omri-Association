@@ -331,6 +331,19 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                                     donor_str.lower() == potential_donor.lower()):
                                     matched_donor = potential_donor
                                     break
+                            
+                            # If still no match, try more aggressive matching
+                            if not matched_donor:
+                                for potential_donor in all_donors:
+                                    # Remove common prefixes/suffixes and try again
+                                    clean_donor = donor_str.replace('בע"מ', '').replace('עמותת', '').replace('חברה', '').strip()
+                                    clean_potential = potential_donor.replace('בע"מ', '').replace('עמותת', '').replace('חברה', '').strip()
+                                    
+                                    if (clean_donor in clean_potential or 
+                                        clean_potential in clean_donor or
+                                        clean_donor.lower() == clean_potential.lower()):
+                                        matched_donor = potential_donor
+                                        break
                     
                     if matched_donor and monthly_support > 0:
                         # Connected pair
@@ -359,6 +372,14 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
             st.info(f"🔗 תורמים מחוברים: {', '.join(sorted(connected_donors)[:5])}{'...' if len(connected_donors) > 5 else ''}")
         if connected_widows:
             st.info(f"👩 אלמנות מחוברות: {', '.join(sorted(connected_widows)[:5])}{'...' if len(connected_widows) > 5 else ''}")
+        
+        # Show some examples of unmatched donors for debugging
+        if unconnected_donors:
+            st.info(f"🔍 דוגמאות לתורמים לא מחוברים: {', '.join(sorted(unconnected_donors)[:5])}{'...' if len(unconnected_donors) > 5 else ''}")
+        
+        # Show some examples of unmatched widows for debugging
+        if unconnected_widows:
+            st.info(f"🔍 דוגמאות לאלמנות לא מחוברות: {', '.join(sorted(unconnected_widows)[:5])}{'...' if len(unconnected_widows) > 5 else ''}")
         
         # Add nodes with area constraints for natural floating
         st.info(f"🔍 יצירת צמתים: {len(unconnected_widows)} אלמנות לא מחוברות, {len(connected_donors)} תורמים מחוברים, {len(connected_widows)} אלמנות מחוברות, {len(unconnected_donors)} תורמים לא מחוברים")
