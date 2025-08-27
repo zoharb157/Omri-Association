@@ -17,27 +17,14 @@ def create_dashboard_header():
     # Main title
     st.markdown("<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>", unsafe_allow_html=True)
     
-    # Clean, professional header with minimal status info
-    col1, col2, col3 = st.columns([3, 1, 1])
+    # Clean, professional header with just theme toggle
+    col1, col2 = st.columns([4, 1])
     
     with col1:
         # Empty space for clean look
         pass
     
     with col2:
-        if st.button("🔄 רענן", use_container_width=True, help="רענן נתונים"):
-            # Clear session state to force data reload
-            if 'expenses_df' in st.session_state:
-                del st.session_state.expenses_df
-            if 'donations_df' in st.session_state:
-                del st.session_state.donations_df
-            if 'almanot_df' in st.session_state:
-                del st.session_state.almanot_df
-            if 'investors_df' in st.session_state:
-                del st.session_state.investors_df
-            st.rerun()
-    
-    with col3:
         # Quick theme toggle
         try:
             from theme_manager import get_current_theme, switch_theme
