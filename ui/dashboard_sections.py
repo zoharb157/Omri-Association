@@ -380,9 +380,6 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
         # Create network visualization
         if nodes and edges:
-            # Show network info for debugging
-            st.info(f"🌐 רשת עם {len(nodes)} צמתים ו-{len(edges)} קשרים")
-            
             # Add custom CSS and JavaScript for area constraints
             st.markdown("""
             <style>
