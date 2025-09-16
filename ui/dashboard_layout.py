@@ -8,9 +8,25 @@ import streamlit as st
 import pandas as pd
 from typing import Dict, Any
 
+
+def _get_amount_column(df: pd.DataFrame) -> str:
+    if not isinstance(df, pd.DataFrame):
+        return None
+    for col in ('שקלים', 'סכום'):
+        if col in df.columns:
+            return col
+    return None
+
 def create_main_tabs():
     """Create the main tab structure"""
-    return st.tabs(["🏠 דף הבית", "🕸️ מפת קשרים"])
+    return st.tabs([
+        "🏠 דף הבית", 
+        "💰 תקציב", 
+        "👥 תורמים", 
+        "👩 אלמנות", 
+        "🕸️ מפת קשרים", 
+        "🏘️ אזורי מגורים"
+    ])
 
 def create_dashboard_header():
     """Create the main dashboard header with refresh button and system status"""
@@ -25,7 +41,7 @@ def create_dashboard_header():
         pass
     
     with col2:
-        # Quick theme toggle
+        # Quick theme toggle and performance info
         try:
             from theme_manager import get_current_theme, switch_theme
             current_theme = get_current_theme()
@@ -37,22 +53,45 @@ def create_dashboard_header():
                 st.rerun()
         except ImportError:
             pass  # Theme manager not available
+        
+        # Performance info (only in debug mode)
+        if st.session_state.get('debug_mode', False):
+            # Simple performance info
+            def show_performance_info():
+                st.info("ℹ️ מידע על ביצועים: טעינה מהירה")
+            show_performance_info()
     
     add_spacing(1)
 
 def create_section_header(title: str, icon: str = ""):
-    """Create a consistent section header"""
+    """Create a consistent section header using design system tokens"""
     icon_text = f"{icon} " if icon else ""
-    st.markdown(f"<h2 style='color: #000000; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 2rem;'>{icon_text}{title}</h2>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <h2 style='
+        color: var(--color-text-primary, #0f172a);
+        border-bottom: 2px solid var(--color-border, #e2e8f0);
+        padding-bottom: var(--space-2, 0.5rem);
+        margin-bottom: var(--space-6, 1.5rem);
+        font-family: var(--font-primary, "Segoe UI", "Noto Sans Hebrew", "Arial Hebrew", sans-serif);
+        font-size: var(--text-2xl, 1.5rem);
+        font-weight: var(--font-semibold, 600);
+    '>{icon_text}{title}</h2>
+    """, unsafe_allow_html=True)
 
 def create_metric_row(metrics: list, columns: int = 4):
-    """Create a row of metrics with specified number of columns"""
-    cols = st.columns(columns)
-    for i, metric in enumerate(metrics):
-        if i < len(cols):
+    """Create a row of metrics with specified number of columns using design system components"""
+    # Simple metric cards
+    def create_metric_cards(metrics):
+        """Create simple metric cards"""
+        cols = st.columns(len(metrics))
+        for i, metric in enumerate(metrics):
             with cols[i]:
-                st.metric(metric['label'], metric['value'], metric.get('delta', None), help=metric.get('help', None))
-    return cols
+                st.metric(
+                    label=metric.get('label', ''),
+                    value=metric.get('value', ''),
+                    help=metric.get('help', '')
+                )
+    create_metric_cards(metrics)
 
 def create_two_column_layout():
     """Create a two-column layout"""
@@ -63,43 +102,71 @@ def create_three_column_layout():
     return st.columns(3)
 
 def add_spacing(rem: float = 2):
-    """Add consistent spacing between sections"""
-    st.markdown(f"<div style='margin: {rem}rem 0;'></div>", unsafe_allow_html=True)
+    """Add consistent spacing between sections using design system tokens"""
+    # Convert rem to design system spacing scale
+    spacing_map = {
+        0.5: "var(--space-2, 0.5rem)",
+        1: "var(--space-4, 1rem)", 
+        1.5: "var(--space-6, 1.5rem)",
+        2: "var(--space-8, 2rem)",
+        3: "var(--space-12, 3rem)",
+        4: "var(--space-16, 4rem)"
+    }
+    spacing_value = spacing_map.get(rem, f"{rem}rem")
+    st.markdown(f"<div style='margin: {spacing_value} 0;'></div>", unsafe_allow_html=True)
 
 def create_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame):
     """Create the recent activity section"""
     col1, col2 = create_two_column_layout()
-    
+
     with col1:
         st.markdown("<h4>🎁 תרומות אחרונות</h4>", unsafe_allow_html=True)
         try:
-            recent_donations = donations_df.sort_values('תאריך', ascending=False).head(5)
-            if len(recent_donations) > 0:
-                for _, donation in recent_donations.iterrows():
-                    donation_date = donation['תאריך']
-                    if pd.notna(donation_date):
-                        st.write(f"**{donation['שם']}** - ₪{donation['שקלים']:,.0f} ({donation_date.strftime('%d/%m/%Y')})")
-                    else:
-                        st.write(f"**{donation['שם']}** - ₪{donation['שקלים']:,.0f} (תאריך לא מוגדר)")
+            name_col = 'שם' if 'שם' in donations_df.columns else 'שם התורם' if 'שם התורם' in donations_df.columns else None
+            amount_col = _get_amount_column(donations_df)
+            if name_col and amount_col:
+                recent_donations = donations_df.sort_values('תאריך', ascending=False).head(5)
+                if len(recent_donations) > 0:
+                    for _, donation in recent_donations.iterrows():
+                        donation_date = donation['תאריך']
+                        amount = pd.to_numeric(donation.get(amount_col, 0), errors='coerce')
+                        if pd.isna(amount):
+                            amount = 0
+                        label = donation.get(name_col, '')
+                        if pd.notna(donation_date):
+                            st.write(f"**{label}** - ₪{amount:,.0f} ({donation_date.strftime('%d/%m/%Y')})")
+                        else:
+                            st.write(f"**{label}** - ₪{amount:,.0f} (תאריך לא מוגדר)")
+                else:
+                    st.info("אין תרומות להצגה")
             else:
-                st.info("אין תרומות להצגה")
-        except Exception as e:
+                st.warning("אין נתוני תרומות זמינים")
+        except Exception:
             st.error("שגיאה בטעינת תרומות אחרונות")
-    
+
     with col2:
         st.markdown("<h4>💸 הוצאות אחרונות</h4>", unsafe_allow_html=True)
         try:
-            recent_expenses = expenses_df.sort_values('תאריך', ascending=False).head(5)
-            if len(recent_expenses) > 0:
-                for _, expense in recent_expenses.iterrows():
-                    expense_date = expense['תאריך']
-                    if pd.notna(expense_date):
-                        st.write(f"**{expense['שם']}** - ₪{expense['שקלים']:,.0f} ({expense_date.strftime('%d/%m/%Y')})")
-                    else:
-                        st.write(f"**{expense['שם']}** - ₪{expense['שקלים']:,.0f} (תאריך לא מוגדר)")
+            name_col = 'שם' if 'שם' in expenses_df.columns else 'שם לקוח' if 'שם לקוח' in expenses_df.columns else None
+            amount_col = _get_amount_column(expenses_df)
+            if name_col and amount_col:
+                recent_expenses = expenses_df.sort_values('תאריך', ascending=False).head(5)
+                if len(recent_expenses) > 0:
+                    for _, expense in recent_expenses.iterrows():
+                        expense_date = expense['תאריך']
+                        amount = pd.to_numeric(expense.get(amount_col, 0), errors='coerce')
+                        if pd.isna(amount):
+                            amount = 0
+                        label = expense.get(name_col, '')
+                        if pd.notna(expense_date):
+                            st.write(f"**{label}** - ₪{amount:,.0f} ({expense_date.strftime('%d/%m/%Y')})")
+                        else:
+                            st.write(f"**{label}** - ₪{amount:,.0f} (תאריך לא מוגדר)")
+                else:
+                    st.info("אין הוצאות להצגה")
             else:
-                st.info("אין הוצאות להצגה")
-        except Exception as e:
+                st.warning("אין נתוני הוצאות זמינים")
+        except Exception:
             st.error("שגיאה בטעינת הוצאות אחרונות")
 
 def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame):
@@ -114,14 +181,19 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         if st.button("📊 ייצוא סקירה כללית", use_container_width=True):
             try:
                 # Create summary data
+                donations_amount_col = _get_amount_column(donations_df)
+                expenses_amount_col = _get_amount_column(expenses_df)
+                total_donations = pd.to_numeric(donations_df[donations_amount_col], errors='coerce').fillna(0).sum() if donations_amount_col else 0
+                total_expenses = pd.to_numeric(expenses_df[expenses_amount_col], errors='coerce').fillna(0).sum() if expenses_amount_col else 0
+                donor_name_col = 'שם' if 'שם' in donations_df.columns else 'שם התורם' if 'שם התורם' in donations_df.columns else None
                 summary_data = {
-                    'סך תרומות': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum()],
-                    'סך הוצאות': [pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
-                    'יתרה זמינה': [pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() - pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum()],
-                    'מספר תורמים': [len(donations_df['שם'].unique()) if 'שם' in donations_df.columns else 0],
+                    'סך תרומות': [total_donations],
+                    'סך הוצאות': [total_expenses],
+                    'יתרה זמינה': [total_donations - total_expenses],
+                    'מספר תורמים': [len(donations_df[donor_name_col].unique()) if donor_name_col else 0],
                     'מספר אלמנות': [len(almanot_df['שם '].unique()) if 'שם ' in almanot_df.columns else 0]
                 }
-                
+
                 summary_df = pd.DataFrame(summary_data)
                 csv = summary_df.to_csv(index=False, encoding='utf-8-sig')
                 st.download_button(

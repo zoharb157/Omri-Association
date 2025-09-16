@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: omri-dashboard
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 -m streamlit run dashboard.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: PORT
+        value: 10000
+
+

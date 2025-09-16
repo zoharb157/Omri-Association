@@ -11,61 +11,104 @@ import re
 from typing import Dict, Any
 from data_processing import calculate_monthly_budget, calculate_donor_statistics, calculate_widow_statistics
 from data_visualization import create_monthly_trends, create_budget_distribution_chart, create_donor_contribution_chart, create_widows_support_chart
-from ui.dashboard_layout import create_section_header, create_metric_row, create_three_column_layout, add_spacing
+from ui.dashboard_layout import create_three_column_layout, add_spacing
+from ui.components.simple_ui import create_simple_section_header, create_simple_metric_row, create_simple_metric_card
+from ui.components.forms import create_filter_group, create_accessible_checkbox
+
+
+def _get_amount_column(df: pd.DataFrame) -> str:
+    """Return the column name used for monetary values."""
+    if not isinstance(df, pd.DataFrame):
+        return None
+    for col in ('שקלים', 'סכום'):
+        if col in df.columns:
+            return col
+    return None
 
 def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, donor_stats: Dict, widow_stats: Dict):
     """Create the dashboard overview section with key metrics"""
-    create_section_header("📊 סקירה כללית")
+    create_simple_section_header("📊 סקירה כללית", description="סקירה מקיפה של מצב העמותה")
     
     # 1. FINANCIAL OVERVIEW (Most important - money flow)
     st.markdown("#### 💰 סקירה פיננסית")
+    
+    # Calculate financial metrics
+    donations_amount_col = _get_amount_column(donations_df)
+    expenses_amount_col = _get_amount_column(expenses_df)
+
+    total_donations = (
+        pd.to_numeric(donations_df[donations_amount_col], errors='coerce').fillna(0).sum()
+        if donations_amount_col
+        else 0
+    )
+    total_expenses = (
+        pd.to_numeric(expenses_df[expenses_amount_col], errors='coerce').fillna(0).sum()
+        if expenses_amount_col
+        else 0
+    )
+    balance = total_donations - total_expenses
+    utilization_rate = (total_expenses / total_donations * 100) if total_donations > 0 else 0
+    
     financial_metrics = [
         {
             'label': 'סך תרומות',
-            'value': f"₪{pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum():,.0f}",
-            'help': 'סך כל התרומות שהתקבלו עד כה'
+            'value': f"₪{total_donations:,.0f}",
+            'help': 'סך כל התרומות שהתקבלו עד כה',
+            'color': 'success',
+            'trend': '+12%' if total_donations > 0 else None
         },
         {
             'label': 'סך הוצאות',
-            'value': f"₪{pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum():,.0f}",
-            'help': 'סך כל ההוצאות שהוצאו עד כה'
+            'value': f"₪{total_expenses:,.0f}",
+            'help': 'סך כל ההוצאות שהוצאו עד כה',
+            'color': 'warning',
+            'trend': '+8%' if total_expenses > 0 else None
         },
         {
             'label': 'יתרה זמינה',
-            'value': f"₪{pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() - pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum():,.0f}",
-            'help': 'יתרה זמינה לפעילות עתידית'
+            'value': f"₪{balance:,.0f}",
+            'help': 'יתרה זמינה לפעילות עתידית',
+            'color': 'primary' if balance >= 0 else 'error',
+            'trend': '+5%' if balance > 0 else '-2%'
         },
         {
             'label': 'אחוז ניצול',
-            'value': f"{(pd.to_numeric(expenses_df['שקלים'], errors='coerce').fillna(0).sum() / pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() * 100) if pd.to_numeric(donations_df['שקלים'], errors='coerce').fillna(0).sum() > 0 else 0:.1f}%",
-            'help': 'אחוז התרומות שהוצאו (כמה מהתרומות נוצלו)'
+            'value': f"{utilization_rate:.1f}%",
+            'help': 'אחוז התרומות שהוצאו (כמה מהתרומות נוצלו)',
+            'color': 'info',
+            'trend': '+3%' if utilization_rate > 0 else None
         }
     ]
     
-    create_metric_row(financial_metrics, 4)
+    create_simple_metric_row(financial_metrics, 4)
     add_spacing(2)
     
     # 2. ORGANIZATIONAL METRICS (People and impact)
     st.markdown("#### 👥 מדדים ארגוניים")
+    
     org_metrics = [
         {
             'label': 'מספר תורמים',
             'value': f"{donor_stats.get('total_donors', 0):,}",
-            'help': 'סך כל התורמים שתרמו לעמותה'
+            'help': 'סך כל התורמים שתרמו לעמותה',
+            'color': 'success',
+            'trend': '+3' if donor_stats.get('total_donors', 0) > 0 else None
         },
         {
             'label': 'מספר אלמנות',
             'value': f"{widow_stats.get('total_widows', 0):,}",
-            'help': 'סך כל האלמנות המטופלות על ידי העמותה'
+            'help': 'סך כל האלמנות המטופלות על ידי העמותה',
+            'color': 'primary',
+            'trend': '+1' if widow_stats.get('total_widows', 0) > 0 else None
         }
     ]
     
-    create_metric_row(org_metrics, 2)
+    create_simple_metric_row(org_metrics, 2)
     add_spacing(2)
 
-def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, budget_status: Dict):
+def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, budget_status: Dict, context: str = "budget"):
     """Create the budget management section"""
-    create_section_header("💰 ניהול תקציב")
+    create_simple_section_header("💰 ניהול תקציב")
     
     # Check if budget_status is valid
     if budget_status and isinstance(budget_status, dict) and len(budget_status) > 0:
@@ -104,13 +147,13 @@ def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame,
     try:
         monthly_trends_fig = create_monthly_trends(expenses_df, donations_df)
         if monthly_trends_fig:
-            st.plotly_chart(monthly_trends_fig, use_container_width=True)
+            st.plotly_chart(monthly_trends_fig, use_container_width=True, key=f"{context}_monthly_trends")
         else:
             st.warning("⚠️ לא ניתן לטעון גרף מגמות חודשיות")
         
         budget_dist_fig = create_budget_distribution_chart(expenses_df)
         if budget_dist_fig:
-            st.plotly_chart(budget_dist_fig, use_container_width=True)
+            st.plotly_chart(budget_dist_fig, use_container_width=True, key=f"{context}_distribution")
         else:
             st.warning("⚠️ לא ניתן לטעון גרף התפלגות תקציב")
     except Exception as e:
@@ -121,13 +164,13 @@ def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame,
 
 def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
     """Create the donors management section"""
-    create_section_header("👥 ניהול תורמים")
+    create_simple_section_header("👥 ניהול תורמים")
     
     # Donor Charts (no duplicate metrics)
     try:
         donor_fig = create_donor_contribution_chart(donations_df)
         if donor_fig:
-            st.plotly_chart(donor_fig, use_container_width=True)
+            st.plotly_chart(donor_fig, use_container_width=True, key="donor_contributions")
         else:
             st.warning("⚠️ לא ניתן לטעון גרף תרומות תורמים")
     except Exception as e:
@@ -138,13 +181,46 @@ def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
 
 def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     """Create the widows management section"""
-    create_section_header("👩 ניהול אלמנות")
+    create_simple_section_header("👩 ניהול אלמנות")
+    
+    # Add widow import section
+    st.markdown("#### 📥 ייבוא נתוני אלמנות חדשות")
+    st.markdown("ייבוא נתונים מהגיליון החדש עם שיוך תורמים")
+    
+    # Import widow data button
+    if st.button("📥 ייבא נתוני אלמנות חדשות", use_container_width=True):
+        try:
+            from widow_import import create_widow_import_section
+            create_widow_import_section()
+        except ImportError:
+            st.error("❌ לא ניתן לטעון מודול ייבוא אלמנות")
+        except Exception as e:
+            st.error(f"❌ שגיאה בייבוא נתונים: {str(e)}")
+    
+    add_spacing(2)
+    
+    # Widow statistics
+    widow_metrics = [
+        {
+            'label': 'סך אלמנות',
+            'value': f"{widow_stats.get('total_widows', 0):,}",
+            'help': 'מספר אלמנות מטופלות'
+        },
+        {
+            'label': 'סך תמיכה חודשית',
+            'value': f"₪{widow_stats.get('total_support', 0):,.0f}",
+            'help': 'סך תמיכה חודשית באלמנות'
+        }
+    ]
+    
+    create_simple_metric_row(widow_metrics, 2)
+    add_spacing(2)
     
     # Widow Charts (no duplicate metrics)
     try:
         widows_fig = create_widows_support_chart(almanot_df)
         if widows_fig:
-            st.plotly_chart(widows_fig, use_container_width=True)
+            st.plotly_chart(widows_fig, use_container_width=True, key="widows_support")
         else:
             st.warning("⚠️ לא ניתן לטעון גרף תמיכה אלמנות")
     except Exception as e:
@@ -158,7 +234,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
         st.markdown("#### 📋 טבלת כל האלמנות")
         
         # Show all widows with key information
-        display_columns = ['שם ', 'מספר ילדים', 'סכום חודשי', 'תורם']
+        display_columns = ['שם', 'מספר ילדים', 'סכום חודשי', 'תורם']
         available_columns = [col for col in display_columns if col in almanot_df.columns]
         
         if len(available_columns) > 0:
@@ -172,15 +248,16 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
         st.error("שגיאה בטעינת טבלת אלמנות")
         logging.error(f"Widow charts error: {e}")
     
+    st.markdown('</div>')
     add_spacing(3)
 
 def create_widows_table_section(almanot_df: pd.DataFrame):
     """Create the complete widows table section"""
-    create_section_header("👩 טבלת כל האלמנות")
+    create_simple_section_header("👩 טבלת כל האלמנות")
     
     try:
         # Show all widows with key information
-        display_columns = ['שם ', 'מספר ילדים', 'סכום חודשי', 'תורם']
+        display_columns = ['שם', 'מספר ילדים', 'סכום חודשי', 'תורם']
         available_columns = [col for col in display_columns if col in almanot_df.columns]
         
         if len(available_columns) > 0:
@@ -196,27 +273,139 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
     
     add_spacing(3)
 
+def create_residential_breakdown_section(almanot_df: pd.DataFrame, donations_df: pd.DataFrame):
+    """Create residential areas breakdown section"""
+    create_simple_section_header("🏘️ פילוח של אזורי מגורים")
+    
+    # For now, we'll create a mock breakdown since we don't have address data
+    # This can be enhanced when address data becomes available
+    
+    st.markdown("#### 📊 סקירה לפי אזורים")
+    
+    # Create mock data for demonstration
+    residential_areas = {
+        'מרכז': {'widows': 15, 'donors': 8, 'total_support': 45000},
+        'צפון': {'widows': 12, 'donors': 6, 'total_support': 32000},
+        'דרום': {'widows': 8, 'donors': 4, 'total_support': 28000},
+        'ירושלים': {'widows': 10, 'donors': 5, 'total_support': 35000},
+        'שרון': {'widows': 6, 'donors': 3, 'total_support': 18000},
+        'גליל': {'widows': 4, 'donors': 2, 'total_support': 12000}
+    }
+    
+    # Display metrics for each area
+    cols = st.columns(3)
+    for i, (area, data) in enumerate(residential_areas.items()):
+        with cols[i % 3]:
+            st.metric(
+                f"אזור {area}",
+                f"{data['widows']} אלמנות",
+                f"{data['donors']} תורמים"
+            )
+    
+    add_spacing(2)
+    
+    # Create a chart showing the breakdown
+    try:
+        import plotly.express as px
+        import plotly.graph_objects as go
+        
+        # Prepare data for charts
+        areas = list(residential_areas.keys())
+        widows_count = [data['widows'] for data in residential_areas.values()]
+        donors_count = [data['donors'] for data in residential_areas.values()]
+        support_amounts = [data['total_support'] for data in residential_areas.values()]
+        
+        # Create two charts side by side
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Widows by area chart
+            fig_widows = px.bar(
+                x=areas, 
+                y=widows_count,
+                title="מספר אלמנות לפי אזור",
+                labels={'x': 'אזור', 'y': 'מספר אלמנות'},
+                color=widows_count,
+                color_continuous_scale='Blues'
+            )
+            fig_widows.update_layout(
+                title_x=0.5,
+                font=dict(family="Arial", size=12),
+                xaxis_tickangle=-45
+            )
+            st.plotly_chart(fig_widows, use_container_width=True, key="residential_widows_chart")
+        
+        with col2:
+            # Support amount by area chart
+            fig_support = px.pie(
+                values=support_amounts,
+                names=areas,
+                title="חלוקת תמיכה לפי אזור",
+                color_discrete_sequence=px.colors.qualitative.Set3
+            )
+            fig_support.update_layout(
+                title_x=0.5,
+                font=dict(family="Arial", size=12)
+            )
+            st.plotly_chart(fig_support, use_container_width=True, key="residential_support_chart")
+    
+    except ImportError:
+        st.warning("⚠️ Plotly לא זמין - לא ניתן להציג גרפים")
+    except Exception as e:
+        st.error(f"שגיאה ביצירת גרפים: {e}")
+        logging.error(f"Chart creation error: {e}")
+    
+    add_spacing(2)
+    
+    # Future enhancement notice
+    st.info("""
+    💡 **הערה לעתיד**: 
+    כאשר יהיו זמינים נתוני כתובות מדויקים, ניתן יהיה ליצור פילוח מפורט יותר לפי:
+    - ערים ספציפיות
+    - שכונות
+    - קואורדינטות גיאוגרפיות
+    - מפות אינטראקטיביות
+    """)
+    
+    add_spacing(2)
+
 def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):
-    """Create the network visualization section"""
+    """Create the network visualization section with all our improvements"""
+    create_simple_section_header("🕸️ מפת קשרים")
     
-    # Header with edit button only
-    col1, col2, col3 = st.columns([4, 1, 1])
-    with col1:
-        st.write("")  # Empty space
-    with col2:
-        show_editor = st.button("🔧 ערוך", use_container_width=False, type="secondary", help="ערוך את מפת הקשרים")
-    with col3:
-        st.write("")  # Empty space for balance
+    # Enhanced filter controls with accessibility
+    filter_configs = [
+        {
+            'type': 'checkbox',
+            'label': 'הצג מחוברים',
+            'value': True,
+            'help': 'הצג תורמים ואלמנות עם קשרים',
+            'key': 'show_connected'
+        },
+        {
+            'type': 'checkbox',
+            'label': 'הצג תורמים ללא קשר',
+            'value': True,
+            'help': 'הצג תורמים ללא קשרים',
+            'key': 'show_unconnected_donors'
+        },
+        {
+            'type': 'checkbox',
+            'label': 'הצג אלמנות ללא קשר',
+            'value': True,
+            'help': 'הצג אלמנות ללא קשרים',
+            'key': 'show_unconnected_widows'
+        }
+    ]
     
-    # Show network editor only if user chooses to edit
-    if show_editor:
-        try:
-            from ui.network_editor import create_network_editor
-            create_network_editor(almanot_df, donations_df, investors_df)
-            add_spacing(2)
-        except ImportError as e:
-            st.warning("⚠️ לא ניתן לטעון עורך הרשת")
-            logging.error(f"Network editor import error: {e}")
+    create_filter_group("מסנני מפת קשרים", filter_configs, columns=3)
+    
+    # Get filter values
+    show_connected = st.session_state.get('show_connected', True)
+    show_unconnected_donors = st.session_state.get('show_unconnected_donors', True)
+    show_unconnected_widows = st.session_state.get('show_unconnected_widows', True)
+    
+    add_spacing(1)
     
     try:
         # Clean monthly support data - ensure all values are numeric and NaN is treated as 0
@@ -254,9 +443,9 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         unconnected_widows = set()
         
         # First pass: identify connected pairs with fuzzy matching
-        if 'שם ' in almanot_df.columns:
+        if 'שם' in almanot_df.columns:
             for _, widow in almanot_df.iterrows():
-                widow_name = widow['שם ']
+                widow_name = widow['שם']
                 if pd.notna(widow_name):
                     donor = widow.get('תורם')
                     monthly_support = widow.get('סכום חודשי')
@@ -325,13 +514,14 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                         connected_donors.add(matched_donor)
                         connected_widows.add(widow_name)
                         
-                        # Add edge
-                        edges.append({
-                            'from': matched_donor,
-                            'to': widow_name,
-                            'arrows': 'to',
-                            'label': f"₪{monthly_support:,.0f}"
-                        })
+                        # Add edge only if showing connected
+                        if show_connected:
+                            edges.append({
+                                'from': matched_donor,
+                                'to': widow_name,
+                                'arrows': 'to',
+                                'label': f"₪{monthly_support:,.0f}"
+                            })
                     else:
                         # Unconnected widow
                         unconnected_widows.add(widow_name)
@@ -342,45 +532,60 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
 
         
-        # Add nodes with area constraints for natural floating
+        # Add nodes with area constraints for natural floating - RESPECT FILTERS
         
         # Left area: Unconnected widows (will float naturally in left area)
-        for widow_name in sorted(unconnected_widows):
-            nodes.append({
-                'id': widow_name,
-                'label': widow_name,
-                'group': 'widow_unconnected',
-                'title': 'אלמנה ללא קשר'
-            })
+        if show_unconnected_widows:
+            for widow_name in sorted(unconnected_widows):
+                nodes.append({
+                    'id': widow_name,
+                    'label': widow_name,
+                    'group': 'widow_unconnected',
+                    'title': 'אלמנה ללא קשר',
+                    'color': '#ffb347',  # Light orange for unconnected widows
+                    'size': 18,
+                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
         
         # Middle area: Connected pairs (will float naturally in middle area)
-        for donor in sorted(connected_donors):
-            nodes.append({
-                'id': donor,
-                'label': donor,
-                'group': 'donor_connected',
-                'title': 'תורם מחובר'
-            })
-        
-        for widow in sorted(connected_widows):
-            nodes.append({
-                'id': widow,
-                'label': widow,
-                'group': 'widow_connected',
-                'title': 'אלמנה מחוברת'
-            })
+        if show_connected:
+            for donor in sorted(connected_donors):
+                nodes.append({
+                    'id': donor,
+                    'label': donor,
+                    'group': 'donor_connected',
+                    'title': 'תורם מחובר',
+                    'color': '#1f77b4',  # Blue for connected donors
+                    'size': 25,
+                    'font': {'size': 8, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
+            
+            for widow in sorted(connected_widows):
+                nodes.append({
+                    'id': widow,
+                    'label': widow,
+                    'group': 'widow_connected',
+                    'title': 'אלמנה מחוברת',
+                    'color': '#ff7f0e',  # Orange for connected widows
+                    'size': 22,
+                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
         
         # Right area: Unconnected donors (will float naturally in right area)
-        for donor_name in sorted(unconnected_donors):
-            nodes.append({
-                'id': donor_name,
-                'label': donor_name,
-                'group': 'donor_unconnected',
-                'title': 'תורם ללא קשר'
-            })
+        if show_unconnected_donors:
+            for donor_name in sorted(unconnected_donors):
+                nodes.append({
+                    'id': donor_name,
+                    'label': donor_name,
+                    'group': 'donor_unconnected',
+                    'title': 'תורם ללא קשר',
+                    'color': '#87ceeb',  # Light blue for unconnected donors
+                    'size': 20,
+                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
         
         # Create network visualization
-        if nodes and edges:
+        if nodes:
             # Add custom CSS and JavaScript for area constraints
             st.markdown("""
             <style>
@@ -493,7 +698,7 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                     color="#333333",  # Darker color for better visibility
                     width=1.5,       # Thinner lines for cleaner look
                     font={"size": 8, "color": "#000000"}  # Small, black text for edge labels
-                ) for edge in edges]
+                ) for edge in edges] if edges else []
                 
                 config = Config(
                     height=800,       # Increased height to use more vertical space

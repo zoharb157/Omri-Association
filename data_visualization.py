@@ -89,7 +89,11 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
             logging.error("Data must be DataFrames")
             return None
             
-        if 'תאריך' not in expenses_df.columns or 'שקלים' not in expenses_df.columns or 'תאריך' not in donations_df.columns or 'שקלים' not in donations_df.columns:
+        # Check for required columns with flexible mapping
+        expenses_amount_col = 'סכום' if 'סכום' in expenses_df.columns else 'שקלים'
+        donations_amount_col = 'סכום' if 'סכום' in donations_df.columns else 'שקלים'
+        
+        if 'תאריך' not in expenses_df.columns or expenses_amount_col not in expenses_df.columns or 'תאריך' not in donations_df.columns or donations_amount_col not in donations_df.columns:
             logging.error("Missing required columns")
             return None
             
@@ -107,8 +111,8 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
                 logging.warning("No valid date data to display")
                 return None
                 
-            monthly_expenses = valid_expenses.groupby(valid_expenses['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
-            monthly_donations = valid_donations.groupby(valid_donations['תאריך'].dt.strftime('%Y-%m'))['שקלים'].sum().reset_index()
+            monthly_expenses = valid_expenses.groupby(valid_expenses['תאריך'].dt.strftime('%Y-%m'))[expenses_amount_col].sum().reset_index()
+            monthly_donations = valid_donations.groupby(valid_donations['תאריך'].dt.strftime('%Y-%m'))[donations_amount_col].sum().reset_index()
         except Exception as e:
             logging.error(f"Error processing dates: {str(e)}")
             return None
@@ -119,7 +123,7 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
         # Add expenses line
         fig.add_trace(go.Scatter(
             x=monthly_expenses['תאריך'],
-            y=monthly_expenses['שקלים'],
+            y=monthly_expenses[expenses_amount_col],
             name='הוצאות',
             line=dict(color='red', width=2),
             hovertemplate='חודש: %{x}<br>סכום: %{y:,.0f} ₪<extra></extra>'
@@ -128,7 +132,7 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
         # Add donations line
         fig.add_trace(go.Scatter(
             x=monthly_donations['תאריך'],
-            y=monthly_donations['שקלים'],
+            y=monthly_donations[donations_amount_col],
             name='תרומות',
             line=dict(color='green', width=2),
             hovertemplate='חודש: %{x}<br>סכום: %{y:,.0f} ₪<extra></extra>'
@@ -157,21 +161,43 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
         return None
 
 def create_budget_distribution_chart(df: pd.DataFrame):
-    if not isinstance(df, pd.DataFrame) or 'שם' not in df.columns or 'שקלים' not in df.columns or df.empty:
-        logging.error("Invalid or missing data")
+    if not isinstance(df, pd.DataFrame) or df.empty:
+        logging.error("Invalid or missing data - DataFrame is empty or invalid")
         return None
+    
+    # Map column names to expected names - prioritize mapped names
+    name_col = None
+    amount_col = None
+    
+    # Check for mapped column names first (from google_sheets_io mapping)
+    if 'שם' in df.columns:
+        name_col = 'שם'
+    elif 'שם לקוח' in df.columns:
+        name_col = 'שם לקוח'
+    elif 'שם התורם' in df.columns:
+        name_col = 'שם התורם'
+    
+    if 'שקלים' in df.columns:
+        amount_col = 'שקלים'
+    elif 'סכום' in df.columns:
+        amount_col = 'סכום'
+    
+    if not name_col or not amount_col:
+        logging.error(f"Invalid or missing data - required columns not found. Available: {list(df.columns)}")
+        return None
+    
     try:
         # Group by name and calculate totals
-        budget_data = df.groupby('שם')['שקלים'].sum().reset_index()
+        budget_data = df.groupby(name_col)[amount_col].sum().reset_index()
         
         # Sort by amount
-        budget_data = budget_data.sort_values('שקלים', ascending=False)
+        budget_data = budget_data.sort_values(amount_col, ascending=False)
         
         # Create figure
         fig = px.pie(
             budget_data,
-            values='שקלים',
-            names='שם',
+            values=amount_col,
+            names=name_col,
             title='התפלגות תקציב',
             hole=0.4,
             color_discrete_sequence=px.colors.qualitative.Set3,
@@ -216,15 +242,21 @@ def create_budget_distribution_chart(df: pd.DataFrame):
         
     except Exception as e:
         logging.error(f"Error creating budget distribution chart: {str(e)}")
+        logging.error(f"Error type: {type(e).__name__}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
         return None
 
 def create_widows_support_chart(df: pd.DataFrame):
-    if not isinstance(df, pd.DataFrame) or 'שם ' not in df.columns or 'סכום חודשי' not in df.columns or df.empty:
-        logging.error("Invalid or missing data")
+    # Check for both possible column names
+    name_col = 'שם ' if 'שם ' in df.columns else 'שם'
+    
+    if not isinstance(df, pd.DataFrame) or name_col not in df.columns or 'סכום חודשי' not in df.columns or df.empty:
+        logging.error(f"Invalid or missing data - name_col: {name_col}, available columns: {list(df.columns)}")
         return None
     try:
         # Group by name and calculate totals
-        support_data = df.groupby('שם ')['סכום חודשי'].sum().reset_index()
+        support_data = df.groupby(name_col)['סכום חודשי'].sum().reset_index()
         
         # Sort by amount
         support_data = support_data.sort_values('סכום חודשי', ascending=False)
@@ -232,7 +264,7 @@ def create_widows_support_chart(df: pd.DataFrame):
         # Create figure
         fig = px.bar(
             support_data,
-            x='שם ',
+            x=name_col,
             y='סכום חודשי',
             title='תמיכה באלמנות',
             color='סכום חודשי',
@@ -275,13 +307,28 @@ def create_donor_contribution_chart(donations_df: pd.DataFrame):
         if not isinstance(donations_df, pd.DataFrame):
             logging.error("Data must be DataFrame")
             return None
-            
-        if 'שם' not in donations_df.columns or 'שקלים' not in donations_df.columns:
+        
+        # Map column names to expected names - prioritize mapped names
+        name_col = None
+        amount_col = None
+        
+        # Check for mapped column names first (from google_sheets_io mapping)
+        if 'שם' in donations_df.columns:
+            name_col = 'שם'
+        elif 'שם התורם' in donations_df.columns:
+            name_col = 'שם התורם'
+        
+        if 'שקלים' in donations_df.columns:
+            amount_col = 'שקלים'
+        elif 'סכום' in donations_df.columns:
+            amount_col = 'סכום'
+        
+        if not name_col or not amount_col:
             logging.error("Missing required columns")
             return None
             
         # Calculate total donations by donor
-        donor_totals = donations_df.groupby('שם')['שקלים'].sum().sort_values(ascending=False)
+        donor_totals = donations_df.groupby(name_col)[amount_col].sum().sort_values(ascending=False)
         
         # Create the chart
         fig = go.Figure()

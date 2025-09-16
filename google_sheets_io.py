@@ -14,8 +14,9 @@ SCOPES = [
 # Path to your service account file
 SERVICE_ACCOUNT_FILE = 'service_account.json'
 
-# Spreadsheet ID (replace with your actual spreadsheet ID)
-SPREADSHEET_ID = '1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo'
+# Spreadsheet IDs
+SPREADSHEET_ID = '1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo'  # Main dashboard data
+WIDOW_SPREADSHEET_ID = '1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8'  # New widow data
 
 # Initialize Google Sheets client
 gc = None
@@ -162,84 +163,68 @@ def _map_columns_to_expected(df, sheet_name):
     """Map actual columns from Google Sheets to expected column names"""
     try:
         if sheet_name == "Expenses":
-            # Map the actual columns to expected columns - simplified
             column_mapping = {}
-            
-            # Map based on actual column names from the test
+
             for col in df.columns:
                 col_str = str(col).strip()
                 if col_str == 'NaT':
                     column_mapping[col] = 'תאריך'
-                elif col_str == 'שם לקוח':
+                elif col_str in ('שם לקוח', 'שם ספק'):
                     column_mapping[col] = 'שם'
                 elif col_str == 'סכום':
                     column_mapping[col] = 'שקלים'
-            
+
             df = df.rename(columns=column_mapping)
-            
-            # Add missing columns with empty values
+
             expected_columns = ['תאריך', 'שם', 'שקלים']
             for col in expected_columns:
                 if col not in df.columns:
                     df[col] = ''
-            
-            # Keep only the expected columns
-            df = df[expected_columns]
-            
-            return df
-        
+
+            return df[expected_columns]
+
         elif sheet_name == "Donations":
-            # Similar mapping for donations - simplified
             column_mapping = {}
-            
-            # Map based on actual column names from the test
+
             for col in df.columns:
                 col_str = str(col).strip()
                 if col_str == 'NaT':
                     column_mapping[col] = 'תאריך'
-                elif col_str == 'שם התורם':
+                elif col_str in ('שם התורם', 'שם', 'שם לקוח'):
                     column_mapping[col] = 'שם'
                 elif col_str == 'סכום':
                     column_mapping[col] = 'שקלים'
-            
+
             df = df.rename(columns=column_mapping)
-            
+
             expected_columns = ['תאריך', 'שם', 'שקלים']
             for col in expected_columns:
                 if col not in df.columns:
                     df[col] = ''
-            
-            # Keep only the expected columns
-            df = df[expected_columns]
-            
-            return df
-        
+
+            return df[expected_columns]
+
         elif sheet_name == "Investors":
-            # Similar mapping for investors - simplified
             column_mapping = {}
-            
-            # Map based on actual column names from the test
+
             for col in df.columns:
                 col_str = str(col).strip()
                 if col_str == 'NaT':
                     column_mapping[col] = 'תאריך'
-                elif col_str == 'שם התורם':
+                elif col_str in ('שם התורם', 'שם לקוח', 'שם'):
                     column_mapping[col] = 'שם'
                 elif col_str == 'סכום':
                     column_mapping[col] = 'שקלים'
-            
+
             df = df.rename(columns=column_mapping)
-            
+
             expected_columns = ['תאריך', 'שם', 'שקלים']
             for col in expected_columns:
                 if col not in df.columns:
                     df[col] = ''
-            
-            # Keep only the expected columns
-            df = df[expected_columns]
-            
-            return df
-        
+
+            return df[expected_columns]
+
         elif sheet_name == "Widows":
             # Mapping for widows sheet - simplified mapping based on actual data
             column_mapping = {}
@@ -392,4 +377,121 @@ def write_sheet(sheet_name: str, df: pd.DataFrame) -> None:
         print(f"Data saved successfully to Google Sheets: {sheet_name}")
     except Exception as e:
         print(f"Error writing to Google Sheets: {e}")
-        print("Data could not be saved") 
+        print("Data could not be saved")
+
+def load_all_data():
+    """Load ALL data from ALL sheets in the Google Spreadsheet."""
+    if gc is None:
+        print("Google Sheets not available")
+        return {}
+    
+    try:
+        sh = gc.open_by_key(SPREADSHEET_ID)
+        all_data = {}
+        
+        for ws in sh.worksheets():
+            try:
+                values = ws.get_all_values()
+
+                if not values:
+                    all_data[ws.title] = pd.DataFrame()
+                    continue
+                
+                # For financial sheets (Expenses, Donations, Investors), skip the first 2 rows
+                # Row 0: Title (e.g., "עמרי למען משפחות השכול- הוצאות")
+                # Row 1: Headers (e.g., "תאריך", "שם לקוח", "סכום")
+                # Row 2+: Data
+                if ws.title in ["Expenses", "Donations", "Investors"]:
+                    if len(values) >= 3:
+                        headers = _fix_headers(values[1])  # Use row 1 as headers
+                        data = values[2:]  # Start from row 2
+                    else:
+                        all_data[ws.title] = pd.DataFrame()
+                        continue
+                else:
+                    # For other sheets, use first row as headers
+                    headers = _fix_headers(values[0])
+                    data = values[1:]
+
+                # Create DataFrame
+                df = pd.DataFrame(data, columns=headers)
+                
+                # Clean the data
+                df = df.replace('', pd.NA)
+                
+                # Apply the same column mapping logic as read_sheet()
+                df = _map_columns_to_expected(df, ws.title)
+                
+                # Convert date columns first (before numeric conversion)
+                for col in df.columns:
+                    if any(keyword in str(col).lower() for keyword in ['תאריך', 'date', 'חודש', 'month']):
+                        df[col] = pd.to_datetime(df[col], errors='coerce')
+                
+                # Convert numeric columns (only for amount columns, not date columns)
+                for col in df.columns:
+                    if any(keyword in str(col).lower() for keyword in ['סכום', 'amount', 'שקלים', 'מחיר', 'price']):
+                        # Clean and convert numeric columns
+                        df[col] = df[col].astype(str).str.replace(r'[^\d.,-]', '', regex=True)
+                        df[col] = df[col].str.replace(',', '.')
+                        df[col] = pd.to_numeric(df[col], errors='coerce')
+                        df[col] = df[col].fillna(0)
+                
+                all_data[ws.title] = df
+            except Exception as e:
+                print(f"Error loading sheet '{ws.title}': {e}")
+                all_data[ws.title] = pd.DataFrame()
+        return all_data
+
+    except Exception as e:
+        print(f"Error loading all data: {e}")
+        return {}
+
+
+def read_widow_support_data() -> pd.DataFrame:
+    """Read widow support data from the new widow support spreadsheet."""
+    if gc is None:
+        print("Google Sheets not available - returning empty DataFrame")
+        return pd.DataFrame(columns=[
+            'שם הבחורה', 'כמה ילדים', 'סכום חודשי', 
+            'מתי התחילה לקבל', 'עד מתי תחת תורם', 
+            'כמה מקבלת בכל חודש', 'תורם'
+        ])
+    
+    try:
+        # Open the widow support spreadsheet
+        sh = gc.open_by_key(WIDOW_SPREADSHEET_ID)
+        
+        # Try to find the correct worksheet
+        # The gid parameter suggests it might be a specific worksheet
+        try:
+            # Try "Widows Support" first
+            worksheet = sh.worksheet("Widows Support")
+        except:
+            try:
+                # Try other possible names
+                worksheet = sh.worksheet("Widows")
+            except:
+                try:
+                    worksheet = sh.worksheet("Almanot")
+                except:
+                    # Get the first worksheet if none of the above work
+                    worksheet = sh.sheet1
+        
+        # Get all values
+        values = worksheet.get_all_values()
+        if not values:
+            print("Widow support sheet is empty")
+            return pd.DataFrame()
+        
+        # Convert to DataFrame
+        df = pd.DataFrame(values[1:], columns=values[0])  # First row as headers
+        
+        # Clean the data
+        df = df.replace('', pd.NA)
+        
+        print(f"Widow support data loaded: {len(df)} rows")
+        return df
+        
+    except Exception as e:
+        print(f"Error reading widow support data: {e}")
+        return pd.DataFrame() 

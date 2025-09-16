@@ -8,11 +8,16 @@ import streamlit as st
 import pandas as pd
 import logging
 from typing import Dict, Any, Tuple
-from google_sheets_io import read_sheet, check_service_account_validity
+from google_sheets_io import load_all_data, check_service_account_validity
 from data_processing import calculate_monthly_budget, calculate_donor_statistics, calculate_widow_statistics
 from alerts import check_budget_alerts, check_data_quality_alerts, check_widows_alerts, check_donations_alerts
 from ui.dashboard_layout import create_dashboard_header, create_main_tabs, create_recent_activity_section, create_reports_section, add_spacing
-from ui.dashboard_sections import create_overview_section, create_budget_section, create_donors_section, create_widows_section, create_widows_table_section, create_network_section
+from ui.dashboard_sections import create_overview_section, create_budget_section, create_donors_section, create_widows_section, create_widows_table_section, create_network_section, create_residential_breakdown_section
+from ui.components.headers import create_page_title
+from ui.components.modern_dashboard import create_modern_overview_section, create_modern_charts_section, create_modern_recent_activity_section, create_modern_alerts_section, create_modern_summary_cards
+from ui.components.modern_navigation import create_modern_tab_navigation, create_modern_page_header
+from ui.components.responsive_design import create_responsive_container, create_mobile_navigation, create_touch_friendly_buttons, create_responsive_typography, create_responsive_spacing
+from ui.components.micro_interactions import create_loading_animations, create_hover_effects, create_focus_states, create_transition_animations, create_interactive_feedback
 
 def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load all dashboard data from Google Sheets with enhanced loading states and error handling"""
@@ -32,21 +37,19 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
                 almanot_df is not None and investors_df is not None):
                 return expenses_df, donations_df, almanot_df, investors_df
         
-        # Load fresh data (silent loading)
-        expenses_df = read_sheet("Expenses")
-        if expenses_df is None:
+        # Load fresh data using our improved load_all_data function
+        all_data = load_all_data()
+        
+        if all_data and len(all_data) > 0:
+            expenses_df = all_data.get('Expenses', pd.DataFrame())
+            donations_df = all_data.get('Donations', pd.DataFrame())
+            investors_df = all_data.get('Investors', pd.DataFrame())
+            almanot_df = all_data.get('Widows', all_data.get('Almanot', pd.DataFrame()))
+        else:
+            # Fallback to empty DataFrames
             expenses_df = pd.DataFrame()
-        
-        donations_df = read_sheet("Donations")
-        if donations_df is None:
             donations_df = pd.DataFrame()
-        
-        investors_df = read_sheet("Investors")
-        if investors_df is None:
             investors_df = pd.DataFrame()
-        
-        almanot_df = read_sheet("Widows")
-        if almanot_df is None:
             almanot_df = pd.DataFrame()
         
         # Store in session state
@@ -179,7 +182,7 @@ def render_home_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, alman
     create_recent_activity_section(expenses_df, donations_df)
     
     # 3. BUDGET CHARTS (Visual financial overview)
-    create_budget_section(expenses_df, donations_df, budget_status)
+    create_budget_section(expenses_df, donations_df, budget_status, "home")
     
     # 4. WIDOWS TABLE (Complete list of all widows)
     create_widows_table_section(almanot_df)
@@ -239,19 +242,40 @@ def run_dashboard():
         budget_status, donor_stats, widow_stats = process_dashboard_data(expenses_df, donations_df, almanot_df)
         
         # Create tabs
-        tab1, tab2 = create_main_tabs()
+        tab1, tab2, tab3, tab4, tab5, tab6 = create_main_tabs()
         
         # Render Home Tab
         with tab1:
             render_home_tab(expenses_df, donations_df, almanot_df, budget_status, donor_stats, widow_stats)
         
-        # Render Network Tab
+        # Render Budget Tab
         with tab2:
-            render_network_tab(expenses_df, donations_df, almanot_df, investors_df)
+            create_budget_section(expenses_df, donations_df, budget_status, "budget")
+        
+        # Render Donors Tab
+        with tab3:
+            create_donors_section(donations_df, donor_stats)
+        
+        # Render Widows Tab
+        with tab4:
+            create_widows_section(almanot_df, widow_stats)
+            create_widows_table_section(almanot_df)
+        
+        # Render Network Tab
+        with tab5:
+            create_network_section(expenses_df, donations_df, almanot_df, investors_df)
+        
+        # Render Residential Breakdown Tab
+        with tab6:
+            create_residential_breakdown_section(almanot_df, donations_df)
         
         logging.info("=== DASHBOARD RENDERING COMPLETED ===")
         
     except Exception as e:
-        st.error(f"שגיאה כללית בדשבורד: {e}")
+        error_msg = f"שגיאה כללית בדשבורד: {str(e)}"
+        st.error(error_msg)
         logging.error(f"General dashboard error: {e}")
+        logging.error(f"Error type: {type(e).__name__}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
         st.info("אנא רענן את הדף או פנה לתמיכה")
