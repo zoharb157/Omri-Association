@@ -536,53 +536,53 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
         # Left area: Unconnected widows (will float naturally in left area)
         if show_unconnected_widows:
-        for widow_name in sorted(unconnected_widows):
-            nodes.append({
-                'id': widow_name,
-                'label': widow_name,
-                'group': 'widow_unconnected',
-                'title': 'אלמנה ללא קשר',
-                'color': '#ffb347',  # Light orange for unconnected widows
-                'size': 18,
-                'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
-            })
+            for widow_name in sorted(unconnected_widows):
+                nodes.append({
+                    'id': widow_name,
+                    'label': widow_name,
+                    'group': 'widow_unconnected',
+                    'title': 'אלמנה ללא קשר',
+                    'color': '#ffb347',  # Light orange for unconnected widows
+                    'size': 18,
+                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
         
         # Middle area: Connected pairs (will float naturally in middle area)
         if show_connected:
-        for donor in sorted(connected_donors):
-            nodes.append({
-                'id': donor,
-                'label': donor,
-                'group': 'donor_connected',
-                'title': 'תורם מחובר',
-                'color': '#1f77b4',  # Blue for connected donors
-                'size': 25,
-                'font': {'size': 8, 'color': '#000000', 'face': 'Arial', 'bold': True}
-            })
-        
-        for widow in sorted(connected_widows):
-            nodes.append({
-                'id': widow,
-                'label': widow,
-                'group': 'widow_connected',
-                'title': 'אלמנה מחוברת',
-                'color': '#ff7f0e',  # Orange for connected widows
-                'size': 22,
-                'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
-            })
+            for donor in sorted(connected_donors):
+                nodes.append({
+                    'id': donor,
+                    'label': donor,
+                    'group': 'donor_connected',
+                    'title': 'תורם מחובר',
+                    'color': '#1f77b4',  # Blue for connected donors
+                    'size': 25,
+                    'font': {'size': 8, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
+            
+            for widow in sorted(connected_widows):
+                nodes.append({
+                    'id': widow,
+                    'label': widow,
+                    'group': 'widow_connected',
+                    'title': 'אלמנה מחוברת',
+                    'color': '#ff7f0e',  # Orange for connected widows
+                    'size': 22,
+                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
         
         # Right area: Unconnected donors (will float naturally in right area)
         if show_unconnected_donors:
-        for donor_name in sorted(unconnected_donors):
-            nodes.append({
-                'id': donor_name,
-                'label': donor_name,
-                'group': 'donor_unconnected',
-                'title': 'תורם ללא קשר',
-                'color': '#87ceeb',  # Light blue for unconnected donors
-                'size': 20,
-                'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
-            })
+            for donor_name in sorted(unconnected_donors):
+                nodes.append({
+                    'id': donor_name,
+                    'label': donor_name,
+                    'group': 'donor_unconnected',
+                    'title': 'תורם ללא קשר',
+                    'color': '#87ceeb',  # Light blue for unconnected donors
+                    'size': 20,
+                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+                })
         
         # Create network visualization
         if nodes:
