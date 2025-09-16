@@ -51,28 +51,28 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
     
     financial_metrics = [
         {
-            'label': 'סך תרומות',
+            'title': 'סך תרומות',
             'value': f"₪{total_donations:,.0f}",
             'help': 'סך כל התרומות שהתקבלו עד כה',
             'color': 'success',
             'trend': '+12%' if total_donations > 0 else None
         },
         {
-            'label': 'סך הוצאות',
+            'title': 'סך הוצאות',
             'value': f"₪{total_expenses:,.0f}",
             'help': 'סך כל ההוצאות שהוצאו עד כה',
             'color': 'warning',
             'trend': '+8%' if total_expenses > 0 else None
         },
         {
-            'label': 'יתרה זמינה',
+            'title': 'יתרה זמינה',
             'value': f"₪{balance:,.0f}",
             'help': 'יתרה זמינה לפעילות עתידית',
             'color': 'primary' if balance >= 0 else 'error',
             'trend': '+5%' if balance > 0 else '-2%'
         },
         {
-            'label': 'אחוז ניצול',
+            'title': 'אחוז ניצול',
             'value': f"{utilization_rate:.1f}%",
             'help': 'אחוז התרומות שהוצאו (כמה מהתרומות נוצלו)',
             'color': 'info',
@@ -88,14 +88,14 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
     
     org_metrics = [
         {
-            'label': 'מספר תורמים',
+            'title': 'מספר תורמים',
             'value': f"{donor_stats.get('total_donors', 0):,}",
             'help': 'סך כל התורמים שתרמו לעמותה',
             'color': 'success',
             'trend': '+3' if donor_stats.get('total_donors', 0) > 0 else None
         },
         {
-            'label': 'מספר אלמנות',
+            'title': 'מספר אלמנות',
             'value': f"{widow_stats.get('total_widows', 0):,}",
             'help': 'סך כל האלמנות המטופלות על ידי העמותה',
             'color': 'primary',
