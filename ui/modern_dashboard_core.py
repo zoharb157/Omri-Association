@@ -12,6 +12,7 @@ from google_sheets_io import load_all_data, check_service_account_validity
 from data_processing import calculate_monthly_budget, calculate_donor_statistics, calculate_widow_statistics
 from alerts import check_budget_alerts, check_data_quality_alerts, check_widows_alerts, check_donations_alerts
 from ui.dashboard_sections import create_budget_section, create_donors_section, create_widows_section, create_widows_table_section, create_network_section, create_residential_breakdown_section
+from ui.dashboard_layout import create_reports_section
 from ui.components.headers import create_page_title
 from ui.components.modern_dashboard import create_modern_overview_section, create_modern_charts_section, create_modern_recent_activity_section
 from ui.components.responsive_design import create_responsive_container, create_mobile_navigation, create_touch_friendly_buttons, create_responsive_typography, create_responsive_spacing
@@ -299,6 +300,9 @@ def run_modern_dashboard():
                 create_modern_recent_activity_section(expenses_df, donations_df)
             else:
                 st.info("ℹ️ אין נתונים להצגת פעילות אחרונה")
+            
+            # Reports section - data export and reporting
+            create_reports_section(expenses_df, donations_df, almanot_df)
         
         with tab2:
             create_budget_section(expenses_df, donations_df, budget_status)
