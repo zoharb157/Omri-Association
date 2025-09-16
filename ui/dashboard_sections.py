@@ -202,12 +202,12 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     # Widow statistics
     widow_metrics = [
         {
-            'label': 'סך אלמנות',
+            'title': 'סך אלמנות',
             'value': f"{widow_stats.get('total_widows', 0):,}",
             'help': 'מספר אלמנות מטופלות'
         },
         {
-            'label': 'סך תמיכה חודשית',
+            'title': 'סך תמיכה חודשית',
             'value': f"₪{widow_stats.get('total_support', 0):,.0f}",
             'help': 'סך תמיכה חודשית באלמנות'
         }
