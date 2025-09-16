@@ -272,13 +272,17 @@ def create_metric_card(title: str, value: str, change: str = None,
         {change_icon} {change}
     </div>''' if change else ''
     
+    # Escape HTML in value to prevent raw HTML display
+    import html
+    escaped_value = html.escape(str(value))
+    
     card_html = f"""
     <div class="metric-card-modern">
         <div class="metric-card-header">
             <span class="metric-card-title">{title}</span>
             {icon_html}
         </div>
-        <div class="metric-card-value">{value}</div>
+        <div class="metric-card-value">{escaped_value}</div>
         {change_html}
     </div>
     """

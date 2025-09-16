@@ -183,11 +183,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     """Create the widows management section"""
     create_section_header("👩 ניהול אלמנות", "ניהול ותמיכה באלמנות העמותה")
     
-    # Add widow import section
-    st.markdown("#### 📥 ייבוא נתוני אלמנות חדשות")
-    st.markdown("ייבוא נתונים מהגיליון החדש עם שיוך תורמים")
-    
-    # Import widow data button
+    # Import widow data button (simplified)
     if st.button("📥 ייבא נתוני אלמנות חדשות", use_container_width=True):
         try:
             from widow_import import create_widow_import_section
