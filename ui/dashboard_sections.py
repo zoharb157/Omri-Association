@@ -12,7 +12,7 @@ from typing import Dict, Any
 from data_processing import calculate_monthly_budget, calculate_donor_statistics, calculate_widow_statistics
 from data_visualization import create_monthly_trends, create_budget_distribution_chart, create_donor_contribution_chart, create_widows_support_chart
 from ui.dashboard_layout import create_three_column_layout, add_spacing
-from ui.components.simple_ui import create_simple_section_header, create_simple_metric_row, create_simple_metric_card
+from ui.components.layout_system import create_section_header, create_metric_card, create_metrics_grid
 from ui.components.forms import create_filter_group, create_accessible_checkbox
 
 
@@ -27,7 +27,7 @@ def _get_amount_column(df: pd.DataFrame) -> str:
 
 def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, donor_stats: Dict, widow_stats: Dict):
     """Create the dashboard overview section with key metrics"""
-    create_simple_section_header("📊 סקירה כללית", description="סקירה מקיפה של מצב העמותה")
+    create_section_header("📊 סקירה כללית", "סקירה מקיפה של מצב העמותה")
     
     # 1. FINANCIAL OVERVIEW (Most important - money flow)
     st.markdown("#### 💰 סקירה פיננסית")
@@ -80,7 +80,7 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
         }
     ]
     
-    create_simple_metric_row(financial_metrics, 4)
+    create_metrics_grid(financial_metrics, 4)
     add_spacing(2)
     
     # 2. ORGANIZATIONAL METRICS (People and impact)
@@ -103,12 +103,12 @@ def create_overview_section(expenses_df: pd.DataFrame, donations_df: pd.DataFram
         }
     ]
     
-    create_simple_metric_row(org_metrics, 2)
+    create_metrics_grid(org_metrics, 2)
     add_spacing(2)
 
 def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, budget_status: Dict, context: str = "budget"):
     """Create the budget management section"""
-    create_simple_section_header("💰 ניהול תקציב")
+    create_section_header("💰 ניהול תקציב", "ניהול תקציב חודשי והוצאות")
     
     # Check if budget_status is valid
     if budget_status and isinstance(budget_status, dict) and len(budget_status) > 0:
@@ -164,7 +164,7 @@ def create_budget_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame,
 
 def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
     """Create the donors management section"""
-    create_simple_section_header("👥 ניהול תורמים")
+    create_section_header("👥 ניהול תורמים", "סקירה מקיפה של תורמי העמותה")
     
     # Donor Charts (no duplicate metrics)
     try:
@@ -181,7 +181,7 @@ def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
 
 def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     """Create the widows management section"""
-    create_simple_section_header("👩 ניהול אלמנות")
+    create_section_header("👩 ניהול אלמנות", "ניהול ותמיכה באלמנות העמותה")
     
     # Add widow import section
     st.markdown("#### 📥 ייבוא נתוני אלמנות חדשות")
@@ -213,7 +213,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
         }
     ]
     
-    create_simple_metric_row(widow_metrics, 2)
+    create_metrics_grid(widow_metrics, 2)
     add_spacing(2)
     
     # Widow Charts (no duplicate metrics)
@@ -253,7 +253,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
 
 def create_widows_table_section(almanot_df: pd.DataFrame):
     """Create the complete widows table section"""
-    create_simple_section_header("👩 טבלת כל האלמנות")
+    create_section_header("👩 טבלת כל האלמנות", "רשימה מפורטת של כל האלמנות")
     
     try:
         # Show all widows with key information
@@ -275,7 +275,7 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
 
 def create_residential_breakdown_section(almanot_df: pd.DataFrame, donations_df: pd.DataFrame):
     """Create residential areas breakdown section"""
-    create_simple_section_header("🏘️ פילוח של אזורי מגורים")
+    create_section_header("🏘️ פילוח של אזורי מגורים", "ניתוח גיאוגרפי של תורמים ואלמנות")
     
     # For now, we'll create a mock breakdown since we don't have address data
     # This can be enhanced when address data becomes available
@@ -371,7 +371,7 @@ def create_residential_breakdown_section(almanot_df: pd.DataFrame, donations_df:
 
 def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):
     """Create the network visualization section with all our improvements"""
-    create_simple_section_header("🕸️ מפת קשרים")
+    create_section_header("🕸️ מפת קשרים", "ויזואליזציה של קשרים בין תורמים ואלמנות")
     
     # Enhanced filter controls with accessibility
     filter_configs = [
@@ -536,53 +536,53 @@ def create_network_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         
         # Left area: Unconnected widows (will float naturally in left area)
         if show_unconnected_widows:
-            for widow_name in sorted(unconnected_widows):
-                nodes.append({
-                    'id': widow_name,
-                    'label': widow_name,
-                    'group': 'widow_unconnected',
-                    'title': 'אלמנה ללא קשר',
-                    'color': '#ffb347',  # Light orange for unconnected widows
-                    'size': 18,
-                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
-                })
+        for widow_name in sorted(unconnected_widows):
+            nodes.append({
+                'id': widow_name,
+                'label': widow_name,
+                'group': 'widow_unconnected',
+                'title': 'אלמנה ללא קשר',
+                'color': '#ffb347',  # Light orange for unconnected widows
+                'size': 18,
+                'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+            })
         
         # Middle area: Connected pairs (will float naturally in middle area)
         if show_connected:
-            for donor in sorted(connected_donors):
-                nodes.append({
-                    'id': donor,
-                    'label': donor,
-                    'group': 'donor_connected',
-                    'title': 'תורם מחובר',
-                    'color': '#1f77b4',  # Blue for connected donors
-                    'size': 25,
-                    'font': {'size': 8, 'color': '#000000', 'face': 'Arial', 'bold': True}
-                })
-            
-            for widow in sorted(connected_widows):
-                nodes.append({
-                    'id': widow,
-                    'label': widow,
-                    'group': 'widow_connected',
-                    'title': 'אלמנה מחוברת',
-                    'color': '#ff7f0e',  # Orange for connected widows
-                    'size': 22,
-                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
-                })
+        for donor in sorted(connected_donors):
+            nodes.append({
+                'id': donor,
+                'label': donor,
+                'group': 'donor_connected',
+                'title': 'תורם מחובר',
+                'color': '#1f77b4',  # Blue for connected donors
+                'size': 25,
+                'font': {'size': 8, 'color': '#000000', 'face': 'Arial', 'bold': True}
+            })
+        
+        for widow in sorted(connected_widows):
+            nodes.append({
+                'id': widow,
+                'label': widow,
+                'group': 'widow_connected',
+                'title': 'אלמנה מחוברת',
+                'color': '#ff7f0e',  # Orange for connected widows
+                'size': 22,
+                'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+            })
         
         # Right area: Unconnected donors (will float naturally in right area)
         if show_unconnected_donors:
-            for donor_name in sorted(unconnected_donors):
-                nodes.append({
-                    'id': donor_name,
-                    'label': donor_name,
-                    'group': 'donor_unconnected',
-                    'title': 'תורם ללא קשר',
-                    'color': '#87ceeb',  # Light blue for unconnected donors
-                    'size': 20,
-                    'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
-                })
+        for donor_name in sorted(unconnected_donors):
+            nodes.append({
+                'id': donor_name,
+                'label': donor_name,
+                'group': 'donor_unconnected',
+                'title': 'תורם ללא קשר',
+                'color': '#87ceeb',  # Light blue for unconnected donors
+                'size': 20,
+                'font': {'size': 7, 'color': '#000000', 'face': 'Arial', 'bold': True}
+            })
         
         # Create network visualization
         if nodes:

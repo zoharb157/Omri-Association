@@ -26,8 +26,8 @@ def create_section_header(title: str, icon: str = "", level: int = 3, descriptio
         st.markdown(f"""
         <p style="
             color: {ModernDesignSystem.COLORS['gray_600']};
-            font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']};
-            margin: 0 0 {ModernDesignSystem.SPACING['space_6']} 0;
+            font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
+            margin: 0 0 {ModernDesignSystem.SPACING['6']} 0;
             line-height: 1.5;
         ">
             {description}
@@ -35,7 +35,7 @@ def create_section_header(title: str, icon: str = "", level: int = 3, descriptio
         """, unsafe_allow_html=True)
     else:
         # Add spacing if no description
-        st.markdown(f"<div style='margin-bottom: {ModernDesignSystem.SPACING['space_6']};'></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='margin-bottom: {ModernDesignSystem.SPACING['6']};'></div>", unsafe_allow_html=True)
 
 def create_page_title(title: str, subtitle: str = "", icon: str = ""):
     """Create main page title with optional subtitle"""
@@ -45,23 +45,23 @@ def create_page_title(title: str, subtitle: str = "", icon: str = ""):
         title_html = f"""
         <div class="page-title-container" style="
             text-align: center;
-            margin-bottom: {ModernDesignSystem.SPACING['space_8']};
-            padding: {ModernDesignSystem.SPACING['space_6']} 0;
+            margin-bottom: {ModernDesignSystem.SPACING['8']};
+            padding: {ModernDesignSystem.SPACING['6']} 0;
             background: linear-gradient(135deg, {ModernDesignSystem.COLORS['primary']}, {ModernDesignSystem.COLORS['primary_500']});
             color: white;
-            border-radius: {ModernDesignSystem.BORDER_RADIUS['radius_lg']};
-            box-shadow: {ModernDesignSystem.SHADOWS['shadow_lg']};
+            border-radius: {ModernDesignSystem.BORDER_RADIUS['lg']};
+            box-shadow: {ModernDesignSystem.SHADOWS['lg']};
         ">
             <h1 style="
-                font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']};
+                font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']['size']};
                 font-weight: 700;
-                margin: 0 0 {ModernDesignSystem.SPACING['space_2']} 0;
+                margin: 0 0 {ModernDesignSystem.SPACING['2']} 0;
                 color: white;
             ">
                 {icon_text}{title}
             </h1>
             <p style="
-                font-size: {ModernDesignSystem.TYPOGRAPHY['text_base']};
+                font-size: {ModernDesignSystem.TYPOGRAPHY['text_base']['size']};
                 margin: 0;
                 opacity: 0.9;
             ">
@@ -73,15 +73,15 @@ def create_page_title(title: str, subtitle: str = "", icon: str = ""):
         title_html = f"""
         <div class="page-title-container" style="
             text-align: center;
-            margin-bottom: {ModernDesignSystem.SPACING['space_8']};
-            padding: {ModernDesignSystem.SPACING['space_6']} 0;
+            margin-bottom: {ModernDesignSystem.SPACING['8']};
+            padding: {ModernDesignSystem.SPACING['6']} 0;
             background: linear-gradient(135deg, {ModernDesignSystem.COLORS['primary']}, {ModernDesignSystem.COLORS['primary_500']});
             color: white;
-            border-radius: {ModernDesignSystem.BORDER_RADIUS['radius_lg']};
-            box-shadow: {ModernDesignSystem.SHADOWS['shadow_lg']};
+            border-radius: {ModernDesignSystem.BORDER_RADIUS['lg']};
+            box-shadow: {ModernDesignSystem.SHADOWS['lg']};
         ">
             <h1 style="
-                font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']};
+                font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']['size']};
                 font-weight: 700;
                 margin: 0;
                 color: white;
@@ -100,10 +100,10 @@ def create_subsection_header(title: str, icon: str = ""):
     st.markdown(f"""
     <h4 style="
         color: {ModernDesignSystem.COLORS['gray_900']};
-        font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']};
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']['size']};
         font-weight: 600;
-        margin: {ModernDesignSystem.SPACING['space_6']} 0 {ModernDesignSystem.SPACING['space_4']} 0;
-        padding-left: {ModernDesignSystem.SPACING['space_4']};
+        margin: {ModernDesignSystem.SPACING['6']} 0 {ModernDesignSystem.SPACING['4']} 0;
+        padding-left: {ModernDesignSystem.SPACING['4']};
         border-left: 4px solid {ModernDesignSystem.COLORS['primary']};
     ">
         {icon_text}{title}
