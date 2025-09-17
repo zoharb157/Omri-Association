@@ -43,8 +43,12 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
     """Load all dashboard data from Google Sheets with enhanced loading states and error handling"""
     try:
         # Check if data is already in session state
-        if ('expenses_df' in st.session_state and 'donations_df' in st.session_state and
-            'almanot_df' in st.session_state and 'investors_df' in st.session_state):
+        if (
+            "expenses_df" in st.session_state
+            and "donations_df" in st.session_state
+            and "almanot_df" in st.session_state
+            and "investors_df" in st.session_state
+        ):
 
             # Use cached data
             expenses_df = st.session_state.expenses_df
@@ -53,15 +57,19 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
             investors_df = st.session_state.investors_df
 
             # Validate cached data
-            if (expenses_df is not None and donations_df is not None and
-                almanot_df is not None and investors_df is not None):
+            if (
+                expenses_df is not None
+                and donations_df is not None
+                and almanot_df is not None
+                and investors_df is not None
+            ):
                 return expenses_df, donations_df, almanot_df, investors_df
 
         frames = fetch_dashboard_frames()
-        expenses_df = frames.get('Expenses', pd.DataFrame())
-        donations_df = frames.get('Donations', pd.DataFrame())
-        investors_df = frames.get('Investors', pd.DataFrame())
-        almanot_df = frames.get('Widows', pd.DataFrame())
+        expenses_df = frames.get("Expenses", pd.DataFrame())
+        donations_df = frames.get("Donations", pd.DataFrame())
+        investors_df = frames.get("Investors", pd.DataFrame())
+        almanot_df = frames.get("Widows", pd.DataFrame())
 
         # Store in session state
         st.session_state.expenses_df = expenses_df
@@ -89,26 +97,37 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
 
         return None, None, None, None
 
-def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame) -> Tuple[Dict, Dict, Dict]:
+
+def process_dashboard_data(
+    expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame
+) -> Tuple[Dict, Dict, Dict]:
     """Process dashboard data and calculate statistics with enhanced error handling"""
     try:
         # Fix data types with validation (silent processing)
-        for _df_name, df in [('expenses_df', expenses_df), ('donations_df', donations_df)]:
+        for _df_name, df in [("expenses_df", expenses_df), ("donations_df", donations_df)]:
             if df is not None and not df.empty:
-                if 'שקלים' in df.columns:
-                    df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
-                if 'תאריך' in df.columns:
-                    df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
+                if "שקלים" in df.columns:
+                    df["שקלים"] = pd.to_numeric(df["שקלים"], errors="coerce").fillna(0)
+                if "תאריך" in df.columns:
+                    df["תאריך"] = pd.to_datetime(df["תאריך"], errors="coerce")
 
         if almanot_df is not None and not almanot_df.empty:
-            if 'מספר ילדים' in almanot_df.columns:
-                almanot_df['מספר ילדים'] = pd.to_numeric(almanot_df['מספר ילדים'], errors='coerce').fillna(0)
-            if 'סכום חודשי' in almanot_df.columns:
+            if "מספר ילדים" in almanot_df.columns:
+                almanot_df["מספר ילדים"] = pd.to_numeric(
+                    almanot_df["מספר ילדים"], errors="coerce"
+                ).fillna(0)
+            if "סכום חודשי" in almanot_df.columns:
                 # Clean the data first - remove any non-numeric characters
-                almanot_df['סכום חודשי'] = almanot_df['סכום חודשי'].astype(str).str.replace('₪', '').str.replace(',', '').str.replace(' ', '')
-                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
+                almanot_df["סכום חודשי"] = (
+                    almanot_df["סכום חודשי"]
+                    .astype(str)
+                    .str.replace("₪", "")
+                    .str.replace(",", "")
+                    .str.replace(" ", "")
+                )
+                almanot_df["סכום חודשי"] = pd.to_numeric(almanot_df["סכום חודשי"], errors="coerce")
                 # Only fill NaN with 0, not all values
-                almanot_df['סכום חודשי'] = almanot_df['סכום חודשי'].fillna(0)
+                almanot_df["סכום חודשי"] = almanot_df["סכום חודשי"].fillna(0)
 
         # Calculate statistics (silent processing)
         budget_status = calculate_monthly_budget(expenses_df, donations_df)
@@ -130,22 +149,26 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         st.info("• בדוק פורמט התאריכים")
 
         # Return default values to prevent crashes
-        return {
-            'monthly_donations': {},
-            'monthly_expenses': {},
-            'total_budget': 0,
-            'total_expenses': 0
-        }, {
-            'total_donors': 0,
-            'total_donations': 0,
-            'avg_donation': 0,
-            'max_donation': 0
-        }, {
-            'total_widows': 0,
-            'total_support': 0
-        }
+        return (
+            {
+                "monthly_donations": {},
+                "monthly_expenses": {},
+                "total_budget": 0,
+                "total_expenses": 0,
+            },
+            {"total_donors": 0, "total_donations": 0, "avg_donation": 0, "max_donation": 0},
+            {"total_widows": 0, "total_support": 0},
+        )
 
-def create_alerts_section(budget_status: Dict, expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, donor_stats: Dict, widow_stats: Dict):
+
+def create_alerts_section(
+    budget_status: Dict,
+    expenses_df: pd.DataFrame,
+    donations_df: pd.DataFrame,
+    almanot_df: pd.DataFrame,
+    donor_stats: Dict,
+    widow_stats: Dict,
+):
     """Create the alerts section"""
     try:
         all_alerts = []
@@ -186,8 +209,15 @@ def create_alerts_section(budget_status: Dict, expenses_df: pd.DataFrame, donati
     else:
         st.success("✅ אין התראות פעילות")
 
-def render_home_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame,
-                   budget_status: Dict, donor_stats: Dict, widow_stats: Dict):
+
+def render_home_tab(
+    expenses_df: pd.DataFrame,
+    donations_df: pd.DataFrame,
+    almanot_df: pd.DataFrame,
+    budget_status: Dict,
+    donor_stats: Dict,
+    widow_stats: Dict,
+):
     """Render the home tab content - clean and focused"""
 
     # 1. OVERVIEW & KEY METRICS (Executive summary - most important numbers)
@@ -199,15 +229,22 @@ def render_home_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, alman
     # 3. BUDGET CHARTS (Visual financial overview)
     create_budget_section(expenses_df, donations_df, budget_status, "home")
 
-
     # 5. REPORTS & EXPORTS (Data access - for analysis and record keeping)
     create_reports_section(expenses_df, donations_df, almanot_df)
 
-def render_network_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame, investors_df: pd.DataFrame):
+
+def render_network_tab(
+    expenses_df: pd.DataFrame,
+    donations_df: pd.DataFrame,
+    almanot_df: pd.DataFrame,
+    investors_df: pd.DataFrame,
+):
     """Render the network tab content"""
     create_network_section(expenses_df, donations_df, almanot_df, investors_df)
 
+
 # Removed unused tab render functions for cleaner code
+
 
 def run_dashboard():
     """Main dashboard execution function with authentication"""
@@ -217,6 +254,7 @@ def run_dashboard():
         # Check authentication if enabled
         try:
             from auth import check_auth_and_redirect, is_authenticated, show_user_info
+
             if not check_auth_and_redirect():
                 return  # User not authenticated, login form shown
         except ImportError:
@@ -226,6 +264,7 @@ def run_dashboard():
         # Apply current theme
         try:
             from theme_manager import apply_current_theme
+
             apply_current_theme()
         except ImportError:
             pass  # Theme manager not available
@@ -247,19 +286,28 @@ def run_dashboard():
 
         # Load data
         expenses_df, donations_df, almanot_df, investors_df = load_dashboard_data()
-        if expenses_df is None or donations_df is None or almanot_df is None or investors_df is None:
+        if (
+            expenses_df is None
+            or donations_df is None
+            or almanot_df is None
+            or investors_df is None
+        ):
             st.error("לא ניתן לטעון נתונים. אנא בדוק את חיבור Google Sheets")
             return
 
         # Process data
-        budget_status, donor_stats, widow_stats = process_dashboard_data(expenses_df, donations_df, almanot_df)
+        budget_status, donor_stats, widow_stats = process_dashboard_data(
+            expenses_df, donations_df, almanot_df
+        )
 
         # Create tabs
         tab1, tab2, tab3, tab4, tab5, tab6 = create_main_tabs()
 
         # Render Home Tab
         with tab1:
-            render_home_tab(expenses_df, donations_df, almanot_df, budget_status, donor_stats, widow_stats)
+            render_home_tab(
+                expenses_df, donations_df, almanot_df, budget_status, donor_stats, widow_stats
+            )
 
         # Render Budget Tab
         with tab2:
@@ -289,5 +337,6 @@ def run_dashboard():
         logging.error(f"General dashboard error: {e}")
         logging.error(f"Error type: {type(e).__name__}")
         import traceback
+
         logging.error(f"Traceback: {traceback.format_exc()}")
         st.info("אנא רענן את הדף או פנה לתמיכה")

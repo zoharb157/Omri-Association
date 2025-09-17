@@ -14,61 +14,61 @@ class ThemeManager:
 
     def __init__(self):
         self.themes = {
-            'light': {
-                'name': 'אור',
-                'primary_color': '#1f77b4',
-                'background_color': '#ffffff',
-                'secondary_background_color': '#f0f2f6',
-                'text_color': '#000000',
-                'accent_color': '#ff6b6b',
-                'success_color': '#28a745',
-                'warning_color': '#ffc107',
-                'error_color': '#dc3545',
-                'info_color': '#17a2b8'
+            "light": {
+                "name": "אור",
+                "primary_color": "#1f77b4",
+                "background_color": "#ffffff",
+                "secondary_background_color": "#f0f2f6",
+                "text_color": "#000000",
+                "accent_color": "#ff6b6b",
+                "success_color": "#28a745",
+                "warning_color": "#ffc107",
+                "error_color": "#dc3545",
+                "info_color": "#17a2b8",
             },
-            'dark': {
-                'name': 'כהה',
-                'primary_color': '#4da6ff',
-                'background_color': '#0e1117',
-                'secondary_background_color': '#262730',
-                'text_color': '#fafafa',
-                'accent_color': '#ff8e8e',
-                'success_color': '#4ade80',
-                'warning_color': '#fbbf24',
-                'error_color': '#f87171',
-                'info_color': '#60a5fa'
+            "dark": {
+                "name": "כהה",
+                "primary_color": "#4da6ff",
+                "background_color": "#0e1117",
+                "secondary_background_color": "#262730",
+                "text_color": "#fafafa",
+                "accent_color": "#ff8e8e",
+                "success_color": "#4ade80",
+                "warning_color": "#fbbf24",
+                "error_color": "#f87171",
+                "info_color": "#60a5fa",
             },
-            'blue': {
-                'name': 'כחול',
-                'primary_color': '#1e40af',
-                'background_color': '#eff6ff',
-                'secondary_background_color': '#dbeafe',
-                'text_color': '#1e293b',
-                'accent_color': '#3b82f6',
-                'success_color': '#059669',
-                'warning_color': '#d97706',
-                'error_color': '#dc2626',
-                'info_color': '#0891b2'
-            }
+            "blue": {
+                "name": "כחול",
+                "primary_color": "#1e40af",
+                "background_color": "#eff6ff",
+                "secondary_background_color": "#dbeafe",
+                "text_color": "#1e293b",
+                "accent_color": "#3b82f6",
+                "success_color": "#059669",
+                "warning_color": "#d97706",
+                "error_color": "#dc2626",
+                "info_color": "#0891b2",
+            },
         }
 
     def get_current_theme(self) -> str:
         """Get current theme name"""
-        return get_setting('ENABLE_DARK_MODE', False) and 'dark' or 'light'
+        return get_setting("ENABLE_DARK_MODE", False) and "dark" or "light"
 
     def get_theme_colors(self, theme_name: str = None) -> dict:
         """Get colors for specified theme"""
         if theme_name is None:
             theme_name = self.get_current_theme()
 
-        return self.themes.get(theme_name, self.themes['light'])
+        return self.themes.get(theme_name, self.themes["light"])
 
     def switch_theme(self, theme_name: str):
         """Switch to specified theme"""
-        if theme_name == 'dark':
-            set_setting('ENABLE_DARK_MODE', True)
+        if theme_name == "dark":
+            set_setting("ENABLE_DARK_MODE", True)
         else:
-            set_setting('ENABLE_DARK_MODE', False)
+            set_setting("ENABLE_DARK_MODE", False)
 
     def apply_theme_css(self):
         """Apply theme CSS to Streamlit"""
@@ -247,26 +247,32 @@ class ThemeManager:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.button("☀️ עיצוב בהיר",
-                        use_container_width=True,
-                        type="primary" if current_theme == 'light' else "secondary"):
-                self.switch_theme('light')
+            if st.button(
+                "☀️ עיצוב בהיר",
+                use_container_width=True,
+                type="primary" if current_theme == "light" else "secondary",
+            ):
+                self.switch_theme("light")
                 st.success("✅ עוצב בהיר הופעל")
                 st.rerun()
 
         with col2:
-            if st.button("🌙 עיצוב כהה",
-                        use_container_width=True,
-                        type="primary" if current_theme == 'dark' else "secondary"):
-                self.switch_theme('dark')
+            if st.button(
+                "🌙 עיצוב כהה",
+                use_container_width=True,
+                type="primary" if current_theme == "dark" else "secondary",
+            ):
+                self.switch_theme("dark")
                 st.success("✅ עיצוב כהה הופעל")
                 st.rerun()
 
         with col3:
-            if st.button("🔵 עיצוב כחול",
-                        use_container_width=True,
-                        type="primary" if current_theme == 'blue' else "secondary"):
-                self.switch_theme('blue')
+            if st.button(
+                "🔵 עיצוב כחול",
+                use_container_width=True,
+                type="primary" if current_theme == "blue" else "secondary",
+            ):
+                self.switch_theme("blue")
                 st.success("✅ עיצוב כחול הופעל")
                 st.rerun()
 
@@ -280,7 +286,8 @@ class ThemeManager:
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div style="
                 background-color: {theme_colors['primary_color']};
                 color: white;
@@ -290,10 +297,13 @@ class ThemeManager:
             ">
                 צבע ראשי
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         with col2:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div style="
                 background-color: {theme_colors['success_color']};
                 color: white;
@@ -303,10 +313,13 @@ class ThemeManager:
             ">
                 צבע הצלחה
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         with col3:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div style="
                 background-color: {theme_colors['warning_color']};
                 color: white;
@@ -316,10 +329,13 @@ class ThemeManager:
             ">
                 צבע אזהרה
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         with col4:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div style="
                 background-color: {theme_colors['error_color']};
                 color: white;
@@ -329,22 +345,29 @@ class ThemeManager:
             ">
                 צבע שגיאה
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
+
 
 # Global theme manager instance
 theme_manager = ThemeManager()
+
 
 def get_theme_manager() -> ThemeManager:
     """Get global theme manager instance"""
     return theme_manager
 
+
 def apply_current_theme():
     """Apply current theme to Streamlit"""
     theme_manager.apply_theme_css()
 
+
 def show_theme_selector():
     """Show theme selection UI"""
     theme_manager.show_theme_selector()
+
 
 def get_current_theme_colors() -> dict:
     """Get current theme colors"""

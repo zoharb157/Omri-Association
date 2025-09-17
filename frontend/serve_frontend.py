@@ -10,13 +10,15 @@ import webbrowser
 
 PORT = 3000
 
+
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         # Add CORS headers
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         super().end_headers()
+
 
 def start_server():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -29,9 +31,10 @@ def start_server():
         print("✅ Connected to Python FastAPI backend")
 
         # Open browser automatically
-        webbrowser.open(f'http://localhost:{PORT}')
+        webbrowser.open(f"http://localhost:{PORT}")
 
         httpd.serve_forever()
+
 
 if __name__ == "__main__":
     start_server()

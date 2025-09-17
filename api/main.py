@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Omri Association API",
     description="REST API for Omri Association Dashboard",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Add CORS middleware for frontend access
@@ -46,6 +46,7 @@ app.add_middleware(
 data_cache = {}
 cache_timestamp = None
 CACHE_DURATION = 300  # 5 minutes
+
 
 def get_cached_data():
     """Get data from cache or load fresh data"""
@@ -76,14 +77,14 @@ def get_cached_data():
 
         # Cache the data
         data_cache = {
-            "expenses": expenses_df.to_dict('records') if expenses_df is not None else [],
-            "donations": donations_df.to_dict('records') if donations_df is not None else [],
-            "almanot": almanot_df.to_dict('records') if almanot_df is not None else [],
-            "investors": investors_df.to_dict('records') if investors_df is not None else [],
+            "expenses": expenses_df.to_dict("records") if expenses_df is not None else [],
+            "donations": donations_df.to_dict("records") if donations_df is not None else [],
+            "almanot": almanot_df.to_dict("records") if almanot_df is not None else [],
+            "investors": investors_df.to_dict("records") if investors_df is not None else [],
             "budget_status": budget_status,
             "donor_stats": donor_stats,
             "widow_stats": widow_stats,
-            "network_data": network_data
+            "network_data": network_data,
         }
 
         cache_timestamp = current_time
@@ -95,10 +96,12 @@ def get_cached_data():
         logger.error(f"Error loading data: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to load data: {str(e)}") from e
 
+
 @app.get("/")
 async def root():
     """Health check endpoint"""
     return {"message": "Omri Association API is running", "status": "healthy"}
+
 
 @app.get("/api/health")
 async def health_check():
@@ -113,14 +116,12 @@ async def health_check():
                 "expenses": len(data.get("expenses", [])),
                 "donations": len(data.get("donations", [])),
                 "almanot": len(data.get("almanot", [])),
-                "investors": len(data.get("investors", []))
-            }
+                "investors": len(data.get("investors", [])),
+            },
         }
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)
-        }
+        return {"status": "unhealthy", "error": str(e)}
+
 
 @app.get("/api/dashboard/overview")
 async def get_dashboard_overview():
@@ -130,11 +131,12 @@ async def get_dashboard_overview():
         return {
             "budget_status": data["budget_status"],
             "donor_stats": data["donor_stats"],
-            "widow_stats": data["widow_stats"]
+            "widow_stats": data["widow_stats"],
         }
     except Exception as e:
         logger.error(f"Error getting dashboard overview: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 @app.get("/api/data/expenses")
 async def get_expenses():
@@ -146,6 +148,7 @@ async def get_expenses():
         logger.error(f"Error getting expenses: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 @app.get("/api/data/donations")
 async def get_donations():
     """Get donations data"""
@@ -155,6 +158,7 @@ async def get_donations():
     except Exception as e:
         logger.error(f"Error getting donations: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 @app.get("/api/data/almanot")
 async def get_almanot():
@@ -166,6 +170,7 @@ async def get_almanot():
         logger.error(f"Error getting almanot: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 @app.get("/api/data/investors")
 async def get_investors():
     """Get investors data"""
@@ -175,6 +180,7 @@ async def get_investors():
     except Exception as e:
         logger.error(f"Error getting investors: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 @app.get("/api/network")
 async def get_network_data():
@@ -186,6 +192,7 @@ async def get_network_data():
         logger.error(f"Error getting network data: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 @app.get("/api/reports/monthly")
 async def get_monthly_report():
     """Get monthly report data"""
@@ -196,13 +203,15 @@ async def get_monthly_report():
             "monthly_data": {
                 "expenses": data["expenses"],
                 "donations": data["donations"],
-                "summary": data["budget_status"]
+                "summary": data["budget_status"],
             }
         }
     except Exception as e:
         logger.error(f"Error getting monthly report: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

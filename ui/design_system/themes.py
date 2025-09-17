@@ -21,97 +21,97 @@ class ThemeManager:
     def get_light_theme(self) -> Dict[str, Any]:
         """Get light theme configuration"""
         return {
-            'name': 'light',
-            'colors': {
-                'primary': self.colors.PRIMARY_BLUE,
-                'primary_light': self.colors.PRIMARY_BLUE_LIGHT,
-                'primary_dark': self.colors.PRIMARY_BLUE_DARK,
-                'secondary': self.colors.SECONDARY_GRAY,
-                'secondary_light': self.colors.SECONDARY_GRAY_LIGHT,
-                'secondary_dark': self.colors.SECONDARY_GRAY_DARK,
-                'background': self.colors.WHITE,
-                'surface': self.colors.GRAY_50,
-                'surface_variant': self.colors.GRAY_100,
-                'text_primary': self.colors.GRAY_900,
-                'text_secondary': self.colors.GRAY_600,
-                'text_disabled': self.colors.GRAY_400,
-                'border': self.colors.GRAY_200,
-                'border_light': self.colors.GRAY_100,
-                'success': self.colors.SUCCESS,
-                'warning': self.colors.WARNING,
-                'error': self.colors.ERROR,
-                'info': self.colors.INFO,
+            "name": "light",
+            "colors": {
+                "primary": self.colors.PRIMARY_BLUE,
+                "primary_light": self.colors.PRIMARY_BLUE_LIGHT,
+                "primary_dark": self.colors.PRIMARY_BLUE_DARK,
+                "secondary": self.colors.SECONDARY_GRAY,
+                "secondary_light": self.colors.SECONDARY_GRAY_LIGHT,
+                "secondary_dark": self.colors.SECONDARY_GRAY_DARK,
+                "background": self.colors.WHITE,
+                "surface": self.colors.GRAY_50,
+                "surface_variant": self.colors.GRAY_100,
+                "text_primary": self.colors.GRAY_900,
+                "text_secondary": self.colors.GRAY_600,
+                "text_disabled": self.colors.GRAY_400,
+                "border": self.colors.GRAY_200,
+                "border_light": self.colors.GRAY_100,
+                "success": self.colors.SUCCESS,
+                "warning": self.colors.WARNING,
+                "error": self.colors.ERROR,
+                "info": self.colors.INFO,
             },
-            'typography': self.typography.get_text_styles(),
-            'spacing': self.spacing.get_spacing_scale(),
+            "typography": self.typography.get_text_styles(),
+            "spacing": self.spacing.get_spacing_scale(),
         }
 
     def get_dark_theme(self) -> Dict[str, Any]:
         """Get dark theme configuration"""
         return {
-            'name': 'dark',
-            'colors': {
-                'primary': self.colors.PRIMARY_BLUE_LIGHT,
-                'primary_light': self.colors.PRIMARY_BLUE,
-                'primary_dark': self.colors.PRIMARY_BLUE_DARK,
-                'secondary': self.colors.SECONDARY_GRAY_LIGHT,
-                'secondary_light': self.colors.SECONDARY_GRAY,
-                'secondary_dark': self.colors.SECONDARY_GRAY_DARK,
-                'background': self.colors.GRAY_900,
-                'surface': self.colors.GRAY_800,
-                'surface_variant': self.colors.GRAY_700,
-                'text_primary': self.colors.WHITE,
-                'text_secondary': self.colors.GRAY_300,
-                'text_disabled': self.colors.GRAY_500,
-                'border': self.colors.GRAY_600,
-                'border_light': self.colors.GRAY_700,
-                'success': self.colors.SUCCESS,
-                'warning': self.colors.WARNING,
-                'error': self.colors.ERROR,
-                'info': self.colors.INFO,
+            "name": "dark",
+            "colors": {
+                "primary": self.colors.PRIMARY_BLUE_LIGHT,
+                "primary_light": self.colors.PRIMARY_BLUE,
+                "primary_dark": self.colors.PRIMARY_BLUE_DARK,
+                "secondary": self.colors.SECONDARY_GRAY_LIGHT,
+                "secondary_light": self.colors.SECONDARY_GRAY,
+                "secondary_dark": self.colors.SECONDARY_GRAY_DARK,
+                "background": self.colors.GRAY_900,
+                "surface": self.colors.GRAY_800,
+                "surface_variant": self.colors.GRAY_700,
+                "text_primary": self.colors.WHITE,
+                "text_secondary": self.colors.GRAY_300,
+                "text_disabled": self.colors.GRAY_500,
+                "border": self.colors.GRAY_600,
+                "border_light": self.colors.GRAY_700,
+                "success": self.colors.SUCCESS,
+                "warning": self.colors.WARNING,
+                "error": self.colors.ERROR,
+                "info": self.colors.INFO,
             },
-            'typography': self.typography.get_text_styles(),
-            'spacing': self.spacing.get_spacing_scale(),
+            "typography": self.typography.get_text_styles(),
+            "spacing": self.spacing.get_spacing_scale(),
         }
 
     def get_blue_theme(self) -> Dict[str, Any]:
         """Get blue theme configuration"""
         return {
-            'name': 'blue',
-            'colors': {
-                'primary': self.colors.PRIMARY_BLUE_DARK,
-                'primary_light': self.colors.PRIMARY_BLUE,
-                'primary_dark': self.colors.GRAY_800,
-                'secondary': self.colors.SECONDARY_GRAY,
-                'secondary_light': self.colors.SECONDARY_GRAY_LIGHT,
-                'secondary_dark': self.colors.SECONDARY_GRAY_DARK,
-                'background': self.colors.GRAY_50,
-                'surface': self.colors.WHITE,
-                'surface_variant': self.colors.GRAY_100,
-                'text_primary': self.colors.GRAY_800,
-                'text_secondary': self.colors.GRAY_600,
-                'text_disabled': self.colors.GRAY_400,
-                'border': self.colors.GRAY_200,
-                'border_light': self.colors.GRAY_100,
-                'success': self.colors.SUCCESS,
-                'warning': self.colors.WARNING,
-                'error': self.colors.ERROR,
-                'info': self.colors.INFO,
+            "name": "blue",
+            "colors": {
+                "primary": self.colors.PRIMARY_BLUE_DARK,
+                "primary_light": self.colors.PRIMARY_BLUE,
+                "primary_dark": self.colors.GRAY_800,
+                "secondary": self.colors.SECONDARY_GRAY,
+                "secondary_light": self.colors.SECONDARY_GRAY_LIGHT,
+                "secondary_dark": self.colors.SECONDARY_GRAY_DARK,
+                "background": self.colors.GRAY_50,
+                "surface": self.colors.WHITE,
+                "surface_variant": self.colors.GRAY_100,
+                "text_primary": self.colors.GRAY_800,
+                "text_secondary": self.colors.GRAY_600,
+                "text_disabled": self.colors.GRAY_400,
+                "border": self.colors.GRAY_200,
+                "border_light": self.colors.GRAY_100,
+                "success": self.colors.SUCCESS,
+                "warning": self.colors.WARNING,
+                "error": self.colors.ERROR,
+                "info": self.colors.INFO,
             },
-            'typography': self.typography.get_text_styles(),
-            'spacing': self.spacing.get_spacing_scale(),
+            "typography": self.typography.get_text_styles(),
+            "spacing": self.spacing.get_spacing_scale(),
         }
 
-    def get_theme_css(self, theme_name: str = 'light') -> str:
+    def get_theme_css(self, theme_name: str = "light") -> str:
         """Generate CSS for specified theme"""
-        if theme_name == 'dark':
+        if theme_name == "dark":
             theme = self.get_dark_theme()
-        elif theme_name == 'blue':
+        elif theme_name == "blue":
             theme = self.get_blue_theme()
         else:
             theme = self.get_light_theme()
 
-        colors = theme['colors']
+        colors = theme["colors"]
 
         return f"""
         <style>

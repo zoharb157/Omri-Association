@@ -10,22 +10,21 @@ import streamlit as st
 def show_success_message(message):
     """Show a success message that auto-dismisses after 3 seconds"""
     # Store message in session state with timestamp
-    st.session_state.success_message = {
-        'text': message,
-        'timestamp': datetime.now()
-    }
+    st.session_state.success_message = {"text": message, "timestamp": datetime.now()}
+
 
 def display_success_messages():
     """Display and auto-dismiss success messages"""
-    if 'success_message' in st.session_state:
+    if "success_message" in st.session_state:
         message_data = st.session_state.success_message
-        elapsed = (datetime.now() - message_data['timestamp']).total_seconds()
+        elapsed = (datetime.now() - message_data["timestamp"]).total_seconds()
 
         if elapsed < 3:
             st.success(f"✅ {message_data['text']}")
         else:
             # Remove message after 3 seconds
             del st.session_state.success_message
+
 
 def get_custom_css():
     """Return custom CSS for the dashboard"""
@@ -245,13 +244,14 @@ def get_custom_css():
     </style>
     """
 
+
 def setup_page_config():
     """Setup Streamlit page configuration"""
     st.set_page_config(
         page_title="מערכת ניהול עמותת עמרי",
         page_icon="🏢",
         layout="wide",
-        initial_sidebar_state="expanded"
+        initial_sidebar_state="expanded",
     )
 
     # Apply custom CSS

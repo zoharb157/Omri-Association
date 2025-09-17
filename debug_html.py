@@ -6,22 +6,21 @@ Debug HTML rendering issue
 import streamlit as st
 
 # Set page config
-st.set_page_config(
-    page_title="Debug HTML",
-    page_icon="🐛",
-    layout="wide"
-)
+st.set_page_config(page_title="Debug HTML", page_icon="🐛", layout="wide")
 
 st.title("🐛 HTML Rendering Debug")
 
 # Test 1: Simple HTML
 st.subheader("Test 1: Simple HTML")
-st.markdown("""
+st.markdown(
+    """
 <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; text-align: center;">
     <h3>Simple HTML Test</h3>
     <p>This should be rendered as HTML.</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Test 2: Complex HTML (like our metric card)
 st.subheader("Test 2: Complex HTML")
@@ -74,6 +73,7 @@ st.markdown(complex_html, unsafe_allow_html=True)
 st.subheader("Test 3: Using create_metric_card function")
 try:
     from ui.components.metrics import create_metric_card
+
     card_html = create_metric_card("Test Label", "Test Value", "Test Help", "+5%", "primary")
     st.markdown("Raw HTML:")
     st.code(card_html)
@@ -85,6 +85,3 @@ except Exception as e:
 # Test 4: Check if it's a Streamlit version issue
 st.subheader("Test 4: Streamlit Info")
 st.info(f"Streamlit version: {st.__version__}")
-
-
-

@@ -17,7 +17,7 @@ def create_modern_tab_navigation():
         {"label": "👥 תורמים", "key": "donors"},
         {"label": "👩 אלמנות", "key": "widows"},
         {"label": "🕸️ מפת קשרים", "key": "network"},
-        {"label": "🏘️ אזורי מגורים", "key": "residential"}
+        {"label": "🏘️ אזורי מגורים", "key": "residential"},
     ]
 
     # Create custom tab navigation
@@ -111,6 +111,7 @@ def create_modern_tab_navigation():
     """
 
     st.markdown(tab_css, unsafe_allow_html=True)
+
 
 def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
     """Create modern breadcrumb navigation"""
@@ -207,6 +208,7 @@ def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
     """
 
     st.markdown(breadcrumb_css, unsafe_allow_html=True)
+
 
 def create_modern_page_header(title: str, subtitle: str = None, actions: list = None):
     """Create modern page header with actions"""
@@ -306,6 +308,7 @@ def create_modern_page_header(title: str, subtitle: str = None, actions: list = 
     """
 
     st.markdown(header_css, unsafe_allow_html=True)
+
 
 def create_modern_sidebar_navigation():
     """Create modern sidebar navigation"""
@@ -576,6 +579,3 @@ def create_modern_sidebar_navigation():
     """
 
     st.markdown(sidebar_css, unsafe_allow_html=True)
-
-
-

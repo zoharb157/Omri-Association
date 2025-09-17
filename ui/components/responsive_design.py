@@ -42,31 +42,16 @@ def create_responsive_container():
 
     st.markdown(container_css, unsafe_allow_html=True)
 
+
 def create_responsive_grid(items: list, columns: int = 4, gap: str = "md"):
     """Create a responsive grid that adapts to screen size"""
 
     # Define responsive column configurations
     responsive_configs = {
-        4: {
-            'mobile': 1,
-            'tablet': 2,
-            'desktop': 4
-        },
-        3: {
-            'mobile': 1,
-            'tablet': 2,
-            'desktop': 3
-        },
-        2: {
-            'mobile': 1,
-            'tablet': 2,
-            'desktop': 2
-        },
-        1: {
-            'mobile': 1,
-            'tablet': 1,
-            'desktop': 1
-        }
+        4: {"mobile": 1, "tablet": 2, "desktop": 4},
+        3: {"mobile": 1, "tablet": 2, "desktop": 3},
+        2: {"mobile": 1, "tablet": 2, "desktop": 2},
+        1: {"mobile": 1, "tablet": 1, "desktop": 1},
     }
 
     config = responsive_configs.get(columns, {1: 1, 2: 2, 4: 4})
@@ -99,6 +84,7 @@ def create_responsive_grid(items: list, columns: int = 4, gap: str = "md"):
     # Create the grid using Streamlit columns
     cols = st.columns(columns)
     return cols
+
 
 def create_mobile_navigation():
     """Create mobile-optimized navigation"""
@@ -293,6 +279,7 @@ def create_mobile_navigation():
 
     st.markdown(mobile_nav_css, unsafe_allow_html=True)
 
+
 def create_touch_friendly_buttons():
     """Create touch-friendly buttons for mobile devices"""
 
@@ -364,6 +351,7 @@ def create_touch_friendly_buttons():
     """
 
     st.markdown(button_css, unsafe_allow_html=True)
+
 
 def create_responsive_typography():
     """Create responsive typography system"""
@@ -445,6 +433,7 @@ def create_responsive_typography():
 
     st.markdown(typography_css, unsafe_allow_html=True)
 
+
 def create_responsive_spacing():
     """Create responsive spacing system"""
 
@@ -483,6 +472,3 @@ def create_responsive_spacing():
     """
 
     st.markdown(spacing_css, unsafe_allow_html=True)
-
-
-

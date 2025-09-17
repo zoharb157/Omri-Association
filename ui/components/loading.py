@@ -51,6 +51,7 @@ def create_loading_spinner(message: str = "טוען...", size: str = "large"):
 
     return st.markdown(spinner_html, unsafe_allow_html=True)
 
+
 def create_progress_bar(message: str = "מעבד נתונים...", progress: float = 0.0):
     """Create a styled progress bar"""
 
@@ -102,6 +103,7 @@ def create_progress_bar(message: str = "מעבד נתונים...", progress: flo
 
     return st.markdown(progress_html, unsafe_allow_html=True)
 
+
 def create_skeleton_card(title: str = "טוען...", lines: int = 3):
     """Create a skeleton loading card"""
 
@@ -147,6 +149,7 @@ def create_skeleton_card(title: str = "טוען...", lines: int = 3):
 
     return st.markdown(skeleton_html, unsafe_allow_html=True)
 
+
 def create_data_loading_state():
     """Create a comprehensive data loading state"""
 
@@ -160,7 +163,7 @@ def create_data_loading_state():
             "טוען נתוני תרומות...",
             "טוען נתוני אלמנות...",
             "מעבד נתונים...",
-            "יוצר ויזואליזציות..."
+            "יוצר ויזואליזציות...",
         ]
 
         progress_container = st.container()
@@ -171,6 +174,7 @@ def create_data_loading_state():
                 time.sleep(0.5)  # Simulate loading time
 
         st.success("✅ הנתונים נטענו בהצלחה!")
+
 
 def create_chart_loading_state():
     """Create a loading state for charts"""

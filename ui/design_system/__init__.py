@@ -8,4 +8,4 @@ from .spacing import SpacingSystem
 from .themes import ThemeManager
 from .typography import TypographySystem
 
-__all__ = ['ColorSystem', 'TypographySystem', 'SpacingSystem', 'ThemeManager']
+__all__ = ["ColorSystem", "TypographySystem", "SpacingSystem", "ThemeManager"]

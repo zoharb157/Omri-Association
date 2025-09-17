@@ -1,4 +1,3 @@
-
 from data_processing import calculate_monthly_budget
 from tests.fixtures.sample_data import sample_donations_df, sample_expenses_df
 

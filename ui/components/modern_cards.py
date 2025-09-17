@@ -11,7 +11,9 @@ import streamlit as st
 from ui.components.layout_system import create_section_header
 
 
-def create_chart_card(title: str, subtitle: str = None, empty: bool = False, chart_html: str = "", caption: str = None):
+def create_chart_card(
+    title: str, subtitle: str = None, empty: bool = False, chart_html: str = "", caption: str = None
+):
     """Render a chart inside a modern card with title, subtitle, and empty state."""
     header_html = f"""
         <header class="chart-card-header">
@@ -23,7 +25,7 @@ def create_chart_card(title: str, subtitle: str = None, empty: bool = False, cha
         body_html = '<div class="chart-empty-state">אין נתונים להצגה</div>'
     else:
         body_html = chart_html
-    caption_html = f'<div class="chart-card-caption">{caption}</div>' if caption else ''
+    caption_html = f'<div class="chart-card-caption">{caption}</div>' if caption else ""
     card_html = f"""
         <section class="chart-card">
             {header_html}
@@ -49,12 +51,13 @@ def create_info_card(title: str, content: str, action_button: str = None, action
     """
     st.markdown(card_html, unsafe_allow_html=True)
 
+
 def create_dashboard_kpis(budget_status: dict, donor_stats: dict, widow_stats: dict):
     """Create the main dashboard KPIs with modern styling"""
 
     # Calculate key metrics
-    total_donations = budget_status.get('total_donations', 0)
-    total_expenses = budget_status.get('total_expenses', 0)
+    total_donations = budget_status.get("total_donations", 0)
+    total_expenses = budget_status.get("total_expenses", 0)
     available_balance = total_donations - total_expenses
     utilization_rate = (total_expenses / total_donations * 100) if total_donations > 0 else 0
 
@@ -72,27 +75,23 @@ def create_dashboard_kpis(budget_status: dict, donor_stats: dict, widow_stats: d
         status = "positive" if float_value > 0 else "negative" if float_value < 0 else "neutral"
         return f"{float_value:+.1f}%", status
 
-    metrics_have_data = any([
-        total_donations,
-        total_expenses,
-        available_balance,
-        donor_stats.get('total_donations'),
-        widow_stats.get('total_support'),
-    ])
+    metrics_have_data = any(
+        [
+            total_donations,
+            total_expenses,
+            available_balance,
+            donor_stats.get("total_donations"),
+            widow_stats.get("total_support"),
+        ]
+    )
 
     metrics = []
     if metrics_have_data:
-        donations_change, donations_status = format_change(
-            budget_status.get('donations_growth')
-        )
-        expenses_change, expenses_status = format_change(
-            budget_status.get('expenses_growth')
-        )
-        balance_change, balance_status = format_change(
-            budget_status.get('balance_growth')
-        )
+        donations_change, donations_status = format_change(budget_status.get("donations_growth"))
+        expenses_change, expenses_status = format_change(budget_status.get("expenses_growth"))
+        balance_change, balance_status = format_change(budget_status.get("balance_growth"))
         utilization_change, utilization_status = format_change(
-            budget_status.get('utilization_change')
+            budget_status.get("utilization_change")
         )
 
         if available_balance <= 0:
@@ -137,9 +136,11 @@ def create_dashboard_kpis(budget_status: dict, donor_stats: dict, widow_stats: d
 
     create_section_header("סקירה כללית", "נתונים עדכניים על מצב העמותה")
     if metrics and metrics[0].get("empty"):
-        st.info("אין נתונים להצגה עדיין. <a href='#quick-actions'>הוספת נתונים</a>", unsafe_allow_html=True)
+        st.info(
+            "אין נתונים להצגה עדיין. <a href='#quick-actions'>הוספת נתונים</a>",
+            unsafe_allow_html=True,
+        )
     create_metrics_grid(metrics)
-
 
 
 def create_metrics_grid(metrics: list) -> None:
@@ -213,6 +214,7 @@ def create_page_container():
         <div class="page-content">
     """
     st.markdown(container_html, unsafe_allow_html=True)
+
 
 def create_loading_card():
     """Create a loading state card"""

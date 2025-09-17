@@ -15,8 +15,13 @@ from ..design_system.typography import TypographySystem
 class SectionHeader:
     """Modern section header component"""
 
-    def __init__(self, title: str, subtitle: Optional[str] = None,
-                 icon: Optional[str] = None, actions: Optional[List] = None):
+    def __init__(
+        self,
+        title: str,
+        subtitle: Optional[str] = None,
+        icon: Optional[str] = None,
+        actions: Optional[List] = None,
+    ):
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
@@ -27,9 +32,15 @@ class SectionHeader:
 
     def render(self):
         """Render the section header"""
-        icon_html = f'<span style="font-size: 1.5rem;">{self.icon}</span>' if self.icon else ''
-        actions_html = ''.join([f'<div style="margin-left: var(--space-2);">{action}</div>' for action in self.actions])
-        subtitle_html = f'<p style="color: var(--color-text-secondary); font-size: var(--text-base); margin: 0;">{self.subtitle}</p>' if self.subtitle else ''
+        icon_html = f'<span style="font-size: 1.5rem;">{self.icon}</span>' if self.icon else ""
+        actions_html = "".join(
+            [f'<div style="margin-left: var(--space-2);">{action}</div>' for action in self.actions]
+        )
+        subtitle_html = (
+            f'<p style="color: var(--color-text-secondary); font-size: var(--text-base); margin: 0;">{self.subtitle}</p>'
+            if self.subtitle
+            else ""
+        )
 
         header_html = f"""
         <div style="
@@ -69,6 +80,7 @@ class SectionHeader:
 
         st.markdown(header_html, unsafe_allow_html=True)
 
+
 class Container:
     """Container component for consistent spacing and layout"""
 
@@ -91,6 +103,7 @@ class Container:
         content_func()
         st.markdown("</div>", unsafe_allow_html=True)
 
+
 class Grid:
     """Grid system for responsive layouts"""
 
@@ -111,26 +124,35 @@ class Grid:
     def create_responsive_columns(self, breakpoints: Dict[str, List[int]]) -> List:
         """Create responsive columns based on breakpoints"""
         # For now, use the default breakpoint
-        default_sizes = breakpoints.get('default', [6, 6])
+        default_sizes = breakpoints.get("default", [6, 6])
         return self.create_columns(default_sizes)
 
-def create_section_header(title: str, subtitle: Optional[str] = None,
-                         icon: Optional[str] = None, actions: Optional[List] = None):
+
+def create_section_header(
+    title: str,
+    subtitle: Optional[str] = None,
+    icon: Optional[str] = None,
+    actions: Optional[List] = None,
+):
     """Create a section header"""
     header = SectionHeader(title, subtitle, icon, actions)
     header.render()
+
 
 def create_container(max_width: str = "1200px", padding: str = "var(--space-4)"):
     """Create a container wrapper"""
     return Container(max_width, padding)
 
+
 def create_grid(columns: int = 12, gap: str = "var(--space-4)"):
     """Create a grid system"""
     return Grid(columns, gap)
 
+
 def add_spacing(rem: float = 2):
     """Add consistent spacing between sections"""
     st.markdown(f"<div style='margin: {rem}rem 0;'></div>", unsafe_allow_html=True)
+
 
 def create_metric_row(metrics: list, columns: int = 4):
     """Create a row of metrics with proper spacing"""
@@ -139,19 +161,22 @@ def create_metric_row(metrics: list, columns: int = 4):
         if i < len(cols):
             with cols[i]:
                 st.metric(
-                    metric.get('label', ''),
-                    metric.get('value', ''),
-                    metric.get('delta'),
-                    help=metric.get('help')
+                    metric.get("label", ""),
+                    metric.get("value", ""),
+                    metric.get("delta"),
+                    help=metric.get("help"),
                 )
+
 
 def create_two_column_layout():
     """Create a two-column layout"""
     return st.columns(2)
 
+
 def create_three_column_layout():
     """Create a three-column layout"""
     return st.columns(3)
+
 
 def create_four_column_layout():
     """Create a four-column layout"""

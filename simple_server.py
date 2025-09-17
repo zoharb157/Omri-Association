@@ -8,12 +8,22 @@ import time
 
 def start_streamlit():
     """Start Streamlit in the background"""
-    subprocess.run([
-        'python3', '-m', 'streamlit', 'run', 'dashboard.py',
-        '--server.port', '8501',
-        '--server.address', '0.0.0.0',
-        '--server.headless', 'true'
-    ])
+    subprocess.run(
+        [
+            "python3",
+            "-m",
+            "streamlit",
+            "run",
+            "dashboard.py",
+            "--server.port",
+            "8501",
+            "--server.address",
+            "0.0.0.0",
+            "--server.headless",
+            "true",
+        ]
+    )
+
 
 def start_http_server():
     """Start a simple HTTP server that proxies to Streamlit"""
@@ -23,19 +33,20 @@ def start_http_server():
         def do_GET(self):
             try:
                 import urllib.request
+
                 url = f"http://localhost:8501{self.path}"
                 req = urllib.request.Request(url)
 
                 with urllib.request.urlopen(req) as response:
                     self.send_response(response.status)
                     for header, value in response.headers.items():
-                        if header.lower() not in ['content-encoding', 'transfer-encoding']:
+                        if header.lower() not in ["content-encoding", "transfer-encoding"]:
                             self.send_header(header, value)
                     self.end_headers()
                     self.wfile.write(response.read())
             except Exception as e:
                 self.send_response(500)
-                self.send_header('Content-type', 'text/html')
+                self.send_header("Content-type", "text/html")
                 self.end_headers()
                 self.wfile.write(f"Error: {str(e)}".encode())
 
@@ -45,27 +56,28 @@ def start_http_server():
         def do_POST(self):
             try:
                 import urllib.request
-                content_length = int(self.headers.get('Content-Length', 0))
+
+                content_length = int(self.headers.get("Content-Length", 0))
                 post_data = self.rfile.read(content_length)
 
                 url = f"http://localhost:8501{self.path}"
                 req = urllib.request.Request(url, data=post_data)
-                req.add_header('Content-Length', str(len(post_data)))
+                req.add_header("Content-Length", str(len(post_data)))
 
                 for header, value in self.headers.items():
-                    if header.lower() not in ['host', 'connection', 'content-length']:
+                    if header.lower() not in ["host", "connection", "content-length"]:
                         req.add_header(header, value)
 
                 with urllib.request.urlopen(req) as response:
                     self.send_response(response.status)
                     for header, value in response.headers.items():
-                        if header.lower() not in ['content-encoding', 'transfer-encoding']:
+                        if header.lower() not in ["content-encoding", "transfer-encoding"]:
                             self.send_header(header, value)
                     self.end_headers()
                     self.wfile.write(response.read())
             except Exception as e:
                 self.send_response(500)
-                self.send_header('Content-type', 'text/html')
+                self.send_header("Content-type", "text/html")
                 self.end_headers()
                 self.wfile.write(f"Error: {str(e)}".encode())
 
@@ -75,6 +87,7 @@ def start_http_server():
         print(f"🌍 Network access: http://10.100.102.7:{PORT}")
         print("🔗 No password protection - direct access!")
         httpd.serve_forever()
+
 
 if __name__ == "__main__":
     # Start Streamlit in background

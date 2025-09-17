@@ -99,6 +99,7 @@ def create_loading_animations():
 
     st.markdown(loading_css, unsafe_allow_html=True)
 
+
 def create_hover_effects():
     """Create hover effects for interactive elements"""
 
@@ -218,6 +219,7 @@ def create_hover_effects():
 
     st.markdown(hover_css, unsafe_allow_html=True)
 
+
 def create_focus_states():
     """Create focus states for accessibility"""
 
@@ -268,6 +270,7 @@ def create_focus_states():
     """
 
     st.markdown(focus_css, unsafe_allow_html=True)
+
 
 def create_transition_animations():
     """Create smooth transition animations"""
@@ -359,6 +362,7 @@ def create_transition_animations():
 
     st.markdown(transition_css, unsafe_allow_html=True)
 
+
 def create_loading_states():
     """Create loading states for different components"""
 
@@ -403,10 +407,11 @@ def create_loading_states():
         return loading_html
 
     return {
-        'card': create_loading_card,
-        'metric': create_loading_metric,
-        'chart': create_loading_chart
+        "card": create_loading_card,
+        "metric": create_loading_metric,
+        "chart": create_loading_chart,
     }
+
 
 def create_interactive_feedback():
     """Create interactive feedback components"""
@@ -493,6 +498,3 @@ def create_interactive_feedback():
     """
 
     st.markdown(feedback_css, unsafe_allow_html=True)
-
-
-

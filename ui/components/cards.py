@@ -15,9 +15,15 @@ from ..design_system.typography import TypographySystem
 class MetricCard:
     """Modern metric card component"""
 
-    def __init__(self, title: str, value: str, delta: Optional[str] = None,
-                 help_text: Optional[str] = None, icon: Optional[str] = None,
-                 color: str = "primary"):
+    def __init__(
+        self,
+        title: str,
+        value: str,
+        delta: Optional[str] = None,
+        help_text: Optional[str] = None,
+        icon: Optional[str] = None,
+        color: str = "primary",
+    ):
         self.title = title
         self.value = value
         self.delta = delta
@@ -32,18 +38,30 @@ class MetricCard:
         """Render the metric card"""
         # Get color based on type
         color_map = {
-            'primary': self.colors.PRIMARY_BLUE,
-            'success': self.colors.SUCCESS,
-            'warning': self.colors.WARNING,
-            'error': self.colors.ERROR,
-            'info': self.colors.INFO,
+            "primary": self.colors.PRIMARY_BLUE,
+            "success": self.colors.SUCCESS,
+            "warning": self.colors.WARNING,
+            "error": self.colors.ERROR,
+            "info": self.colors.INFO,
         }
         card_color = color_map.get(self.color, self.colors.PRIMARY_BLUE)
 
         # Create card HTML with design system tokens
-        icon_html = f'<span style="font-size: 1.2rem; margin-left: var(--space-2, 8px);">{self.icon}</span>' if self.icon else ''
-        delta_html = f'<span style="color: var(--color-text-secondary, #64748b); font-size: var(--text-sm, 0.875rem); font-weight: var(--font-medium, 500);">{self.delta}</span>' if self.delta else ''
-        help_html = f'<p style="color: var(--color-text-secondary, #64748b); font-size: var(--text-xs, 0.75rem); margin: var(--space-1, 4px) 0 0 0;">{self.help_text}</p>' if self.help_text else ''
+        icon_html = (
+            f'<span style="font-size: 1.2rem; margin-left: var(--space-2, 8px);">{self.icon}</span>'
+            if self.icon
+            else ""
+        )
+        delta_html = (
+            f'<span style="color: var(--color-text-secondary, #64748b); font-size: var(--text-sm, 0.875rem); font-weight: var(--font-medium, 500);">{self.delta}</span>'
+            if self.delta
+            else ""
+        )
+        help_html = (
+            f'<p style="color: var(--color-text-secondary, #64748b); font-size: var(--text-xs, 0.75rem); margin: var(--space-1, 4px) 0 0 0;">{self.help_text}</p>'
+            if self.help_text
+            else ""
+        )
 
         card_html = f"""
         <div class="metric-card" style="
@@ -89,11 +107,13 @@ class MetricCard:
 
         st.markdown(card_html, unsafe_allow_html=True)
 
+
 class InfoCard:
     """Information card component for displaying content"""
 
-    def __init__(self, title: str, content: str, icon: Optional[str] = None,
-                 variant: str = "default"):
+    def __init__(
+        self, title: str, content: str, icon: Optional[str] = None, variant: str = "default"
+    ):
         self.title = title
         self.content = content
         self.icon = icon
@@ -104,35 +124,39 @@ class InfoCard:
         """Render the info card"""
         # Get variant colors
         variant_colors = {
-            'default': {
-                'background': 'var(--color-surface)',
-                'border': 'var(--color-border)',
-                'title_color': 'var(--color-text-primary)',
-                'content_color': 'var(--color-text-secondary)',
+            "default": {
+                "background": "var(--color-surface)",
+                "border": "var(--color-border)",
+                "title_color": "var(--color-text-primary)",
+                "content_color": "var(--color-text-secondary)",
             },
-            'success': {
-                'background': 'rgba(5, 150, 105, 0.1)',
-                'border': 'var(--color-success)',
-                'title_color': 'var(--color-success)',
-                'content_color': 'var(--color-text-primary)',
+            "success": {
+                "background": "rgba(5, 150, 105, 0.1)",
+                "border": "var(--color-success)",
+                "title_color": "var(--color-success)",
+                "content_color": "var(--color-text-primary)",
             },
-            'warning': {
-                'background': 'rgba(234, 88, 12, 0.1)',
-                'border': 'var(--color-warning)',
-                'title_color': 'var(--color-warning)',
-                'content_color': 'var(--color-text-primary)',
+            "warning": {
+                "background": "rgba(234, 88, 12, 0.1)",
+                "border": "var(--color-warning)",
+                "title_color": "var(--color-warning)",
+                "content_color": "var(--color-text-primary)",
             },
-            'error': {
-                'background': 'rgba(220, 38, 38, 0.1)',
-                'border': 'var(--color-error)',
-                'title_color': 'var(--color-error)',
-                'content_color': 'var(--color-text-primary)',
+            "error": {
+                "background": "rgba(220, 38, 38, 0.1)",
+                "border": "var(--color-error)",
+                "title_color": "var(--color-error)",
+                "content_color": "var(--color-text-primary)",
             },
         }
 
-        colors = variant_colors.get(self.variant, variant_colors['default'])
+        colors = variant_colors.get(self.variant, variant_colors["default"])
 
-        icon_html = f'<span style="font-size: 1.2rem; margin-left: 8px;">{self.icon}</span>' if self.icon else ''
+        icon_html = (
+            f'<span style="font-size: 1.2rem; margin-left: 8px;">{self.icon}</span>'
+            if self.icon
+            else ""
+        )
 
         card_html = f"""
         <div style="
@@ -168,6 +192,7 @@ class InfoCard:
 
         st.markdown(card_html, unsafe_allow_html=True)
 
+
 def create_metric_cards(metrics: list, columns: int = 4):
     """Create a row of metric cards"""
     cols = st.columns(columns)
@@ -175,14 +200,15 @@ def create_metric_cards(metrics: list, columns: int = 4):
         if i < len(cols):
             with cols[i]:
                 card = MetricCard(
-                    title=metric.get('label', ''),
-                    value=metric.get('value', ''),
-                    delta=metric.get('delta'),
-                    help_text=metric.get('help'),
-                    icon=metric.get('icon'),
-                    color=metric.get('color', 'primary')
+                    title=metric.get("label", ""),
+                    value=metric.get("value", ""),
+                    delta=metric.get("delta"),
+                    help_text=metric.get("help"),
+                    icon=metric.get("icon"),
+                    color=metric.get("color", "primary"),
                 )
                 card.render()
+
 
 def create_info_cards(cards: list, columns: int = 2):
     """Create a grid of info cards"""
@@ -191,9 +217,9 @@ def create_info_cards(cards: list, columns: int = 2):
         if i < len(cols):
             with cols[i]:
                 card = InfoCard(
-                    title=card_data.get('title', ''),
-                    content=card_data.get('content', ''),
-                    icon=card_data.get('icon'),
-                    variant=card_data.get('variant', 'default')
+                    title=card_data.get("title", ""),
+                    content=card_data.get("content", ""),
+                    icon=card_data.get("icon"),
+                    variant=card_data.get("variant", "default"),
                 )
                 card.render()

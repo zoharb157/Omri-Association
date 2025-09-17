@@ -20,12 +20,12 @@ class WidowImportManager:
         self.sheet_id = "1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8"
         self.tab_name = "Widows Support"  # Based on the gid parameter
         self.required_columns = [
-            'שם הבחורה',
-            'כמה ילדים',
-            'סכום חודשי',
-            'מתי התחילה לקבל',
-            'עד מתי תחת תורם',
-            'כמה מקבלת בכל חודש'
+            "שם הבחורה",
+            "כמה ילדים",
+            "סכום חודשי",
+            "מתי התחילה לקבל",
+            "עד מתי תחת תורם",
+            "כמה מקבלת בכל חודש",
         ]
 
     def load_widow_data(self) -> Tuple[pd.DataFrame, List[Dict]]:
@@ -59,13 +59,13 @@ class WidowImportManager:
 
             # Standardize column names
             column_mapping = {
-                'שם הבחורה': 'widow_name',
-                'כמה ילדים': 'children_count',
-                'סכום חודשי': 'monthly_amount',
-                'מתי התחילה לקבל': 'start_date',
-                'עד מתי תחת תורם': 'end_date',
-                'כמה מקבלת בכל חודש': 'monthly_support',
-                'תורם': 'donor_name'
+                "שם הבחורה": "widow_name",
+                "כמה ילדים": "children_count",
+                "סכום חודשי": "monthly_amount",
+                "מתי התחילה לקבל": "start_date",
+                "עד מתי תחת תורם": "end_date",
+                "כמה מקבלת בכל חודש": "monthly_support",
+                "תורם": "donor_name",
             }
 
             # Rename columns if they exist
@@ -74,35 +74,35 @@ class WidowImportManager:
                     cleaned_df[english_name] = cleaned_df[hebrew_name]
 
             # Ensure required columns exist
-            for col in ['widow_name', 'children_count', 'monthly_amount']:
+            for col in ["widow_name", "children_count", "monthly_amount"]:
                 if col not in cleaned_df.columns:
-                    cleaned_df[col] = ''
+                    cleaned_df[col] = ""
 
             # Clean data types
-            if 'children_count' in cleaned_df.columns:
-                cleaned_df['children_count'] = pd.to_numeric(
-                    cleaned_df['children_count'], errors='coerce'
-                ).fillna(0).astype(int)
+            if "children_count" in cleaned_df.columns:
+                cleaned_df["children_count"] = (
+                    pd.to_numeric(cleaned_df["children_count"], errors="coerce")
+                    .fillna(0)
+                    .astype(int)
+                )
 
-            if 'monthly_amount' in cleaned_df.columns:
-                cleaned_df['monthly_amount'] = pd.to_numeric(
-                    cleaned_df['monthly_amount'], errors='coerce'
+            if "monthly_amount" in cleaned_df.columns:
+                cleaned_df["monthly_amount"] = pd.to_numeric(
+                    cleaned_df["monthly_amount"], errors="coerce"
                 ).fillna(0)
 
-            if 'monthly_support' in cleaned_df.columns:
-                cleaned_df['monthly_support'] = pd.to_numeric(
-                    cleaned_df['monthly_support'], errors='coerce'
+            if "monthly_support" in cleaned_df.columns:
+                cleaned_df["monthly_support"] = pd.to_numeric(
+                    cleaned_df["monthly_support"], errors="coerce"
                 ).fillna(0)
 
             # Clean dates
-            for date_col in ['start_date', 'end_date']:
+            for date_col in ["start_date", "end_date"]:
                 if date_col in cleaned_df.columns:
-                    cleaned_df[date_col] = pd.to_datetime(
-                        cleaned_df[date_col], errors='coerce'
-                    )
+                    cleaned_df[date_col] = pd.to_datetime(cleaned_df[date_col], errors="coerce")
 
             # Remove empty rows
-            cleaned_df = cleaned_df.dropna(subset=['widow_name'])
+            cleaned_df = cleaned_df.dropna(subset=["widow_name"])
 
             return cleaned_df
 
@@ -118,16 +118,16 @@ class WidowImportManager:
         try:
             # Look for rows without donor assignment
             for index, row in df.iterrows():
-                if pd.isna(row.get('donor_name')) or row.get('donor_name') == '':
+                if pd.isna(row.get("donor_name")) or row.get("donor_name") == "":
                     new_widow = {
-                        'index': index,
-                        'widow_name': row.get('widow_name', ''),
-                        'children_count': row.get('children_count', 0),
-                        'monthly_amount': row.get('monthly_amount', 0),
-                        'start_date': row.get('start_date'),
-                        'end_date': row.get('end_date'),
-                        'monthly_support': row.get('monthly_support', 0),
-                        'status': 'new'  # Mark as new widow
+                        "index": index,
+                        "widow_name": row.get("widow_name", ""),
+                        "children_count": row.get("children_count", 0),
+                        "monthly_amount": row.get("monthly_amount", 0),
+                        "start_date": row.get("start_date"),
+                        "end_date": row.get("end_date"),
+                        "monthly_support": row.get("monthly_support", 0),
+                        "status": "new",  # Mark as new widow
                     }
                     new_widows.append(new_widow)
 
@@ -157,14 +157,14 @@ class WidowImportManager:
             st.metric("סך אלמנות", len(widow_df))
 
         with col2:
-            assigned_count = len(widow_df[widow_df['donor_name'].notna()])
+            assigned_count = len(widow_df[widow_df["donor_name"].notna()])
             st.metric("משוייכות לתורם", assigned_count)
 
         with col3:
             st.metric("אלמנות חדשות", len(new_widows))
 
         with col4:
-            total_support = widow_df['monthly_support'].sum()
+            total_support = widow_df["monthly_support"].sum()
             st.metric("סך תמיכה חודשית", f"₪{total_support:,.0f}")
 
         st.divider()
@@ -184,8 +184,12 @@ class WidowImportManager:
                         st.write(f"**סכום חודשי:** ₪{widow['monthly_amount']:,.0f}")
 
                     with col2:
-                        st.write(f"**תאריך התחלה:** {widow['start_date'].strftime('%d/%m/%Y') if pd.notna(widow['start_date']) else 'לא מוגדר'}")
-                        st.write(f"**תאריך סיום:** {widow['end_date'].strftime('%d/%m/%Y') if pd.notna(widow['end_date']) else 'לא מוגדר'}")
+                        st.write(
+                            f"**תאריך התחלה:** {widow['start_date'].strftime('%d/%m/%Y') if pd.notna(widow['start_date']) else 'לא מוגדר'}"
+                        )
+                        st.write(
+                            f"**תאריך סיום:** {widow['end_date'].strftime('%d/%m/%Y') if pd.notna(widow['end_date']) else 'לא מוגדר'}"
+                        )
                         st.write(f"**תמיכה חודשית:** ₪{widow['monthly_support']:,.0f}")
 
                     # Donor assignment
@@ -193,7 +197,7 @@ class WidowImportManager:
                     donor_name = st.text_input(
                         f"שם התורם עבור {widow['widow_name']}",
                         key=f"donor_{i}",
-                        placeholder="הזן שם התורם"
+                        placeholder="הזן שם התורם",
                     )
 
                     if st.button("שייך לתורם", key=f"assign_{i}"):
@@ -222,19 +226,26 @@ class WidowImportManager:
         filtered_df = widow_df.copy()
 
         if show_assigned:
-            filtered_df = filtered_df[filtered_df['donor_name'].notna()]
+            filtered_df = filtered_df[filtered_df["donor_name"].notna()]
 
         if show_new:
-            filtered_df = filtered_df[filtered_df['donor_name'].isna()]
+            filtered_df = filtered_df[filtered_df["donor_name"].isna()]
 
         if min_support > 0:
-            filtered_df = filtered_df[filtered_df['monthly_support'] >= min_support]
+            filtered_df = filtered_df[filtered_df["monthly_support"] >= min_support]
 
         # Display filtered table
         if not filtered_df.empty:
             # Select columns to display
-            display_columns = ['widow_name', 'children_count', 'monthly_amount',
-                             'monthly_support', 'donor_name', 'start_date', 'end_date']
+            display_columns = [
+                "widow_name",
+                "children_count",
+                "monthly_amount",
+                "monthly_support",
+                "donor_name",
+                "start_date",
+                "end_date",
+            ]
 
             # Filter to only existing columns
             available_columns = [col for col in display_columns if col in filtered_df.columns]
@@ -244,19 +255,20 @@ class WidowImportManager:
                     filtered_df[available_columns],
                     use_container_width=True,
                     column_config={
-                        'widow_name': 'שם',
-                        'children_count': 'ילדים',
-                        'monthly_amount': 'סכום חודשי',
-                        'monthly_support': 'תמיכה חודשית',
-                        'donor_name': 'תורם',
-                        'start_date': 'תאריך התחלה',
-                        'end_date': 'תאריך סיום'
-                    }
+                        "widow_name": "שם",
+                        "children_count": "ילדים",
+                        "monthly_amount": "סכום חודשי",
+                        "monthly_support": "תמיכה חודשית",
+                        "donor_name": "תורם",
+                        "start_date": "תאריך התחלה",
+                        "end_date": "תאריך סיום",
+                    },
                 )
             else:
                 st.warning("⚠️ לא נמצאו עמודות מתאימות להצגה")
         else:
             st.info("אין נתונים להצגה לפי הפילטרים שנבחרו")
+
 
 def create_widow_import_section():
     """Create the widow import section for the dashboard"""

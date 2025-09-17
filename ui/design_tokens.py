@@ -72,8 +72,7 @@ class DesignSystem:
     }
 
     TYPOGRAPHY = {
-        key: _typography(key)
-        for key in ["h1", "h2", "h3", "h4", "body", "body_small", "caption"]
+        key: _typography(key) for key in ["h1", "h2", "h3", "h4", "body", "body_small", "caption"]
     }
 
     BORDER_RADIUS = {
@@ -93,7 +92,9 @@ class DesignSystem:
 
     BREAKPOINTS = ModernDesignSystem.BREAKPOINTS
 
+
 def get_global_css():
     """Generate global CSS with modern design system tokens"""
     from ui.design_system.modern_tokens import get_modern_css
+
     return get_modern_css()

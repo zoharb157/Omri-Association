@@ -13,7 +13,7 @@ def check_budget_alerts(budget_status: dict, donations_df: pd.DataFrame = None) 
             return alerts
 
         # Check utilization percentage
-        utilization_percentage = budget_status.get('utilization_percentage', 0)
+        utilization_percentage = budget_status.get("utilization_percentage", 0)
         if utilization_percentage > 90:
             alerts.append(f"אחוז ניצול גבוה: {utilization_percentage:.1f}%")
         elif utilization_percentage > 80:
@@ -22,15 +22,15 @@ def check_budget_alerts(budget_status: dict, donations_df: pd.DataFrame = None) 
             alerts.append(f"אחוז ניצול נמוך: {utilization_percentage:.1f}%")
 
         # Check balance
-        balance = budget_status.get('balance', 0)
+        balance = budget_status.get("balance", 0)
         if balance < 0:
             alerts.append(f"יתרה שלילית: ₪{balance:,.0f}")
         elif balance > 100000:
             alerts.append(f"יתרה חיובית גבוהה: ₪{balance:,.0f}")
 
         # Check status
-        status = budget_status.get('status', '')
-        if status in ['דורש תשומת לב', 'חסר']:
+        status = budget_status.get("status", "")
+        if status in ["דורש תשומת לב", "חסר"]:
             alerts.append(f"סטטוס תקציב: {status}")
 
     except Exception as e:
@@ -38,15 +38,18 @@ def check_budget_alerts(budget_status: dict, donations_df: pd.DataFrame = None) 
 
     return alerts
 
-def check_data_quality_alerts(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, widows_df: pd.DataFrame) -> List[str]:
+
+def check_data_quality_alerts(
+    expenses_df: pd.DataFrame, donations_df: pd.DataFrame, widows_df: pd.DataFrame
+) -> List[str]:
     """Check for data quality issues"""
     alerts = []
     try:
         # Check each dataframe
         for df, name, amount_col in [
-            (expenses_df, 'הוצאות', 'שקלים'),
-            (donations_df, 'תרומות', 'שקלים'),
-            (widows_df, 'אלמנות', 'סכום חודשי')
+            (expenses_df, "הוצאות", "שקלים"),
+            (donations_df, "תרומות", "שקלים"),
+            (widows_df, "אלמנות", "סכום חודשי"),
         ]:
             if not isinstance(df, pd.DataFrame):
                 alerts.append(f"נתוני {name} לא תקינים")
@@ -55,20 +58,26 @@ def check_data_quality_alerts(expenses_df: pd.DataFrame, donations_df: pd.DataFr
             # Check for missing values - but be more specific about what constitutes "missing"
             if amount_col in df.columns:
                 null_count = df[amount_col].isnull().sum()
-                (df[amount_col] == '').sum() if amount_col in df.columns else 0
+                (df[amount_col] == "").sum() if amount_col in df.columns else 0
                 total_count = len(df)
 
                 # Skip alert for monthly amounts - we treat missing as 0
-                if amount_col == 'סכום חודשי':
-                    logging.info(f"Monthly amounts: {null_count}/{total_count} missing values (treated as 0)")
+                if amount_col == "סכום חודשי":
+                    logging.info(
+                        f"Monthly amounts: {null_count}/{total_count} missing values (treated as 0)"
+                    )
                     continue
 
                 # Only alert if there are significant missing values (more than 10% of rows)
                 if null_count > 0 and (null_count / total_count) > 0.1:
-                    alerts.append(f"חסרים ערכים בעמודת {amount_col} בקובץ {name} ({null_count}/{total_count} שורות)")
+                    alerts.append(
+                        f"חסרים ערכים בעמודת {amount_col} בקובץ {name} ({null_count}/{total_count} שורות)"
+                    )
                 elif null_count > 0:
                     # Just log for debugging, don't show as alert
-                    logging.info(f"Minor missing values in {amount_col} column of {name}: {null_count}/{total_count}")
+                    logging.info(
+                        f"Minor missing values in {amount_col} column of {name}: {null_count}/{total_count}"
+                    )
 
             # Check for negative values only (not zero)
             if amount_col in df.columns and (df[amount_col] < 0).any():
@@ -79,6 +88,7 @@ def check_data_quality_alerts(expenses_df: pd.DataFrame, donations_df: pd.DataFr
 
     return alerts
 
+
 def check_widows_alerts(widow_stats: dict) -> List[str]:
     """Check for widow-related alerts"""
     alerts = []
@@ -86,9 +96,9 @@ def check_widows_alerts(widow_stats: dict) -> List[str]:
         if not isinstance(widow_stats, dict):
             return alerts
 
-        total_widows = widow_stats.get('total_widows', 0)
-        support_1000_count = widow_stats.get('support_1000_count', 0)
-        support_2000_count = widow_stats.get('support_2000_count', 0)
+        total_widows = widow_stats.get("total_widows", 0)
+        support_1000_count = widow_stats.get("support_1000_count", 0)
+        support_2000_count = widow_stats.get("support_2000_count", 0)
 
         if total_widows == 0:
             alerts.append("אין נתוני אלמנות")
@@ -104,6 +114,7 @@ def check_widows_alerts(widow_stats: dict) -> List[str]:
 
     return alerts
 
+
 def check_donations_alerts(donor_stats: dict) -> List[str]:
     """Check for donation-specific alerts"""
     alerts = []
@@ -111,8 +122,8 @@ def check_donations_alerts(donor_stats: dict) -> List[str]:
         if not isinstance(donor_stats, dict):
             return alerts
 
-        total_donations = donor_stats.get('total_donations', 0)
-        avg_donation = donor_stats.get('avg_donation', 0)
+        total_donations = donor_stats.get("total_donations", 0)
+        avg_donation = donor_stats.get("avg_donation", 0)
 
         if total_donations == 0:
             alerts.append("אין נתוני תרומות")
@@ -127,6 +138,7 @@ def check_donations_alerts(donor_stats: dict) -> List[str]:
         logging.error(f"Error checking donations alerts: {str(e)}")
 
     return alerts
+
 
 def display_alerts(alerts: List[str]) -> None:
     """Display alerts in the sidebar"""

@@ -4,100 +4,112 @@ Modern Design System for Omri Association Dashboard
 Comprehensive design tokens following modern design principles
 """
 
+
 class ModernDesignSystem:
     """Centralized design system with modern tokens"""
 
     # Modern Color Palette (Light Theme Only)
     COLORS = {
         # Primary Brand
-        'primary': '#2563eb',           # Modern blue
-        'primary_50': '#eff6ff',
-        'primary_100': '#dbeafe',
-        'primary_500': '#3b82f6',
-        'primary_600': '#2563eb',
-        'primary_700': '#1d4ed8',
-
+        "primary": "#2563eb",  # Modern blue
+        "primary_50": "#eff6ff",
+        "primary_100": "#dbeafe",
+        "primary_500": "#3b82f6",
+        "primary_600": "#2563eb",
+        "primary_700": "#1d4ed8",
         # Semantic Colors
-        'success': '#10b981',           # Emerald
-        'success_50': '#ecfdf5',
-        'success_100': '#d1fae5',
-        'warning': '#f59e0b',           # Amber
-        'warning_50': '#fffbeb',
-        'warning_100': '#fef3c7',
-        'error': '#ef4444',             # Red
-        'error_50': '#fef2f2',
-        'error_100': '#fee2e2',
-        'info': '#06b6d4',              # Cyan
-        'info_50': '#ecfeff',
-        'info_100': '#cffafe',
-
+        "success": "#10b981",  # Emerald
+        "success_50": "#ecfdf5",
+        "success_100": "#d1fae5",
+        "warning": "#f59e0b",  # Amber
+        "warning_50": "#fffbeb",
+        "warning_100": "#fef3c7",
+        "error": "#ef4444",  # Red
+        "error_50": "#fef2f2",
+        "error_100": "#fee2e2",
+        "info": "#06b6d4",  # Cyan
+        "info_50": "#ecfeff",
+        "info_100": "#cffafe",
         # Neutral Scale
-        'gray_50': '#f9fafb',
-        'gray_100': '#f3f4f6',
-        'gray_200': '#e5e7eb',
-        'gray_300': '#d1d5db',
-        'gray_400': '#9ca3af',
-        'gray_500': '#6b7280',
-        'gray_600': '#4b5563',
-        'gray_700': '#374151',
-        'gray_800': '#1f2937',
-        'gray_900': '#111827',
-
+        "gray_50": "#f9fafb",
+        "gray_100": "#f3f4f6",
+        "gray_200": "#e5e7eb",
+        "gray_300": "#d1d5db",
+        "gray_400": "#9ca3af",
+        "gray_500": "#6b7280",
+        "gray_600": "#4b5563",
+        "gray_700": "#374151",
+        "gray_800": "#1f2937",
+        "gray_900": "#111827",
         # Surface Colors
-        'background': '#ffffff',
-        'surface': '#f8fafc',
-        'surface_elevated': '#ffffff',
-        'border': '#e2e8f0',
-        'border_light': '#f1f5f9',
+        "background": "#ffffff",
+        "surface": "#f8fafc",
+        "surface_elevated": "#ffffff",
+        "border": "#e2e8f0",
+        "border_light": "#f1f5f9",
     }
 
     # Modern Typography Scale
     TYPOGRAPHY = {
-        'font_family': '"Inter", "Noto Sans Hebrew", system-ui, sans-serif',
-        'font_hebrew': '"Noto Sans Hebrew", "Assistant", system-ui, sans-serif',
-
-        'text_xs': {'size': '0.75rem', 'line_height': '1rem', 'weight': '400'},
-        'text_sm': {'size': '0.875rem', 'line_height': '1.25rem', 'weight': '400'},
-        'text_base': {'size': '1rem', 'line_height': '1.5rem', 'weight': '400'},
-        'text_lg': {'size': '1.125rem', 'line_height': '1.75rem', 'weight': '400'},
-        'text_xl': {'size': '1.25rem', 'line_height': '1.75rem', 'weight': '500'},
-        'text_2xl': {'size': '1.5rem', 'line_height': '2rem', 'weight': '600'},
-        'text_3xl': {'size': '1.875rem', 'line_height': '2.25rem', 'weight': '700'},
-        'text_4xl': {'size': '2.25rem', 'line_height': '2.5rem', 'weight': '800'},
+        "font_family": '"Inter", "Noto Sans Hebrew", system-ui, sans-serif',
+        "font_hebrew": '"Noto Sans Hebrew", "Assistant", system-ui, sans-serif',
+        "text_xs": {"size": "0.75rem", "line_height": "1rem", "weight": "400"},
+        "text_sm": {"size": "0.875rem", "line_height": "1.25rem", "weight": "400"},
+        "text_base": {"size": "1rem", "line_height": "1.5rem", "weight": "400"},
+        "text_lg": {"size": "1.125rem", "line_height": "1.75rem", "weight": "400"},
+        "text_xl": {"size": "1.25rem", "line_height": "1.75rem", "weight": "500"},
+        "text_2xl": {"size": "1.5rem", "line_height": "2rem", "weight": "600"},
+        "text_3xl": {"size": "1.875rem", "line_height": "2.25rem", "weight": "700"},
+        "text_4xl": {"size": "2.25rem", "line_height": "2.5rem", "weight": "800"},
     }
 
     # Spacing Scale (4px base unit) - expose both numeric and `space_` keys
     _SPACING_BASE = {
-        '0': '0px', '1': '4px', '2': '8px', '3': '12px', '4': '16px',
-        '5': '20px', '6': '24px', '8': '32px', '10': '40px', '12': '48px',
-        '16': '64px', '20': '80px', '24': '96px', '32': '128px'
+        "0": "0px",
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "20px",
+        "6": "24px",
+        "8": "32px",
+        "10": "40px",
+        "12": "48px",
+        "16": "64px",
+        "20": "80px",
+        "24": "96px",
+        "32": "128px",
     }
-    SPACING = {**_SPACING_BASE, **{f'space_{key}': value for key, value in _SPACING_BASE.items()}}
+    SPACING = {**_SPACING_BASE, **{f"space_{key}": value for key, value in _SPACING_BASE.items()}}
 
     # Border Radius Scale
     _BORDER_RADIUS_BASE = {
-        'none': '0px', 'sm': '4px', 'md': '8px', 'lg': '12px',
-        'xl': '16px', '2xl': '24px', 'full': '9999px'
+        "none": "0px",
+        "sm": "4px",
+        "md": "8px",
+        "lg": "12px",
+        "xl": "16px",
+        "2xl": "24px",
+        "full": "9999px",
     }
-    BORDER_RADIUS = {**_BORDER_RADIUS_BASE, **{f'radius_{key}': value for key, value in _BORDER_RADIUS_BASE.items()}}
+    BORDER_RADIUS = {
+        **_BORDER_RADIUS_BASE,
+        **{f"radius_{key}": value for key, value in _BORDER_RADIUS_BASE.items()},
+    }
 
     # Shadow Scale
     _SHADOWS_BASE = {
-        'none': 'none',
-        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        "none": "none",
+        "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
     }
-    SHADOWS = {**_SHADOWS_BASE, **{f'shadow_{key}': value for key, value in _SHADOWS_BASE.items()}}
+    SHADOWS = {**_SHADOWS_BASE, **{f"shadow_{key}": value for key, value in _SHADOWS_BASE.items()}}
 
     # Breakpoints
-    BREAKPOINTS = {
-        'mobile': '768px',
-        'tablet': '1024px',
-        'desktop': '1200px',
-        'wide': '1400px'
-    }
+    BREAKPOINTS = {"mobile": "768px", "tablet": "1024px", "desktop": "1200px", "wide": "1400px"}
+
 
 def get_modern_css():
     """Generate modern CSS with design system tokens"""

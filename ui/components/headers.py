@@ -25,7 +25,8 @@ def create_section_header(title: str, icon: str = "", level: int = 3, descriptio
 
     # Add description if provided
     if description:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <p style="
             color: {ModernDesignSystem.COLORS['gray_600']};
             font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
@@ -34,10 +35,16 @@ def create_section_header(title: str, icon: str = "", level: int = 3, descriptio
         ">
             {description}
         </p>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
     else:
         # Add spacing if no description
-        st.markdown(f"<div style='margin-bottom: {ModernDesignSystem.SPACING['6']};'></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div style='margin-bottom: {ModernDesignSystem.SPACING['6']};'></div>",
+            unsafe_allow_html=True,
+        )
+
 
 def create_page_title(title: str, subtitle: str = "", icon: str = ""):
     """Create main page title with optional subtitle"""
@@ -95,11 +102,13 @@ def create_page_title(title: str, subtitle: str = "", icon: str = ""):
 
     st.markdown(title_html, unsafe_allow_html=True)
 
+
 def create_subsection_header(title: str, icon: str = ""):
     """Create subsection headers for smaller sections"""
     icon_text = f"{icon} " if icon else ""
 
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <h4 style="
         color: {ModernDesignSystem.COLORS['gray_900']};
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']['size']};
@@ -110,4 +119,6 @@ def create_subsection_header(title: str, icon: str = ""):
     ">
         {icon_text}{title}
     </h4>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )

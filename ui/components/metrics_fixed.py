@@ -9,24 +9,27 @@ import streamlit as st
 from ui.design_tokens import DesignSystem
 
 
-def create_metric_card(label: str, value: str, help_text: str = "", trend: str = None, color: str = "primary"):
+def create_metric_card(
+    label: str, value: str, help_text: str = "", trend: str = None, color: str = "primary"
+):
     """Create a simplified metric card that renders properly"""
 
     # Get color based on theme
     color_map = {
-        'primary': DesignSystem.COLORS['primary'],
-        'success': DesignSystem.COLORS['success'],
-        'warning': DesignSystem.COLORS['warning'],
-        'error': DesignSystem.COLORS['error'],
-        'info': DesignSystem.COLORS['info']
+        "primary": DesignSystem.COLORS["primary"],
+        "success": DesignSystem.COLORS["success"],
+        "warning": DesignSystem.COLORS["warning"],
+        "error": DesignSystem.COLORS["error"],
+        "info": DesignSystem.COLORS["info"],
     }
 
-    card_color = color_map.get(color, DesignSystem.COLORS['primary'])
+    card_color = color_map.get(color, DesignSystem.COLORS["primary"])
 
     # Create a simplified metric card using Streamlit's native components
     with st.container():
         # Create a custom container with background
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div style="
             background: {DesignSystem.COLORS['background']};
             border: 1px solid {DesignSystem.COLORS['border']};
@@ -67,12 +70,19 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             ">
                 {value}
             </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         # Add trend and help text using Streamlit components
         if trend:
-            trend_color = DesignSystem.COLORS['success'] if trend.startswith('+') else DesignSystem.COLORS['error']
-            st.markdown(f"""
+            trend_color = (
+                DesignSystem.COLORS["success"]
+                if trend.startswith("+")
+                else DesignSystem.COLORS["error"]
+            )
+            st.markdown(
+                f"""
             <div style="
                 color: {trend_color};
                 font-size: {DesignSystem.TYPOGRAPHY['body_small']['size']};
@@ -81,10 +91,13 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             ">
                 {trend}
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         if help_text:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div style="
                 color: {DesignSystem.COLORS['text_secondary']};
                 font-size: {DesignSystem.TYPOGRAPHY['caption']['size']};
@@ -93,9 +106,12 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             ">
                 {help_text}
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 def create_metric_row(metrics: list, columns: int = 4, gap: str = "md"):
     """Create a row of metric cards with consistent spacing"""
@@ -106,32 +122,23 @@ def create_metric_row(metrics: list, columns: int = 4, gap: str = "md"):
     for i, metric in enumerate(metrics):
         with cols[i]:
             # Extract metric data
-            label = metric.get('label', '')
-            value = metric.get('value', '')
-            help_text = metric.get('help', '')
-            trend = metric.get('trend', None)
-            color = metric.get('color', 'primary')
+            label = metric.get("label", "")
+            value = metric.get("value", "")
+            help_text = metric.get("help", "")
+            trend = metric.get("trend", None)
+            color = metric.get("color", "primary")
 
             # Create and display metric card
             create_metric_card(label, value, help_text, trend, color)
 
-def create_simple_metric_card(label: str, value: str, help_text: str = "", trend: str = None, color: str = "primary"):
+
+def create_simple_metric_card(
+    label: str, value: str, help_text: str = "", trend: str = None, color: str = "primary"
+):
     """Create a very simple metric card using only Streamlit components"""
 
     # Use Streamlit's native metric component as base
     if trend:
-        st.metric(
-            label=label,
-            value=value,
-            delta=trend,
-            help=help_text
-        )
+        st.metric(label=label, value=value, delta=trend, help=help_text)
     else:
-        st.metric(
-            label=label,
-            value=value,
-            help=help_text
-        )
-
-
-
+        st.metric(label=label, value=value, help=help_text)

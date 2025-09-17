@@ -11,15 +11,21 @@ from ui.design_tokens import DesignSystem
 
 class DataValidationError(Exception):
     """Custom exception for data validation errors"""
+
     pass
+
 
 class NetworkError(Exception):
     """Custom exception for network-related errors"""
+
     pass
+
 
 class AuthenticationError(Exception):
     """Custom exception for authentication errors"""
+
     pass
+
 
 def create_error_message(error: Exception, context: str = "", show_details: bool = False):
     """Create user-friendly error messages with consistent styling"""
@@ -27,40 +33,28 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
     # Determine error type and styling
     if isinstance(error, DataValidationError):
         error_type = "שגיאת נתונים"
-        error_color = DesignSystem.COLORS['error']
+        error_color = DesignSystem.COLORS["error"]
         error_icon = "📊"
         suggestions = [
             "בדוק שהנתונים מכילים את העמודות הנדרשות",
             "ודא שהפורמט של הנתונים תקין",
-            "נסה לרענן את הדף"
+            "נסה לרענן את הדף",
         ]
     elif isinstance(error, NetworkError):
         error_type = "שגיאת רשת"
-        error_color = DesignSystem.COLORS['warning']
+        error_color = DesignSystem.COLORS["warning"]
         error_icon = "🌐"
-        suggestions = [
-            "בדוק את החיבור לאינטרנט",
-            "ודא שהשרת זמין",
-            "נסה שוב בעוד כמה דקות"
-        ]
+        suggestions = ["בדוק את החיבור לאינטרנט", "ודא שהשרת זמין", "נסה שוב בעוד כמה דקות"]
     elif isinstance(error, AuthenticationError):
         error_type = "שגיאת אימות"
-        error_color = DesignSystem.COLORS['error']
+        error_color = DesignSystem.COLORS["error"]
         error_icon = "🔐"
-        suggestions = [
-            "בדוק את פרטי ההתחברות",
-            "ודא שיש לך הרשאות מתאימות",
-            "פנה למנהל המערכת"
-        ]
+        suggestions = ["בדוק את פרטי ההתחברות", "ודא שיש לך הרשאות מתאימות", "פנה למנהל המערכת"]
     else:
         error_type = "שגיאה כללית"
-        error_color = DesignSystem.COLORS['error']
+        error_color = DesignSystem.COLORS["error"]
         error_icon = "❌"
-        suggestions = [
-            "נסה לרענן את הדף",
-            "פנה לתמיכה טכנית",
-            "בדוק את הלוגים לפרטים נוספים"
-        ]
+        suggestions = ["נסה לרענן את הדף", "פנה לתמיכה טכנית", "בדוק את הלוגים לפרטים נוספים"]
 
     # Create error message HTML
     error_html = f"""
@@ -165,6 +159,7 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
 
     st.markdown(error_html, unsafe_allow_html=True)
 
+
 def create_success_message(message: str, icon: str = "✅", context: str = ""):
     """Create success messages with consistent styling"""
 
@@ -211,6 +206,7 @@ def create_success_message(message: str, icon: str = "✅", context: str = ""):
     """
 
     st.markdown(success_html, unsafe_allow_html=True)
+
 
 def create_warning_message(message: str, icon: str = "⚠️", context: str = ""):
     """Create warning messages with consistent styling"""
@@ -259,6 +255,7 @@ def create_warning_message(message: str, icon: str = "⚠️", context: str = ""
 
     st.markdown(warning_html, unsafe_allow_html=True)
 
+
 def create_info_message(message: str, icon: str = "ℹ️", context: str = ""):
     """Create info messages with consistent styling"""
 
@@ -306,14 +303,12 @@ def create_info_message(message: str, icon: str = "ℹ️", context: str = ""):
 
     st.markdown(info_html, unsafe_allow_html=True)
 
+
 def handle_error_with_retry(error: Exception, retry_function, max_retries: int = 3):
     """Handle errors with automatic retry functionality"""
 
     if max_retries > 0:
-        create_warning_message(
-            f"שגיאה זמנית. מנסה שוב... ({max_retries} ניסיונות נותרו)",
-            "🔄"
-        )
+        create_warning_message(f"שגיאה זמנית. מנסה שוב... ({max_retries} ניסיונות נותרו)", "🔄")
 
         try:
             return retry_function()

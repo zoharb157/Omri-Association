@@ -19,6 +19,7 @@ def test_shadow_aliases_exist():
         alias = f"shadow_{key}"
         assert ModernDesignSystem.SHADOWS[key] == ModernDesignSystem.SHADOWS[alias]
 
+
 def test_legacy_design_system_maps_to_modern():
     from ui.design_tokens import DesignSystem
 
