@@ -21,11 +21,11 @@ def create_comparison_chart(expenses_df: pd.DataFrame, donations_df: pd.DataFram
         # Calculate monthly totals - ensure dates are properly converted
         try:
             expenses_df_copy = expenses_df.copy()
-            expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce')
+            expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce', format='%d/%m/%Y')
             valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
 
             donations_df_copy = donations_df.copy()
-            donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce')
+            donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce', format='%d/%m/%Y')
             valid_donations = donations_df_copy.dropna(subset=['תאריך'])
 
             if valid_expenses.empty or valid_donations.empty:
@@ -100,11 +100,11 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
         # Calculate monthly totals - ensure dates are properly converted
         try:
             expenses_df_copy = expenses_df.copy()
-            expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce')
+            expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy['תאריך'], errors='coerce', format='%d/%m/%Y')
             valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
 
             donations_df_copy = donations_df.copy()
-            donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce')
+            donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy['תאריך'], errors='coerce', format='%d/%m/%Y')
             valid_donations = donations_df_copy.dropna(subset=['תאריך'])
 
             if valid_expenses.empty or valid_donations.empty:
