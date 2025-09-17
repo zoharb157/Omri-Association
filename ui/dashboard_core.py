@@ -200,8 +200,6 @@ def render_home_tab(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, alman
     # 3. BUDGET CHARTS (Visual financial overview)
     create_budget_section(expenses_df, donations_df, budget_status, "home")
 
-    # 4. WIDOWS TABLE (Complete list of all widows)
-    create_widows_table_section(almanot_df)
 
     # 5. REPORTS & EXPORTS (Data access - for analysis and record keeping)
     create_reports_section(expenses_df, donations_df, almanot_df)
