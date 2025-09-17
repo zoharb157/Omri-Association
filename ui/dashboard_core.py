@@ -107,8 +107,9 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
             if 'סכום חודשי' in almanot_df.columns:
                 # Clean the data first - remove any non-numeric characters
                 almanot_df['סכום חודשי'] = almanot_df['סכום חודשי'].astype(str).str.replace('₪', '').str.replace(',', '').str.replace(' ', '')
-                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce').fillna(0)
-                # Fill missing values with 0 (intended behavior)
+                almanot_df['סכום חודשי'] = pd.to_numeric(almanot_df['סכום חודשי'], errors='coerce')
+                # Only fill NaN with 0, not all values
+                almanot_df['סכום חודשי'] = almanot_df['סכום חודשי'].fillna(0)
 
         # Calculate statistics (silent processing)
         budget_status = calculate_monthly_budget(expenses_df, donations_df)

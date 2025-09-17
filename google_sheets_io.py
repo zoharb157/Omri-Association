@@ -427,12 +427,22 @@ def load_all_data():
 
                 # Convert numeric columns (only for amount columns, not date columns)
                 for col in df.columns:
-                    if any(keyword in str(col).lower() for keyword in ['סכום', 'amount', 'שקלים', 'מחיר', 'price']):
+                    col_lower = str(col).lower()
+                    if any(keyword in col_lower for keyword in ['סכום', 'amount', 'שקלים', 'מחיר', 'price', 'חודשי']):
+                        # Debug: Check original values before processing
+                        print(f"DEBUG: Processing column '{col}' - Original values: {df[col].head(5).tolist()}")
+                        
                         # Clean and convert numeric columns
                         df[col] = df[col].astype(str).str.replace(r'[^\d.,-]', '', regex=True)
                         df[col] = df[col].str.replace(',', '.')
+                        print(f"DEBUG: After cleaning: {df[col].head(5).tolist()}")
+                        
                         df[col] = pd.to_numeric(df[col], errors='coerce')
+                        print(f"DEBUG: After numeric conversion: {df[col].head(5).tolist()}")
+                        
                         df[col] = df[col].fillna(0)
+                        print(f"DEBUG: Final values: {df[col].head(5).tolist()}")
+                        print(f"DEBUG: Sum: {df[col].sum()}")
 
                 all_data[ws.title] = df
             except Exception as e:

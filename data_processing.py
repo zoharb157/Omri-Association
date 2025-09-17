@@ -370,8 +370,6 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
         try:
             # Convert to numeric, handling any non-numeric values
             numeric_values = pd.to_numeric(df[value_column], errors='coerce')
-            
-            
             # Fill NaN with 0 for calculation purposes
             numeric_values = numeric_values.fillna(0)
             total_support = numeric_values.sum()
