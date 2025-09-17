@@ -37,7 +37,7 @@ def calculate_monthly_averages(df: pd.DataFrame, value_column: str = 'שקלים
         # Group by month and calculate totals - ensure dates are properly converted
         try:
             df_copy = df.copy()
-            df_copy['תאריך'] = pd.to_datetime(df_copy['תאריך'], errors='coerce', infer_datetime_format=True)
+            df_copy['תאריך'] = pd.to_datetime(df_copy['תאריך'], errors='coerce')
             # Filter out rows with invalid dates
             valid_df = df_copy.dropna(subset=['תאריך'])
             if valid_df.empty:
@@ -136,7 +136,7 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             try:
                 expenses_df_copy = expenses_df.copy()
                 date_col = expenses_df_copy.columns[0]
-                expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy[date_col], errors='coerce', infer_datetime_format=True)
+                expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy[date_col], errors='coerce')
                 valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
                 if not valid_expenses.empty:
                     monthly_expenses = (
@@ -152,7 +152,7 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             try:
                 donations_df_copy = donations_df.copy()
                 date_col = donations_df_copy.columns[0]
-                donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy[date_col], errors='coerce', infer_datetime_format=True)
+                donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy[date_col], errors='coerce')
                 valid_donations = donations_df_copy.dropna(subset=['תאריך'])
                 if not valid_donations.empty:
                     monthly_donations = (
@@ -331,7 +331,7 @@ def calculate_expense_statistics(df: pd.DataFrame, value_column: str = 'שקלי
 
 def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום חודשי') -> dict:
     """Calculate widow statistics with detailed analysis"""
-    if not isinstance(df, pd.DataFrame) or value_column not in df.columns or df.empty:
+    if not isinstance(df, pd.DataFrame) or df.empty:
         return {
             'total_widows': 0,
             'total_support': 0,
@@ -340,6 +340,27 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
             'support_distribution': {},
             'monthly_support': []
         }
+    
+    # Check if value_column exists, if not try alternative columns
+    if value_column not in df.columns:
+        # Try alternative column names
+        alternative_columns = ['סכום חודשי', 'כמה מקבלת בכל חודש', 'סכום', 'שקלים']
+        for alt_col in alternative_columns:
+            if alt_col in df.columns:
+                value_column = alt_col
+                break
+        else:
+            # If no value column found, return basic stats
+            name_col = 'שם' if 'שם' in df.columns else 'שם ' if 'שם ' in df.columns else df.columns[0] if len(df.columns) > 0 else 'שם'
+            total_widows = df[name_col].nunique() if name_col in df.columns else 0
+            return {
+                'total_widows': total_widows,
+                'total_support': 0,
+                'support_1000_count': 0,
+                'support_2000_count': 0,
+                'support_distribution': {},
+                'monthly_support': []
+            }
     try:
         # Basic statistics - use the correct column name
         name_col = 'שם' if 'שם' in df.columns else df.columns[0] if len(df.columns) > 0 else 'שם'

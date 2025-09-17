@@ -99,7 +99,7 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                 if 'שקלים' in df.columns:
                     df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
                 if 'תאריך' in df.columns:
-                    df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce', infer_datetime_format=True)
+                    df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
 
         if almanot_df is not None and not almanot_df.empty:
             if 'מספר ילדים' in almanot_df.columns:
@@ -111,6 +111,13 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         # Calculate statistics (silent processing)
         budget_status = calculate_monthly_budget(expenses_df, donations_df)
         donor_stats = calculate_donor_statistics(donations_df)
+        
+        # Debug widow data
+        if almanot_df is not None and not almanot_df.empty:
+            print(f"DEBUG: Widow data columns: {list(almanot_df.columns)}")
+            print(f"DEBUG: Widow data shape: {almanot_df.shape}")
+            print(f"DEBUG: First few rows: {almanot_df.head()}")
+        
         widow_stats = calculate_widow_statistics(almanot_df)
 
         return budget_status, donor_stats, widow_stats

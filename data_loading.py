@@ -93,7 +93,7 @@ def clean_dataframe(df):
     """Clean dataframe data"""
     # Convert date format
     if 'תאריך' in df.columns:
-        df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce', infer_datetime_format=True)
+        df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
 
     # Remove currency symbols and convert to float
     if 'שקלים' in df.columns:

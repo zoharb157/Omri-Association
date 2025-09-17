@@ -38,7 +38,7 @@ def create_modern_donations_chart(donations_df):
         # Handle date column - first column is usually the date
         if len(donations_df.columns) > 0:
             date_col = donations_df.columns[0]  # First column is the date
-            donations_df['תאריך'] = pd.to_datetime(donations_df[date_col], errors='coerce', infer_datetime_format=True)
+            donations_df['תאריך'] = pd.to_datetime(donations_df[date_col], errors='coerce')
 
         amount_col = _get_amount_column(donations_df)
         if not amount_col:

@@ -321,10 +321,10 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
         # Convert date columns to datetime
         if sheet_name in ["Expenses", "Donations", "Investors"]:
             if 'תאריך' in df.columns:
-                df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce', infer_datetime_format=True)
+                df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce')
         elif sheet_name == "Widows":
             if 'חודש התחלה' in df.columns:
-                df['חודש התחלה'] = pd.to_datetime(df['חודש התחלה'], errors='coerce', infer_datetime_format=True)
+                df['חודש התחלה'] = pd.to_datetime(df['חודש התחלה'], errors='coerce')
 
         # Convert amount columns to numeric - handle string amounts
         if sheet_name in ["Expenses", "Donations", "Investors"]:
@@ -423,7 +423,7 @@ def load_all_data():
                 # Convert date columns first (before numeric conversion)
                 for col in df.columns:
                     if any(keyword in str(col).lower() for keyword in ['תאריך', 'date', 'חודש', 'month']):
-                        df[col] = pd.to_datetime(df[col], errors='coerce', infer_datetime_format=True)
+                        df[col] = pd.to_datetime(df[col], errors='coerce')
 
                 # Convert numeric columns (only for amount columns, not date columns)
                 for col in df.columns:
