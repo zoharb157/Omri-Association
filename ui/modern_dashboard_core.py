@@ -46,7 +46,7 @@ Handles core dashboard logic with modern UI components
 
 import logging
 import textwrap
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import pandas as pd
 import streamlit as st
@@ -90,7 +90,7 @@ from ui.dashboard_sections import (
 from ui.dashboard_layout import create_reports_section
 
 
-def _format_currency(value: float | int | None) -> str:
+def _format_currency(value: Union[float, int, None]) -> str:
     if value is None:
         value = 0
     try:
