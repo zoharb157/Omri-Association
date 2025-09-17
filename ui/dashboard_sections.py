@@ -11,7 +11,7 @@ from typing import Dict
 import pandas as pd
 import streamlit as st
 
-from data_processing import calculate_donor_statistics, calculate_monthly_budget, calculate_widow_statistics
+# Removed unused imports: calculate_donor_statistics, calculate_monthly_budget, calculate_widow_statistics
 from data_visualization import (
     create_budget_distribution_chart,
     create_donor_contribution_chart,
@@ -187,11 +187,10 @@ def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
 def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     """Create the widows management section"""
     create_simple_section_header("👩 ניהול אלמנות")
-    
+
     # Add widow import section
     st.markdown("#### 📥 ייבוא נתוני אלמנות חדשות")
     st.markdown("ייבוא נתונים מהגיליון החדש עם שיוך תורמים")
-    
     # Import widow data button
     if st.button("📥 ייבא נתוני אלמנות חדשות", use_container_width=True):
         try:
