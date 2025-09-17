@@ -3,11 +3,12 @@ Spacing System for Omri Association Dashboard
 Centralized spacing definitions and utilities
 """
 
-from typing import Dict, Any
+from typing import Dict
+
 
 class SpacingSystem:
     """Centralized spacing system for consistent layouts"""
-    
+
     # Spacing Scale (8px base)
     SPACE_1 = "0.25rem"    # 4px
     SPACE_2 = "0.5rem"     # 8px
@@ -26,7 +27,7 @@ class SpacingSystem:
     SPACE_48 = "12rem"     # 192px
     SPACE_56 = "14rem"     # 224px
     SPACE_64 = "16rem"     # 256px
-    
+
     @classmethod
     def get_spacing_scale(cls) -> Dict[str, str]:
         """Get complete spacing scale"""
@@ -49,7 +50,7 @@ class SpacingSystem:
             '56': cls.SPACE_56,
             '64': cls.SPACE_64,
         }
-    
+
     @classmethod
     def get_component_spacing(cls) -> Dict[str, str]:
         """Get predefined spacing for common components"""
@@ -59,26 +60,26 @@ class SpacingSystem:
             'padding_medium': cls.SPACE_4,
             'padding_large': cls.SPACE_6,
             'padding_xlarge': cls.SPACE_8,
-            
+
             # Margin
             'margin_small': cls.SPACE_2,
             'margin_medium': cls.SPACE_4,
             'margin_large': cls.SPACE_6,
             'margin_xlarge': cls.SPACE_8,
-            
+
             # Gap
             'gap_small': cls.SPACE_2,
             'gap_medium': cls.SPACE_4,
             'gap_large': cls.SPACE_6,
             'gap_xlarge': cls.SPACE_8,
-            
+
             # Border radius
             'radius_small': cls.SPACE_1,
             'radius_medium': cls.SPACE_2,
             'radius_large': cls.SPACE_3,
             'radius_xlarge': cls.SPACE_4,
         }
-    
+
     @classmethod
     def get_css_variables(cls) -> str:
         """Get CSS custom properties for spacing"""

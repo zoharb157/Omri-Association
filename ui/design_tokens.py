@@ -1,115 +1,97 @@
 #!/usr/bin/env python3
-"""
-Design System for Omri Association Dashboard
-Centralized design tokens and styling utilities
-"""
+"""Legacy design token interface that maps to ModernDesignSystem."""
+
+from __future__ import annotations
+
+from ui.design_system.modern_tokens import ModernDesignSystem
+
+
+def _spacing(name: str) -> str:
+    mapping = {
+        "xs": "space_1",
+        "sm": "space_2",
+        "md": "space_4",
+        "lg": "space_6",
+        "xl": "space_8",
+        "xxl": "space_12",
+        "xxxl": "space_16",
+    }
+    return ModernDesignSystem.SPACING[mapping[name]]
+
+
+def _typography(name: str) -> dict[str, str]:
+    mapping = {
+        "h1": "text_4xl",
+        "h2": "text_3xl",
+        "h3": "text_2xl",
+        "h4": "text_xl",
+        "body": "text_base",
+        "body_small": "text_sm",
+        "caption": "text_xs",
+    }
+    token = ModernDesignSystem.TYPOGRAPHY[mapping[name]]
+    return {
+        "size": token["size"],
+        "weight": token["weight"],
+        "line_height": token.get("line_height", "1.5"),
+        "margin_bottom": _spacing("sm"),
+    }
+
 
 class DesignSystem:
-    """Centralized design system with consistent tokens"""
-    
-    # Color Palette
+    """Backwards-compatible wrapper around the modern design system."""
+
     COLORS = {
-        'primary': '#1f77b4',           # Blue
-        'primary_light': '#4a9eff',     # Light Blue
-        'primary_dark': '#1565c0',      # Dark Blue
-        'secondary': '#ff7f0e',         # Orange
-        'secondary_light': '#ffb74d',   # Light Orange
-        'secondary_dark': '#f57c00',    # Dark Orange
-        'success': '#2ecc71',           # Green
-        'warning': '#f39c12',           # Yellow
-        'error': '#e74c3c',             # Red
-        'info': '#3498db',              # Light Blue
-        'background': '#ffffff',        # White
-        'surface': '#f8f9fa',           # Light Gray
-        'surface_dark': '#e9ecef',      # Darker Gray
-        'text': '#2c3e50',              # Dark Gray
-        'text_secondary': '#7f8c8d',    # Medium Gray
-        'text_light': '#bdc3c7',        # Light Gray
-        'border': '#dee2e6',            # Border Gray
-        'shadow': 'rgba(0, 0, 0, 0.1)', # Shadow
+        "primary": ModernDesignSystem.COLORS["primary"],
+        "primary_light": ModernDesignSystem.COLORS["primary_500"],
+        "primary_dark": ModernDesignSystem.COLORS["primary_700"],
+        "secondary": ModernDesignSystem.COLORS["info"],
+        "secondary_light": ModernDesignSystem.COLORS["info_100"],
+        "secondary_dark": ModernDesignSystem.COLORS["info"],
+        "success": ModernDesignSystem.COLORS["success"],
+        "warning": ModernDesignSystem.COLORS["warning"],
+        "error": ModernDesignSystem.COLORS["error"],
+        "info": ModernDesignSystem.COLORS["info"],
+        "background": ModernDesignSystem.COLORS["background"],
+        "surface": ModernDesignSystem.COLORS["surface"],
+        "surface_dark": ModernDesignSystem.COLORS["gray_100"],
+        "text": ModernDesignSystem.COLORS["gray_800"],
+        "text_secondary": ModernDesignSystem.COLORS["gray_500"],
+        "text_light": ModernDesignSystem.COLORS["gray_400"],
+        "border": ModernDesignSystem.COLORS["border"],
     }
-    
-    # Spacing Scale (8px grid system)
+
     SPACING = {
-        'xs': '4px',
-        'sm': '8px',
-        'md': '16px',
-        'lg': '24px',
-        'xl': '32px',
-        'xxl': '48px',
-        'xxxl': '64px',
+        "xs": _spacing("xs"),
+        "sm": _spacing("sm"),
+        "md": _spacing("md"),
+        "lg": _spacing("lg"),
+        "xl": _spacing("xl"),
+        "xxl": _spacing("xxl"),
+        "xxxl": _spacing("xxxl"),
     }
-    
-    # Typography Scale
+
     TYPOGRAPHY = {
-        'h1': {
-            'size': '2.5rem',
-            'weight': '700',
-            'line_height': '1.2',
-            'margin_bottom': '24px'
-        },
-        'h2': {
-            'size': '2rem',
-            'weight': '600',
-            'line_height': '1.3',
-            'margin_bottom': '20px'
-        },
-        'h3': {
-            'size': '1.5rem',
-            'weight': '600',
-            'line_height': '1.4',
-            'margin_bottom': '16px'
-        },
-        'h4': {
-            'size': '1.25rem',
-            'weight': '600',
-            'line_height': '1.4',
-            'margin_bottom': '12px'
-        },
-        'body': {
-            'size': '1rem',
-            'weight': '400',
-            'line_height': '1.5',
-            'margin_bottom': '8px'
-        },
-        'body_small': {
-            'size': '0.875rem',
-            'weight': '400',
-            'line_height': '1.4',
-            'margin_bottom': '6px'
-        },
-        'caption': {
-            'size': '0.75rem',
-            'weight': '400',
-            'line_height': '1.4',
-            'margin_bottom': '4px'
-        }
+        key: _typography(key)
+        for key in ["h1", "h2", "h3", "h4", "body", "body_small", "caption"]
     }
-    
-    # Border Radius
+
     BORDER_RADIUS = {
-        'sm': '4px',
-        'md': '8px',
-        'lg': '12px',
-        'xl': '16px',
-        'full': '50%'
+        "sm": ModernDesignSystem.BORDER_RADIUS["radius_sm"],
+        "md": ModernDesignSystem.BORDER_RADIUS["radius_md"],
+        "lg": ModernDesignSystem.BORDER_RADIUS["radius_lg"],
+        "xl": ModernDesignSystem.BORDER_RADIUS["radius_xl"],
+        "full": ModernDesignSystem.BORDER_RADIUS["radius_full"],
     }
-    
-    # Shadows
+
     SHADOWS = {
-        'sm': '0 1px 3px rgba(0, 0, 0, 0.1)',
-        'md': '0 4px 6px rgba(0, 0, 0, 0.1)',
-        'lg': '0 10px 15px rgba(0, 0, 0, 0.1)',
-        'xl': '0 20px 25px rgba(0, 0, 0, 0.1)'
+        "sm": ModernDesignSystem.SHADOWS["shadow_sm"],
+        "md": ModernDesignSystem.SHADOWS["shadow_md"],
+        "lg": ModernDesignSystem.SHADOWS["shadow_lg"],
+        "xl": ModernDesignSystem.SHADOWS["shadow_xl"],
     }
-    
-    # Breakpoints
-    BREAKPOINTS = {
-        'mobile': '768px',
-        'tablet': '1024px',
-        'desktop': '1200px',
-        'wide': '1400px'
-    }
+
+    BREAKPOINTS = ModernDesignSystem.BREAKPOINTS
 
 def get_global_css():
     """Generate global CSS with modern design system tokens"""

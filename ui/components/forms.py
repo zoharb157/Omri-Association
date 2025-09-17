@@ -5,7 +5,9 @@ Accessible form elements with consistent styling
 """
 
 import streamlit as st
+
 from ui.design_tokens import DesignSystem
+
 
 def create_accessible_checkbox(label: str, value: bool = False, help_text: str = "", key: str = None, disabled: bool = False):
     """Create accessible checkbox with proper ARIA attributes"""
@@ -63,7 +65,7 @@ def create_accessible_slider(label: str, min_value: float, max_value: float, val
 
 def create_filter_group(title: str, filters: list, columns: int = 3):
     """Create a group of filters with consistent styling"""
-    
+
     # Create section header
     st.markdown(f"""
     <div style="
@@ -86,14 +88,14 @@ def create_filter_group(title: str, filters: list, columns: int = 3):
             🔍 {title}
         </h4>
     """, unsafe_allow_html=True)
-    
+
     # Create filter columns
     cols = st.columns(columns)
-    
+
     for i, filter_config in enumerate(filters):
         with cols[i % columns]:
             filter_type = filter_config.get('type', 'checkbox')
-            
+
             if filter_type == 'checkbox':
                 create_accessible_checkbox(
                     label=filter_config.get('label', ''),
@@ -121,19 +123,19 @@ def create_filter_group(title: str, filters: list, columns: int = 3):
                     key=filter_config.get('key', f"filter_{i}"),
                     disabled=filter_config.get('disabled', False)
                 )
-    
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 def create_search_input(label: str = "חיפוש", placeholder: str = "הקלד לחיפוש...", key: str = None):
     """Create accessible search input with proper styling"""
-    
+
     # Add search icon and styling
     search_html = f"""
     <style>
     .search-input {{
         position: relative;
     }}
-    
+
     .search-input::before {{
         content: "🔍";
         position: absolute;
@@ -143,23 +145,23 @@ def create_search_input(label: str = "חיפוש", placeholder: str = "הקלד 
         color: {DesignSystem.COLORS['text_secondary']};
         z-index: 1;
     }}
-    
+
     .search-input input {{
         padding-left: 40px !important;
         border-radius: {DesignSystem.BORDER_RADIUS['md']} !important;
         border: 1px solid {DesignSystem.COLORS['border']} !important;
         font-size: {DesignSystem.TYPOGRAPHY['body']['size']} !important;
     }}
-    
+
     .search-input input:focus {{
         border-color: {DesignSystem.COLORS['primary']} !important;
         box-shadow: 0 0 0 2px {DesignSystem.COLORS['primary']}20 !important;
     }}
     </style>
     """
-    
+
     st.markdown(search_html, unsafe_allow_html=True)
-    
+
     return st.text_input(
         label=label,
         placeholder=placeholder,
@@ -173,9 +175,9 @@ def create_search_input(label: str = "חיפוש", placeholder: str = "הקלד 
 
 def create_date_range_picker(label: str = "טווח תאריכים", key: str = None):
     """Create accessible date range picker"""
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         start_date = st.date_input(
             "תאריך התחלה",
@@ -185,7 +187,7 @@ def create_date_range_picker(label: str = "טווח תאריכים", key: str = 
                 'role': 'textbox'
             }
         )
-    
+
     with col2:
         end_date = st.date_input(
             "תאריך סיום",
@@ -195,22 +197,22 @@ def create_date_range_picker(label: str = "טווח תאריכים", key: str = 
                 'role': 'textbox'
             }
         )
-    
+
     return start_date, end_date
 
 def create_action_buttons(buttons: list, columns: int = None):
     """Create a row of action buttons with consistent styling"""
-    
+
     if columns is None:
         columns = len(buttons)
-    
+
     cols = st.columns(columns)
-    
+
     for i, button_config in enumerate(buttons):
         with cols[i]:
             button_type = button_config.get('type', 'primary')
-            button_color = DesignSystem.COLORS.get(button_type, DesignSystem.COLORS['primary'])
-            
+            DesignSystem.COLORS.get(button_type, DesignSystem.COLORS['primary'])
+
             if st.button(
                 button_config.get('label', ''),
                 key=button_config.get('key', f"button_{i}"),

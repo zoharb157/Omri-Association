@@ -5,7 +5,9 @@ Consistent error messages and user feedback
 """
 
 import streamlit as st
+
 from ui.design_tokens import DesignSystem
+
 
 class DataValidationError(Exception):
     """Custom exception for data validation errors"""
@@ -21,7 +23,7 @@ class AuthenticationError(Exception):
 
 def create_error_message(error: Exception, context: str = "", show_details: bool = False):
     """Create user-friendly error messages with consistent styling"""
-    
+
     # Determine error type and styling
     if isinstance(error, DataValidationError):
         error_type = "שגיאת נתונים"
@@ -59,7 +61,7 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
             "פנה לתמיכה טכנית",
             "בדוק את הלוגים לפרטים נוספים"
         ]
-    
+
     # Create error message HTML
     error_html = f"""
     <div style="
@@ -90,7 +92,7 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
                 {error_type}
             </h4>
         </div>
-        
+
         <p style="
             color: {DesignSystem.COLORS['text']};
             font-size: {DesignSystem.TYPOGRAPHY['body']['size']};
@@ -99,7 +101,7 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
         ">
             {str(error)}
         </p>
-        
+
         {f'''
         <p style="
             color: {DesignSystem.COLORS['text_secondary']};
@@ -110,7 +112,7 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
             הקשר: {context}
         </p>
         ''' if context else ''}
-        
+
         <div style="
             background: {DesignSystem.COLORS['surface']};
             border-radius: {DesignSystem.BORDER_RADIUS['sm']};
@@ -134,7 +136,7 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
                 {''.join([f'<li>{suggestion}</li>' for suggestion in suggestions])}
             </ul>
         </div>
-        
+
         {f'''
         <details style="
             margin-top: {DesignSystem.SPACING['md']};
@@ -160,12 +162,12 @@ def create_error_message(error: Exception, context: str = "", show_details: bool
         ''' if show_details else ''}
     </div>
     """
-    
+
     st.markdown(error_html, unsafe_allow_html=True)
 
 def create_success_message(message: str, icon: str = "✅", context: str = ""):
     """Create success messages with consistent styling"""
-    
+
     success_html = f"""
     <div style="
         background: {DesignSystem.COLORS['background']};
@@ -195,7 +197,7 @@ def create_success_message(message: str, icon: str = "✅", context: str = ""):
                 {message}
             </p>
         </div>
-        
+
         {f'''
         <p style="
             color: {DesignSystem.COLORS['text_secondary']};
@@ -207,12 +209,12 @@ def create_success_message(message: str, icon: str = "✅", context: str = ""):
         ''' if context else ''}
     </div>
     """
-    
+
     st.markdown(success_html, unsafe_allow_html=True)
 
 def create_warning_message(message: str, icon: str = "⚠️", context: str = ""):
     """Create warning messages with consistent styling"""
-    
+
     warning_html = f"""
     <div style="
         background: {DesignSystem.COLORS['background']};
@@ -242,7 +244,7 @@ def create_warning_message(message: str, icon: str = "⚠️", context: str = ""
                 {message}
             </p>
         </div>
-        
+
         {f'''
         <p style="
             color: {DesignSystem.COLORS['text_secondary']};
@@ -254,12 +256,12 @@ def create_warning_message(message: str, icon: str = "⚠️", context: str = ""
         ''' if context else ''}
     </div>
     """
-    
+
     st.markdown(warning_html, unsafe_allow_html=True)
 
 def create_info_message(message: str, icon: str = "ℹ️", context: str = ""):
     """Create info messages with consistent styling"""
-    
+
     info_html = f"""
     <div style="
         background: {DesignSystem.COLORS['surface']};
@@ -289,7 +291,7 @@ def create_info_message(message: str, icon: str = "ℹ️", context: str = ""):
                 {message}
             </p>
         </div>
-        
+
         {f'''
         <p style="
             color: {DesignSystem.COLORS['text_secondary']};
@@ -301,18 +303,18 @@ def create_info_message(message: str, icon: str = "ℹ️", context: str = ""):
         ''' if context else ''}
     </div>
     """
-    
+
     st.markdown(info_html, unsafe_allow_html=True)
 
 def handle_error_with_retry(error: Exception, retry_function, max_retries: int = 3):
     """Handle errors with automatic retry functionality"""
-    
+
     if max_retries > 0:
         create_warning_message(
             f"שגיאה זמנית. מנסה שוב... ({max_retries} ניסיונות נותרו)",
             "🔄"
         )
-        
+
         try:
             return retry_function()
         except Exception as retry_error:

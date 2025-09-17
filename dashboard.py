@@ -4,8 +4,11 @@ Omri Association Dashboard - MAIN ENTRY POINT
 Uses the modular structure we built together
 """
 
-import streamlit as st
 import logging
+
+import streamlit as st
+
+from ui.design_tokens import get_global_css
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,16 +22,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 # Apply global design system
-from ui.design_tokens import get_global_css
 st.markdown(get_global_css(), unsafe_allow_html=True)
 
 def main():
     """Main entry point for the modern dashboard"""
     try:
-        # Import and run the modern dashboard
-        from ui.modern_dashboard_core import run_modern_dashboard
-        run_modern_dashboard()
+        # Import and run the modern dashboard (navbar + sections)
+        from ui.modern_dashboard_core import render_dashboard
+        render_dashboard()
     except ImportError as e:
         st.error(f"❌ שגיאה בטעינת מודולים: {str(e)}")
         st.info("אנא ודא שכל הקבצים הנדרשים קיימים")

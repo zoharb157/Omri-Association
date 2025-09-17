@@ -4,20 +4,23 @@ Loading Components for Dashboard
 Enhanced loading states and progress indicators
 """
 
-import streamlit as st
 import time
+
+import streamlit as st
+
 from ui.design_tokens import DesignSystem
+
 
 def create_loading_spinner(message: str = "טוען...", size: str = "large"):
     """Create a styled loading spinner"""
-    
+
     spinner_html = f"""
     <div style="
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: {DesignSystem.SPACING['xl']};
+        padding: {DesignSystem.SPACING['xxl']};
         text-align: center;
     ">
         <div class="spinner" style="
@@ -37,7 +40,7 @@ def create_loading_spinner(message: str = "טוען...", size: str = "large"):
             {message}
         </p>
     </div>
-    
+
     <style>
     @keyframes spin {{
         0% {{ transform: rotate(0deg); }}
@@ -45,12 +48,12 @@ def create_loading_spinner(message: str = "טוען...", size: str = "large"):
     }}
     </style>
     """
-    
+
     return st.markdown(spinner_html, unsafe_allow_html=True)
 
 def create_progress_bar(message: str = "מעבד נתונים...", progress: float = 0.0):
     """Create a styled progress bar"""
-    
+
     progress_html = f"""
     <div style="
         background: {DesignSystem.COLORS['surface']};
@@ -79,7 +82,7 @@ def create_progress_bar(message: str = "מעבד נתונים...", progress: flo
                 {int(progress * 100)}%
             </span>
         </div>
-        
+
         <div style="
             width: 100%;
             height: 8px;
@@ -96,14 +99,14 @@ def create_progress_bar(message: str = "מעבד נתונים...", progress: flo
         </div>
     </div>
     """
-    
+
     return st.markdown(progress_html, unsafe_allow_html=True)
 
 def create_skeleton_card(title: str = "טוען...", lines: int = 3):
     """Create a skeleton loading card"""
-    
+
     skeleton_lines = ""
-    for i in range(lines):
+    for _i in range(lines):
         skeleton_lines += f"""
         <div style="
             height: 16px;
@@ -113,7 +116,7 @@ def create_skeleton_card(title: str = "טוען...", lines: int = 3):
             animation: pulse 1.5s ease-in-out infinite;
         "></div>
         """
-    
+
     skeleton_html = f"""
     <div style="
         background: {DesignSystem.COLORS['background']};
@@ -132,7 +135,7 @@ def create_skeleton_card(title: str = "טוען...", lines: int = 3):
         "></div>
         {skeleton_lines}
     </div>
-    
+
     <style>
     @keyframes pulse {{
         0% {{ opacity: 1; }}
@@ -141,15 +144,15 @@ def create_skeleton_card(title: str = "טוען...", lines: int = 3):
     }}
     </style>
     """
-    
+
     return st.markdown(skeleton_html, unsafe_allow_html=True)
 
 def create_data_loading_state():
     """Create a comprehensive data loading state"""
-    
+
     with st.container():
         st.markdown("### 📊 טוען נתונים...")
-        
+
         # Progress steps
         steps = [
             "מתחבר ל-Google Sheets...",
@@ -159,19 +162,19 @@ def create_data_loading_state():
             "מעבד נתונים...",
             "יוצר ויזואליזציות..."
         ]
-        
+
         progress_container = st.container()
-        
+
         for i, step in enumerate(steps):
             with progress_container:
                 create_progress_bar(step, (i + 1) / len(steps))
                 time.sleep(0.5)  # Simulate loading time
-        
+
         st.success("✅ הנתונים נטענו בהצלחה!")
 
 def create_chart_loading_state():
     """Create a loading state for charts"""
-    
+
     loading_html = f"""
     <div style="
         display: flex;
@@ -201,7 +204,7 @@ def create_chart_loading_state():
             יוצר גרף...
         </p>
     </div>
-    
+
     <style>
     @keyframes spin {{
         0% {{ transform: rotate(0deg); }}
@@ -209,5 +212,5 @@ def create_chart_loading_state():
     }}
     </style>
     """
-    
+
     return st.markdown(loading_html, unsafe_allow_html=True)

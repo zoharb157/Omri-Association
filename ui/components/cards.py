@@ -3,16 +3,19 @@ Card Components for Omri Association Dashboard
 Reusable card components with consistent styling
 """
 
+from typing import Optional
+
 import streamlit as st
-from typing import Optional, Dict, Any
+
 from ..design_system.colors import ColorSystem
-from ..design_system.typography import TypographySystem
 from ..design_system.spacing import SpacingSystem
+from ..design_system.typography import TypographySystem
+
 
 class MetricCard:
     """Modern metric card component"""
-    
-    def __init__(self, title: str, value: str, delta: Optional[str] = None, 
+
+    def __init__(self, title: str, value: str, delta: Optional[str] = None,
                  help_text: Optional[str] = None, icon: Optional[str] = None,
                  color: str = "primary"):
         self.title = title
@@ -24,7 +27,7 @@ class MetricCard:
         self.colors = ColorSystem()
         self.typography = TypographySystem()
         self.spacing = SpacingSystem()
-    
+
     def render(self):
         """Render the metric card"""
         # Get color based on type
@@ -36,12 +39,12 @@ class MetricCard:
             'info': self.colors.INFO,
         }
         card_color = color_map.get(self.color, self.colors.PRIMARY_BLUE)
-        
+
         # Create card HTML with design system tokens
         icon_html = f'<span style="font-size: 1.2rem; margin-left: var(--space-2, 8px);">{self.icon}</span>' if self.icon else ''
         delta_html = f'<span style="color: var(--color-text-secondary, #64748b); font-size: var(--text-sm, 0.875rem); font-weight: var(--font-medium, 500);">{self.delta}</span>' if self.delta else ''
         help_html = f'<p style="color: var(--color-text-secondary, #64748b); font-size: var(--text-xs, 0.75rem); margin: var(--space-1, 4px) 0 0 0;">{self.help_text}</p>' if self.help_text else ''
-        
+
         card_html = f"""
         <div class="metric-card" style="
             background-color: var(--color-surface, #f8fafc);
@@ -83,12 +86,12 @@ class MetricCard:
             {help_html}
         </div>
         """
-        
+
         st.markdown(card_html, unsafe_allow_html=True)
 
 class InfoCard:
     """Information card component for displaying content"""
-    
+
     def __init__(self, title: str, content: str, icon: Optional[str] = None,
                  variant: str = "default"):
         self.title = title
@@ -96,7 +99,7 @@ class InfoCard:
         self.icon = icon
         self.variant = variant
         self.colors = ColorSystem()
-    
+
     def render(self):
         """Render the info card"""
         # Get variant colors
@@ -126,11 +129,11 @@ class InfoCard:
                 'content_color': 'var(--color-text-primary)',
             },
         }
-        
+
         colors = variant_colors.get(self.variant, variant_colors['default'])
-        
+
         icon_html = f'<span style="font-size: 1.2rem; margin-left: 8px;">{self.icon}</span>' if self.icon else ''
-        
+
         card_html = f"""
         <div style="
             background-color: {colors['background']};
@@ -162,7 +165,7 @@ class InfoCard:
             </div>
         </div>
         """
-        
+
         st.markdown(card_html, unsafe_allow_html=True)
 
 def create_metric_cards(metrics: list, columns: int = 4):

@@ -89,11 +89,14 @@ pip install -r requirements.txt
 
 #### For macOS/Linux:
 ```bash
-# Option 1: Use the shell script (recommended)
+# Option 1: Run full setup + dashboard
+./scripts/run_all.sh
+
+# Option 2: Use the legacy shell script
 chmod +x run_dashboard.sh
 ./run_dashboard.sh
 
-# Option 2: Direct command
+# Option 3: Direct command
 python3 -m streamlit run dashboard.py
 ```
 

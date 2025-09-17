@@ -4,16 +4,20 @@ Modern Dashboard Components for Omri Association Dashboard
 Main dashboard components with modern styling
 """
 
-import streamlit as st
 import pandas as pd
-from ui.components.modern_cards import create_dashboard_kpis, create_section_header, create_metrics_grid
-from ui.components.modern_charts import (
-    create_modern_donations_chart, 
-    create_modern_expenses_pie_chart,
-    create_modern_donors_chart,
-    create_modern_widows_chart
+import streamlit as st
+
+from ui.components.layout_system import create_modern_alert, create_responsive_grid
+from ui.components.modern_cards import (
+    create_dashboard_kpis,
+    create_section_header,
 )
-from ui.components.layout_system import create_responsive_grid, create_modern_alert
+from ui.components.modern_charts import (
+    create_modern_donations_chart,
+    create_modern_donors_chart,
+    create_modern_expenses_pie_chart,
+    create_modern_widows_chart,
+)
 
 
 def _get_amount_column(df: pd.DataFrame) -> str:
@@ -35,65 +39,142 @@ def _get_name_column(df: pd.DataFrame) -> str:
 
 def create_modern_overview_section(budget_status: dict, donor_stats: dict, widow_stats: dict):
     """Create the modern overview section with KPIs and charts"""
-    
+
     # Create KPI cards
     create_dashboard_kpis(budget_status, donor_stats, widow_stats)
-    
+
     # Add spacing
     st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
 
-def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, 
+def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame,
                                 donors_df: pd.DataFrame, widows_df: pd.DataFrame):
     """Create the modern charts section"""
-    
+
     create_section_header("תרשימים וניתוח נתונים", "סקירה ויזואלית של הנתונים")
-    
+
     # Create charts grid
-    cols = create_responsive_grid([], columns=2)
-    
+    cols = create_responsive_grid([], columns=2)  # Create responsive grid layout
+
     with cols[0]:
         # Donations chart
         donations_chart = create_modern_donations_chart(donations_df)
         if donations_chart:
-            st.plotly_chart(donations_chart, use_container_width=True)
+            chart_html = st.plotly_chart(donations_chart, use_container_width=True, key="donations_chart", output_format="div")
+            from ui.components.modern_cards import create_chart_card
+            create_chart_card(
+                title="תרשים תרומות",
+                subtitle="מגמות תרומות לאורך זמן",
+                empty=False,
+                chart_html=chart_html,
+                caption=None
+            )
         else:
-            create_modern_alert("אין נתוני תרומות להצגה", "info")
-    
+            from ui.components.modern_cards import create_chart_card
+            create_chart_card(
+                title="תרשים תרומות",
+                subtitle="מגמות תרומות לאורך זמן",
+                empty=True,
+                chart_html="",
+                caption=None
+            )
+
     with cols[1]:
         # Expenses pie chart
         expenses_chart = create_modern_expenses_pie_chart(expenses_df)
+        from ui.components.modern_cards import create_chart_card
         if expenses_chart:
-            st.plotly_chart(expenses_chart, use_container_width=True)
+            chart_html = st.plotly_chart(expenses_chart, use_container_width=True, key="expenses_chart", output_format="div")
+            create_chart_card(
+                title="תרשים הוצאות",
+                subtitle="התפלגות הוצאות",
+                empty=False,
+                chart_html=chart_html,
+                caption=None
+            )
         else:
-            create_modern_alert("אין נתוני הוצאות להצגה", "info")
-    
+            create_chart_card(
+                title="תרשים הוצאות",
+                subtitle="התפלגות הוצאות",
+                empty=True,
+                chart_html="",
+                caption=None
+            )
+
     # Second row of charts
-    cols2 = create_responsive_grid([], columns=2)
-    
+    st.markdown(
+        """
+        <style>
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        @media (max-width: 900px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown('<div class="chart-grid">', unsafe_allow_html=True)
+
     with cols2[0]:
         # Donors chart
         donors_chart = create_modern_donors_chart(donors_df)
+        from ui.components.modern_cards import create_chart_card
         if donors_chart:
-            st.plotly_chart(donors_chart, use_container_width=True)
+            chart_html = st.plotly_chart(donors_chart, use_container_width=True, key="donors_chart", output_format="div")
+            create_chart_card(
+                title="תרשים תורמים",
+                subtitle="פילוח תורמים",
+                empty=False,
+                chart_html=chart_html,
+                caption=None
+            )
         else:
-            create_modern_alert("אין נתוני תורמים להצגה", "info")
-    
+            create_chart_card(
+                title="תרשים תורמים",
+                subtitle="פילוח תורמים",
+                empty=True,
+                chart_html="",
+                caption=None
+            )
+
     with cols2[1]:
         # Widows chart
         widows_chart = create_modern_widows_chart(widows_df)
+        from ui.components.modern_cards import create_chart_card
         if widows_chart:
-            st.plotly_chart(widows_chart, use_container_width=True)
+            chart_html = st.plotly_chart(widows_chart, use_container_width=True, key="widows_chart", output_format="div")
+            create_chart_card(
+                title="תרשים אלמנות",
+                subtitle="פילוח אלמנות",
+                empty=False,
+                chart_html=chart_html,
+                caption=None
+            )
         else:
-            create_modern_alert("אין נתוני אלמנות להצגה", "info")
+            create_chart_card(
+                title="תרשים אלמנות",
+                subtitle="פילוח אלמנות",
+                empty=True,
+                chart_html="",
+                caption=None
+            )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def create_modern_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame):
     """Create the modern recent activity section"""
-    
+
     create_section_header("פעילות אחרונה", "תרומות והוצאות אחרונות")
-    
+
     # Create two columns for recent activities
     cols = create_responsive_grid([], columns=2)
-    
+
     with cols[0]:
         st.markdown("### 🎁 תרומות אחרונות")
         try:
@@ -158,31 +239,31 @@ def create_modern_recent_activity_section(expenses_df: pd.DataFrame, donations_d
 
 def create_modern_alerts_section(budget_status: dict, donor_stats: dict, widow_stats: dict):
     """Create the modern alerts section"""
-    
+
     create_section_header("התראות ומידע חשוב", "עדכונים על מצב העמותה")
-    
+
     # Check for alerts
     alerts = []
-    
+
     # Budget alerts
     if budget_status.get('total_donations', 0) < budget_status.get('total_expenses', 0):
         alerts.append(("⚠️", "יתרה שלילית", "ההוצאות עולות על התרומות", "warning"))
-    
+
     # Utilization rate alert
     utilization_rate = (budget_status.get('total_expenses', 0) / budget_status.get('total_donations', 1)) * 100
     if utilization_rate > 90:
         alerts.append(("🚨", "ניצול גבוה", f"אחוז הניצול הוא {utilization_rate:.1f}%", "error"))
     elif utilization_rate > 80:
         alerts.append(("⚠️", "ניצול גבוה", f"אחוז הניצול הוא {utilization_rate:.1f}%", "warning"))
-    
+
     # Donor alerts
     if donor_stats.get('total_donors', 0) < 10:
         alerts.append(("ℹ️", "מעט תורמים", "מספר התורמים נמוך", "info"))
-    
+
     # Widow alerts
     if widow_stats.get('total_widows', 0) > 100:
         alerts.append(("ℹ️", "מספר גבוה של אלמנות", f"יש {widow_stats.get('total_widows', 0)} אלמנות במערכת", "info"))
-    
+
     # Display alerts
     if alerts:
         for icon, title, message, alert_type in alerts:

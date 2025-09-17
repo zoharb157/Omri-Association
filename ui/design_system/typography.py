@@ -3,15 +3,16 @@ Typography System for Omri Association Dashboard
 Centralized font definitions and text styles
 """
 
-from typing import Dict, Any
+from typing import Dict
+
 
 class TypographySystem:
     """Centralized typography system for consistent text styling"""
-    
+
     # Font Families
     FONT_PRIMARY = "'Segoe UI', 'Noto Sans Hebrew', 'Arial Hebrew', sans-serif"
     FONT_MONO = "'Consolas', 'Monaco', 'Courier New', monospace"
-    
+
     # Font Sizes (rem units)
     TEXT_XS = "0.75rem"      # 12px
     TEXT_SM = "0.875rem"     # 14px
@@ -22,7 +23,7 @@ class TypographySystem:
     TEXT_3XL = "1.875rem"    # 30px
     TEXT_4XL = "2.25rem"     # 36px
     TEXT_5XL = "3rem"        # 48px
-    
+
     # Font Weights
     FONT_LIGHT = "300"
     FONT_NORMAL = "400"
@@ -30,14 +31,14 @@ class TypographySystem:
     FONT_SEMIBOLD = "600"
     FONT_BOLD = "700"
     FONT_EXTRABOLD = "800"
-    
+
     # Line Heights
     LEADING_TIGHT = "1.25"
     LEADING_SNUG = "1.375"
     LEADING_NORMAL = "1.5"
     LEADING_RELAXED = "1.625"
     LEADING_LOOSE = "2"
-    
+
     @classmethod
     def get_font_sizes(cls) -> Dict[str, str]:
         """Get all font sizes"""
@@ -52,7 +53,7 @@ class TypographySystem:
             '4xl': cls.TEXT_4XL,
             '5xl': cls.TEXT_5XL,
         }
-    
+
     @classmethod
     def get_font_weights(cls) -> Dict[str, str]:
         """Get all font weights"""
@@ -64,7 +65,7 @@ class TypographySystem:
             'bold': cls.FONT_BOLD,
             'extrabold': cls.FONT_EXTRABOLD,
         }
-    
+
     @classmethod
     def get_text_styles(cls) -> Dict[str, Dict[str, str]]:
         """Get predefined text styles"""
@@ -130,7 +131,7 @@ class TypographySystem:
                 'font_family': cls.FONT_MONO,
             },
         }
-    
+
     @classmethod
     def get_css_variables(cls) -> str:
         """Get CSS custom properties for typography"""
@@ -138,7 +139,7 @@ class TypographySystem:
         :root {{
             --font-primary: {cls.FONT_PRIMARY};
             --font-mono: {cls.FONT_MONO};
-            
+
             --text-xs: {cls.TEXT_XS};
             --text-sm: {cls.TEXT_SM};
             --text-base: {cls.TEXT_BASE};
@@ -148,14 +149,14 @@ class TypographySystem:
             --text-3xl: {cls.TEXT_3XL};
             --text-4xl: {cls.TEXT_4XL};
             --text-5xl: {cls.TEXT_5XL};
-            
+
             --font-light: {cls.FONT_LIGHT};
             --font-normal: {cls.FONT_NORMAL};
             --font-medium: {cls.FONT_MEDIUM};
             --font-semibold: {cls.FONT_SEMIBOLD};
             --font-bold: {cls.FONT_BOLD};
             --font-extrabold: {cls.FONT_EXTRABOLD};
-            
+
             --leading-tight: {cls.LEADING_TIGHT};
             --leading-snug: {cls.LEADING_SNUG};
             --leading-normal: {cls.LEADING_NORMAL};

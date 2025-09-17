@@ -2,10 +2,12 @@
 Data Management Functions for the Omri Association Dashboard
 """
 
-import streamlit as st
-import pandas as pd
-from google_sheets_io import write_sheet
 import logging
+
+import streamlit as st
+
+from google_sheets_io import write_sheet
+
 
 def save_expenses_data(expenses_df):
     """Save expenses data to Google Sheets"""
@@ -63,7 +65,7 @@ def extract_amount_from_title(title):
         if numbers:
             return int(numbers[0])
         return 0
-    except:
+    except Exception:
         return 0
 
 def update_connection_in_data(donor_name, widow_name, amount):
@@ -72,19 +74,19 @@ def update_connection_in_data(donor_name, widow_name, amount):
         # Get current data
         if 'almanot_df' in st.session_state:
             almanot_df = st.session_state.almanot_df.copy()
-            
+
             # Find the widow and update the donor and amount
             mask = almanot_df['שם'] == widow_name
             if mask.any():
                 almanot_df.loc[mask, 'תורם'] = donor_name
                 almanot_df.loc[mask, 'סכום חודשי'] = amount
-                
+
                 # Update session state
                 st.session_state.almanot_df = almanot_df
-                
+
                 # Save to Google Sheets
                 save_widows_data(almanot_df)
-                
+
                 return True
         return False
     except Exception as e:
@@ -98,22 +100,22 @@ def remove_connection_from_data(donor_name, widow_name):
         # Get current data
         if 'almanot_df' in st.session_state:
             almanot_df = st.session_state.almanot_df.copy()
-            
+
             # Find the widow and remove the donor
             mask = almanot_df['שם'] == widow_name
             if mask.any():
                 almanot_df.loc[mask, 'תורם'] = ''
                 almanot_df.loc[mask, 'סכום חודשי'] = 0
-                
+
                 # Update session state
                 st.session_state.almanot_df = almanot_df
-                
+
                 # Save to Google Sheets
                 save_widows_data(almanot_df)
-                
+
                 return True
         return False
     except Exception as e:
         st.error(f"שגיאה בהסרת הקשר: {str(e)}")
         logging.error(f"Error removing connection: {str(e)}")
-        return False 
+        return False

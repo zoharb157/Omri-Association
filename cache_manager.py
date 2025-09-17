@@ -4,34 +4,37 @@ Cache Manager for Omri Association Dashboard
 Provides intelligent caching for data and computations
 """
 
-import streamlit as st
-import pandas as pd
-import time
 import hashlib
 import pickle
-from typing import Any, Optional, Dict
+import time
 from functools import wraps
+from typing import Any, Dict, Optional
+
+import pandas as pd
+import streamlit as st
+
 from config import get_setting
+
 
 class CacheManager:
     """Manages caching for dashboard data and computations"""
-    
+
     def __init__(self):
         self.cache_ttl = get_setting('CACHE_TTL', 300)  # 5 minutes default
         self.max_cache_size = 100  # Maximum number of cached items
-    
+
     def _generate_cache_key(self, func_name: str, *args, **kwargs) -> str:
         """Generate a unique cache key for function call"""
         # Create a string representation of arguments
         args_str = str(args) + str(sorted(kwargs.items()))
         # Hash the string to create a shorter key
         return f"{func_name}_{hashlib.md5(args_str.encode()).hexdigest()}"
-    
+
     def get(self, key: str) -> Optional[Any]:
         """Get item from cache"""
         if not get_setting('ENABLE_CACHING', True):
             return None
-        
+
         if key in st.session_state:
             cached_item = st.session_state[key]
             if isinstance(cached_item, dict) and 'expires_at' in cached_item:
@@ -40,47 +43,47 @@ class CacheManager:
                 else:
                     # Cache expired, remove it
                     del st.session_state[key]
-        
+
         return None
-    
+
     def set(self, key: str, data: Any, ttl: Optional[int] = None) -> None:
         """Set item in cache with TTL"""
         if not get_setting('ENABLE_CACHING', True):
             return
-        
+
         # Clean up old cache entries if we're at capacity
         self._cleanup_cache()
-        
+
         ttl = ttl or self.cache_ttl
         expires_at = time.time() + ttl
-        
+
         st.session_state[key] = {
             'data': data,
             'expires_at': expires_at,
             'created_at': time.time()
         }
-    
+
     def invalidate(self, key: str) -> None:
         """Invalidate a specific cache entry"""
         if key in st.session_state:
             del st.session_state[key]
-    
+
     def clear_all(self) -> None:
         """Clear all cache entries"""
         keys_to_remove = []
         for key in st.session_state.keys():
             if key.startswith('cache_'):
                 keys_to_remove.append(key)
-        
+
         for key in keys_to_remove:
             del st.session_state[key]
-    
+
     def _cleanup_cache(self) -> None:
         """Remove expired cache entries and old entries if at capacity"""
         current_time = time.time()
         keys_to_remove = []
         cache_entries = []
-        
+
         # Find all cache entries
         for key in st.session_state.keys():
             if key.startswith('cache_'):
@@ -90,11 +93,11 @@ class CacheManager:
                         keys_to_remove.append(key)
                     else:
                         cache_entries.append((key, cached_item['created_at']))
-        
+
         # Remove expired entries
         for key in keys_to_remove:
             del st.session_state[key]
-        
+
         # If still at capacity, remove oldest entries
         if len(cache_entries) >= self.max_cache_size:
             # Sort by creation time and remove oldest
@@ -102,15 +105,15 @@ class CacheManager:
             keys_to_remove = [key for key, _ in cache_entries[:-self.max_cache_size]]
             for key in keys_to_remove:
                 del st.session_state[key]
-    
+
     def get_cache_stats(self) -> Dict[str, Any]:
         """Get cache statistics"""
         cache_count = 0
         expired_count = 0
         total_size = 0
-        
+
         current_time = time.time()
-        
+
         for key in st.session_state.keys():
             if key.startswith('cache_'):
                 cached_item = st.session_state[key]
@@ -118,14 +121,14 @@ class CacheManager:
                     cache_count += 1
                     if current_time >= cached_item['expires_at']:
                         expired_count += 1
-                    
+
                     # Estimate size (rough calculation)
                     try:
                         item_size = len(pickle.dumps(cached_item['data']))
                         total_size += item_size
-                    except:
+                    except Exception:
                         pass
-        
+
         return {
             'total_entries': cache_count,
             'expired_entries': expired_count,
@@ -145,16 +148,16 @@ def cached(ttl: Optional[int] = None):
         def wrapper(*args, **kwargs):
             # Generate cache key
             cache_key = f"cache_{cache_manager._generate_cache_key(func.__name__, *args, **kwargs)}"
-            
+
             # Try to get from cache
             cached_result = cache_manager.get(cache_key)
             if cached_result is not None:
                 return cached_result
-            
+
             # Execute function and cache result
             result = func(*args, **kwargs)
             cache_manager.set(cache_key, result, ttl)
-            
+
             return result
         return wrapper
     return decorator
@@ -201,7 +204,7 @@ def st_cache_data(key: str, data: Any, ttl: Optional[int] = None) -> None:
     """Cache data using Streamlit's session state"""
     if not get_setting('ENABLE_CACHING', True):
         return
-    
+
     expires_at = time.time() + (ttl or cache_manager.cache_ttl)
     st.session_state[f"st_cache_{key}"] = {
         'data': data,
@@ -212,7 +215,7 @@ def st_get_cached_data(key: str) -> Optional[Any]:
     """Get cached data from Streamlit's session state"""
     if not get_setting('ENABLE_CACHING', True):
         return None
-    
+
     cache_key = f"st_cache_{key}"
     if cache_key in st.session_state:
         cached_item = st.session_state[cache_key]
@@ -221,5 +224,5 @@ def st_get_cached_data(key: str) -> Optional[Any]:
         else:
             # Cache expired, remove it
             del st.session_state[cache_key]
-    
+
     return None
