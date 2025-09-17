@@ -36,7 +36,6 @@ from ui.dashboard_sections import (
     create_overview_section,
     create_residential_breakdown_section,
     create_widows_section,
-    create_widows_table_section,
 )
 
 
@@ -276,7 +275,6 @@ def run_dashboard():
         # Render Widows Tab
         with tab4:
             create_widows_section(almanot_df, widow_stats)
-            create_widows_table_section(almanot_df)
 
         # Render Network Tab
         with tab5:
