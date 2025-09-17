@@ -4,30 +4,23 @@ FastAPI Backend for Omri Association Dashboard
 Provides REST API endpoints for frontend consumption
 """
 
+import logging
+import os
+import sys
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-import pandas as pd
-import logging
-from typing import Dict, List, Optional
-import sys
-import os
 
 # Add parent directory to path to import existing modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import existing modules
-from google_sheets_io import (
-    read_sheet, 
-    read_widow_support_data,
-    SPREADSHEET_ID,
-    WIDOW_SPREADSHEET_ID
-)
 from data_processing import (
-    calculate_monthly_budget,
     calculate_donor_statistics,
-    calculate_widow_statistics
+    calculate_monthly_budget,
+    calculate_widow_statistics,
 )
+from google_sheets_io import read_sheet, read_widow_support_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -58,29 +51,29 @@ def get_cached_data():
     """Get data from cache or load fresh data"""
     global data_cache, cache_timestamp
     import time
-    
+
     current_time = time.time()
-    
+
     # Return cached data if it's still fresh
     if cache_timestamp and (current_time - cache_timestamp) < CACHE_DURATION:
         return data_cache
-    
+
     try:
         logger.info("Loading fresh data from Google Sheets...")
-        
+
         # Load all data
         expenses_df = read_sheet("Expenses")
         donations_df = read_sheet("Donations")
         almanot_df = read_widow_support_data()
         investors_df = read_sheet("Investors")
-        
+
         # Process data
         budget_status = calculate_monthly_budget(expenses_df, donations_df)
         donor_stats = calculate_donor_statistics(donations_df)
         widow_stats = calculate_widow_statistics(almanot_df)
         # TODO: Add network data processing
         network_data = {}
-        
+
         # Cache the data
         data_cache = {
             "expenses": expenses_df.to_dict('records') if expenses_df is not None else [],
@@ -92,15 +85,15 @@ def get_cached_data():
             "widow_stats": widow_stats,
             "network_data": network_data
         }
-        
+
         cache_timestamp = current_time
         logger.info("Data loaded and cached successfully")
-        
+
         return data_cache
-        
+
     except Exception as e:
         logger.error(f"Error loading data: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load data: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to load data: {str(e)}") from e
 
 @app.get("/")
 async def root():
@@ -141,7 +134,7 @@ async def get_dashboard_overview():
         }
     except Exception as e:
         logger.error(f"Error getting dashboard overview: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/data/expenses")
 async def get_expenses():
@@ -151,7 +144,7 @@ async def get_expenses():
         return {"expenses": data["expenses"]}
     except Exception as e:
         logger.error(f"Error getting expenses: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/data/donations")
 async def get_donations():
@@ -161,7 +154,7 @@ async def get_donations():
         return {"donations": data["donations"]}
     except Exception as e:
         logger.error(f"Error getting donations: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/data/almanot")
 async def get_almanot():
@@ -171,7 +164,7 @@ async def get_almanot():
         return {"almanot": data["almanot"]}
     except Exception as e:
         logger.error(f"Error getting almanot: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/data/investors")
 async def get_investors():
@@ -181,7 +174,7 @@ async def get_investors():
         return {"investors": data["investors"]}
     except Exception as e:
         logger.error(f"Error getting investors: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/network")
 async def get_network_data():
@@ -191,7 +184,7 @@ async def get_network_data():
         return {"network_data": data["network_data"]}
     except Exception as e:
         logger.error(f"Error getting network data: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/reports/monthly")
 async def get_monthly_report():
@@ -208,7 +201,7 @@ async def get_monthly_report():
         }
     except Exception as e:
         logger.error(f"Error getting monthly report: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 if __name__ == "__main__":
     import uvicorn

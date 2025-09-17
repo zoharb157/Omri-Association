@@ -5,12 +5,14 @@ Enhanced metric cards with consistent styling
 """
 
 import streamlit as st
-from ui.design_tokens import DesignSystem
+
 from ui.components.headers import create_section_header
+from ui.design_tokens import DesignSystem
+
 
 def create_metric_card(label: str, value: str, help_text: str = "", trend: str = None, color: str = "primary"):
     """Create a styled metric card using Streamlit's native components with custom styling"""
-    
+
     # Get color based on theme
     color_map = {
         'primary': DesignSystem.COLORS['primary'],
@@ -19,9 +21,9 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
         'error': DesignSystem.COLORS['error'],
         'info': DesignSystem.COLORS['info']
     }
-    
+
     card_color = color_map.get(color, DesignSystem.COLORS['primary'])
-    
+
     # Create a container with custom styling
     with st.container():
         # Add color accent bar
@@ -33,7 +35,7 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             margin: 0;
         "></div>
         """, unsafe_allow_html=True)
-        
+
         # Create the main card container
         st.markdown(f"""
         <div style="
@@ -47,7 +49,7 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             text-align: center;
         ">
         """, unsafe_allow_html=True)
-        
+
         # Label
         st.markdown(f"""
         <div style="
@@ -61,7 +63,7 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             {label}
         </div>
         """, unsafe_allow_html=True)
-        
+
         # Value
         st.markdown(f"""
         <div style="
@@ -74,7 +76,7 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
             {value}
         </div>
         """, unsafe_allow_html=True)
-        
+
         # Trend indicator
         if trend:
             trend_color = DesignSystem.COLORS['success'] if trend.startswith('+') else DesignSystem.COLORS['error']
@@ -88,7 +90,7 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
                 {trend}
             </div>
             """, unsafe_allow_html=True)
-        
+
         # Help text
         if help_text:
             st.markdown(f"""
@@ -101,16 +103,16 @@ def create_metric_card(label: str, value: str, help_text: str = "", trend: str =
                 {help_text}
             </div>
             """, unsafe_allow_html=True)
-        
+
         # Close the container
         st.markdown("</div>", unsafe_allow_html=True)
 
 def create_metric_row(metrics: list, columns: int = 4, gap: str = "md"):
     """Create a row of metric cards with consistent spacing"""
-    
+
     # Create columns
     cols = st.columns(columns)
-    
+
     for i, metric in enumerate(metrics):
         with cols[i]:
             # Extract metric data
@@ -119,13 +121,13 @@ def create_metric_row(metrics: list, columns: int = 4, gap: str = "md"):
             help_text = metric.get('help', '')
             trend = metric.get('trend', None)
             color = metric.get('color', 'primary')
-            
+
             # Create and display metric card
             create_metric_card(label, value, help_text, trend, color)
 
 def create_kpi_dashboard(kpis: list):
     """Create a comprehensive KPI dashboard with multiple metric rows"""
-    
+
     # Group KPIs by category if provided
     if isinstance(kpis[0], dict) and 'category' in kpis[0]:
         categories = {}
@@ -134,7 +136,7 @@ def create_kpi_dashboard(kpis: list):
             if category not in categories:
                 categories[category] = []
             categories[category].append(kpi)
-        
+
         # Display each category
         for category, category_kpis in categories.items():
             create_section_header(f"📊 {category}", level=4)
@@ -146,7 +148,7 @@ def create_kpi_dashboard(kpis: list):
 
 def create_comparison_metrics(metrics: list, title: str = "השוואה"):
     """Create comparison metrics with before/after or target/actual values"""
-    
+
     st.markdown(f"""
     <h4 style="
         color: {DesignSystem.COLORS['text']};
@@ -158,10 +160,10 @@ def create_comparison_metrics(metrics: list, title: str = "השוואה"):
         {title}
     </h4>
     """, unsafe_allow_html=True)
-    
+
     # Create comparison cards
     cols = st.columns(len(metrics))
-    
+
     for i, metric in enumerate(cols):
         with metric:
             comparison_html = f"""

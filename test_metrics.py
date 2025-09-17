@@ -4,7 +4,8 @@ Test file to debug metric rendering
 """
 
 import streamlit as st
-from ui.components.metrics import create_metric_row, create_metric_card
+
+from ui.components.metrics import create_metric_card, create_metric_row
 from ui.design_tokens import get_global_css
 
 # Set page config

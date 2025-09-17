@@ -6,17 +6,17 @@ Comprehensive design tokens following modern design principles
 
 class ModernDesignSystem:
     """Centralized design system with modern tokens"""
-    
+
     # Modern Color Palette (Light Theme Only)
     COLORS = {
         # Primary Brand
         'primary': '#2563eb',           # Modern blue
         'primary_50': '#eff6ff',
-        'primary_100': '#dbeafe', 
+        'primary_100': '#dbeafe',
         'primary_500': '#3b82f6',
         'primary_600': '#2563eb',
         'primary_700': '#1d4ed8',
-        
+
         # Semantic Colors
         'success': '#10b981',           # Emerald
         'success_50': '#ecfdf5',
@@ -30,7 +30,7 @@ class ModernDesignSystem:
         'info': '#06b6d4',              # Cyan
         'info_50': '#ecfeff',
         'info_100': '#cffafe',
-        
+
         # Neutral Scale
         'gray_50': '#f9fafb',
         'gray_100': '#f3f4f6',
@@ -42,7 +42,7 @@ class ModernDesignSystem:
         'gray_700': '#374151',
         'gray_800': '#1f2937',
         'gray_900': '#111827',
-        
+
         # Surface Colors
         'background': '#ffffff',
         'surface': '#f8fafc',
@@ -50,12 +50,12 @@ class ModernDesignSystem:
         'border': '#e2e8f0',
         'border_light': '#f1f5f9',
     }
-    
+
     # Modern Typography Scale
     TYPOGRAPHY = {
         'font_family': '"Inter", "Noto Sans Hebrew", system-ui, sans-serif',
         'font_hebrew': '"Noto Sans Hebrew", "Assistant", system-ui, sans-serif',
-        
+
         'text_xs': {'size': '0.75rem', 'line_height': '1rem', 'weight': '400'},
         'text_sm': {'size': '0.875rem', 'line_height': '1.25rem', 'weight': '400'},
         'text_base': {'size': '1rem', 'line_height': '1.5rem', 'weight': '400'},
@@ -65,7 +65,7 @@ class ModernDesignSystem:
         'text_3xl': {'size': '1.875rem', 'line_height': '2.25rem', 'weight': '700'},
         'text_4xl': {'size': '2.25rem', 'line_height': '2.5rem', 'weight': '800'},
     }
-    
+
     # Spacing Scale (4px base unit) - expose both numeric and `space_` keys
     _SPACING_BASE = {
         '0': '0px', '1': '4px', '2': '8px', '3': '12px', '4': '16px',
@@ -73,14 +73,14 @@ class ModernDesignSystem:
         '16': '64px', '20': '80px', '24': '96px', '32': '128px'
     }
     SPACING = {**_SPACING_BASE, **{f'space_{key}': value for key, value in _SPACING_BASE.items()}}
-    
+
     # Border Radius Scale
     _BORDER_RADIUS_BASE = {
-        'none': '0px', 'sm': '4px', 'md': '8px', 'lg': '12px', 
+        'none': '0px', 'sm': '4px', 'md': '8px', 'lg': '12px',
         'xl': '16px', '2xl': '24px', 'full': '9999px'
     }
     BORDER_RADIUS = {**_BORDER_RADIUS_BASE, **{f'radius_{key}': value for key, value in _BORDER_RADIUS_BASE.items()}}
-    
+
     # Shadow Scale
     _SHADOWS_BASE = {
         'none': 'none',
@@ -90,7 +90,7 @@ class ModernDesignSystem:
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     }
     SHADOWS = {**_SHADOWS_BASE, **{f'shadow_{key}': value for key, value in _SHADOWS_BASE.items()}}
-    
+
     # Breakpoints
     BREAKPOINTS = {
         'mobile': '768px',
@@ -106,7 +106,7 @@ def get_modern_css():
     /* Import Inter font */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap');
-    
+
     /* CSS Variables for Design System */
     :root {{
         /* Colors */
@@ -116,7 +116,7 @@ def get_modern_css():
         --primary-500: {ModernDesignSystem.COLORS['primary_500']};
         --primary-600: {ModernDesignSystem.COLORS['primary_600']};
         --primary-700: {ModernDesignSystem.COLORS['primary_700']};
-        
+
         --success: {ModernDesignSystem.COLORS['success']};
         --success-50: {ModernDesignSystem.COLORS['success_50']};
         --success-100: {ModernDesignSystem.COLORS['success_100']};
@@ -129,7 +129,7 @@ def get_modern_css():
         --info: {ModernDesignSystem.COLORS['info']};
         --info-50: {ModernDesignSystem.COLORS['info_50']};
         --info-100: {ModernDesignSystem.COLORS['info_100']};
-        
+
         --gray-50: {ModernDesignSystem.COLORS['gray_50']};
         --gray-100: {ModernDesignSystem.COLORS['gray_100']};
         --gray-200: {ModernDesignSystem.COLORS['gray_200']};
@@ -140,17 +140,17 @@ def get_modern_css():
         --gray-700: {ModernDesignSystem.COLORS['gray_700']};
         --gray-800: {ModernDesignSystem.COLORS['gray_800']};
         --gray-900: {ModernDesignSystem.COLORS['gray_900']};
-        
+
         --background: {ModernDesignSystem.COLORS['background']};
         --surface: {ModernDesignSystem.COLORS['surface']};
         --surface-elevated: {ModernDesignSystem.COLORS['surface_elevated']};
         --border: {ModernDesignSystem.COLORS['border']};
         --border-light: {ModernDesignSystem.COLORS['border_light']};
-        
+
         /* Typography */
         --font-family: {ModernDesignSystem.TYPOGRAPHY['font_family']};
         --font-hebrew: {ModernDesignSystem.TYPOGRAPHY['font_hebrew']};
-        
+
         /* Spacing */
         --space-0: {ModernDesignSystem.SPACING['0']};
         --space-1: {ModernDesignSystem.SPACING['1']};
@@ -166,7 +166,7 @@ def get_modern_css():
         --space-20: {ModernDesignSystem.SPACING['20']};
         --space-24: {ModernDesignSystem.SPACING['24']};
         --space-32: {ModernDesignSystem.SPACING['32']};
-        
+
         /* Border Radius */
         --radius-none: {ModernDesignSystem.BORDER_RADIUS['none']};
         --radius-sm: {ModernDesignSystem.BORDER_RADIUS['sm']};
@@ -175,7 +175,7 @@ def get_modern_css():
         --radius-xl: {ModernDesignSystem.BORDER_RADIUS['xl']};
         --radius-2xl: {ModernDesignSystem.BORDER_RADIUS['2xl']};
         --radius-full: {ModernDesignSystem.BORDER_RADIUS['full']};
-        
+
         /* Shadows */
         --shadow-none: {ModernDesignSystem.SHADOWS['none']};
         --shadow-sm: {ModernDesignSystem.SHADOWS['sm']};
@@ -183,12 +183,12 @@ def get_modern_css():
         --shadow-lg: {ModernDesignSystem.SHADOWS['lg']};
         --shadow-xl: {ModernDesignSystem.SHADOWS['xl']};
     }}
-    
+
     /* Global Reset and Base Styles */
     * {{
         box-sizing: border-box;
     }}
-    
+
     /* RTL Support */
     [data-testid="stAppViewContainer"] {{
         direction: rtl;
@@ -197,7 +197,7 @@ def get_modern_css():
         background-color: var(--surface);
         color: var(--gray-900);
     }}
-    
+
     /* Modern Typography */
     h1, h2, h3, h4, h5, h6 {{
         color: var(--gray-900);
@@ -205,12 +205,12 @@ def get_modern_css():
         margin-bottom: var(--space-4);
         font-family: var(--font-hebrew);
     }}
-    
+
     h1 {{ font-size: {ModernDesignSystem.TYPOGRAPHY['text_4xl']['size']}; }}
     h2 {{ font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']['size']}; }}
     h3 {{ font-size: {ModernDesignSystem.TYPOGRAPHY['text_2xl']['size']}; }}
     h4 {{ font-size: {ModernDesignSystem.TYPOGRAPHY['text_xl']['size']}; }}
-    
+
     /* Modern Cards */
     .metric-card-modern {{
         background: var(--surface-elevated);
@@ -221,31 +221,31 @@ def get_modern_css():
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         margin-bottom: var(--space-4);
     }}
-    
+
     .metric-card-modern:hover {{
         box-shadow: var(--shadow-md);
         transform: translateY(-1px);
     }}
-    
+
     .metric-card-header {{
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: var(--space-2);
     }}
-    
+
     .metric-card-title {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
         font-weight: 500;
         color: var(--gray-600);
         margin: 0;
     }}
-    
+
     .metric-card-icon {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']['size']};
         opacity: 0.7;
     }}
-    
+
     .metric-card-value {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']['size']};
         font-weight: 700;
@@ -253,7 +253,7 @@ def get_modern_css():
         margin-bottom: var(--space-1);
         line-height: 1.2;
     }}
-    
+
     .metric-card-change {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
         font-weight: 500;
@@ -261,7 +261,7 @@ def get_modern_css():
         align-items: center;
         gap: var(--space-1);
     }}
-    
+
     /* Info Cards */
     .info-card-modern {{
         background: var(--surface-elevated);
@@ -272,21 +272,21 @@ def get_modern_css():
         transition: all 0.2s ease;
         margin-bottom: var(--space-4);
     }}
-    
+
     .info-card-title {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']['size']};
         font-weight: 600;
         color: var(--gray-900);
         margin: 0 0 var(--space-3) 0;
     }}
-    
+
     .info-card-content {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_base']['size']};
         color: var(--gray-600);
         margin: 0 0 var(--space-4) 0;
         line-height: 1.5;
     }}
-    
+
     .info-card-action {{
         background: var(--primary);
         color: white;
@@ -298,19 +298,191 @@ def get_modern_css():
         cursor: pointer;
         transition: all 0.2s ease;
     }}
-    
+
     .info-card-action:hover {{
         background: var(--primary-700);
         transform: translateY(-1px);
     }}
-    
+
     /* Page Layout */
     .page-container {{
         max-width: 1200px;
         margin: 0 auto;
         padding: var(--space-6) var(--space-4);
     }}
-    
+
+    .hero-banner {{
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+        border-radius: var(--radius-2xl);
+        padding: var(--space-10);
+        color: white;
+        margin-bottom: var(--space-10);
+        box-shadow: var(--shadow-xl);
+        position: relative;
+        overflow: hidden;
+    }}
+
+    .hero-banner::after {{
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 55%),
+                    radial-gradient(circle at bottom right, rgba(6,182,212,0.25), transparent 55%);
+        pointer-events: none;
+    }}
+
+    .hero-content {{
+        position: relative;
+        z-index: 2;
+        display: grid;
+        gap: var(--space-6);
+    }}
+
+    .hero-heading {{
+        display: grid;
+        gap: var(--space-3);
+        max-width: 640px;
+    }}
+
+    .hero-heading h1 {{
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_3xl']['size']};
+        line-height: 1.25;
+        font-weight: 700;
+        margin: 0;
+        font-family: var(--font-hebrew);
+    }}
+
+    .hero-heading p {{
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_base']['size']};
+        margin: 0;
+        opacity: 0.85;
+        font-family: var(--font-hebrew);
+    }}
+
+    .hero-stats {{
+        display: grid;
+        gap: var(--space-4);
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }}
+
+    .hero-stat-card {{
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        backdrop-filter: blur(6px);
+        box-shadow: var(--shadow-lg);
+    }}
+
+    .hero-stat-label {{
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
+        opacity: 0.85;
+        margin-bottom: var(--space-2);
+        display: block;
+    }}
+
+    .hero-stat-value {{
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_2xl']['size']};
+        font-weight: 700;
+        margin: 0;
+    }}
+
+    .hero-stat-meta {{
+        display: block;
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
+        margin-top: var(--space-1);
+        opacity: 0.85;
+    }}
+
+    .hero-actions {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        position: relative;
+        z-index: 2;
+    }}
+
+    .hero-button {{
+        border: none;
+        border-radius: var(--radius-lg);
+        padding: var(--space-3) var(--space-5);
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_base']['size']};
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        font-family: var(--font-hebrew);
+        box-shadow: var(--shadow-md);
+    }}
+
+    .hero-button.primary {{
+        background: white;
+        color: var(--primary-700);
+    }}
+
+    .hero-button.secondary {{
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }}
+
+    .hero-button:hover {{
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }}
+
+    .quick-actions {{
+        display: grid;
+        gap: var(--space-4);
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        margin: var(--space-10) 0;
+    }}
+
+    .quick-action-card {{
+        background: var(--surface);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        display: grid;
+        gap: var(--space-3);
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }}
+
+    .quick-action-content {{
+        display: grid;
+        gap: var(--space-2);
+    }}
+
+    .quick-action-card:hover {{
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }}
+
+    .quick-action-icon {{
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-full);
+        background: var(--primary-50);
+        color: var(--primary-700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }}
+
+    .quick-action-title {{
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']['size']};
+        font-weight: 600;
+        margin: 0;
+        color: var(--gray-900);
+    }}
+
+    .quick-action-meta {{
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
+        color: var(--gray-600);
+        margin: 0;
+    }}
+
     .section-header-modern {{
         display: flex;
         justify-content: space-between;
@@ -319,7 +491,7 @@ def get_modern_css():
         padding-bottom: var(--space-4);
         border-bottom: 1px solid var(--border);
     }}
-    
+
     .section-title {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_2xl']['size']};
         font-weight: 700;
@@ -327,20 +499,95 @@ def get_modern_css():
         margin: 0;
         font-family: var(--font-hebrew);
     }}
-    
+
     .section-subtitle {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_base']['size']};
         color: var(--gray-600);
         margin: var(--space-1) 0 0 0;
         font-family: var(--font-hebrew);
     }}
-    
+
     .section-actions {{
         display: flex;
         gap: var(--space-2);
         align-items: center;
     }}
-    
+
+    .metric-grid {{
+        display: grid;
+        gap: var(--space-4);
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        margin: var(--space-6) 0;
+    }}
+
+    .metric-change-badge {{
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-lg);
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_xs']['size']};
+        font-weight: 600;
+    }}
+
+    .metric-change-badge.positive {{
+        color: var(--success);
+        background: var(--success-50);
+    }}
+
+    .metric-change-badge.negative {{
+        color: var(--error);
+        background: var(--error-50);
+    }}
+
+    .metric-change-badge.warning {{
+        color: var(--warning);
+        background: var(--warning-50);
+    }}
+
+    .metric-change-badge.neutral {{
+        color: var(--gray-600);
+        background: var(--gray-100);
+    }}
+
+    .metric-card-empty {{
+        text-align: center;
+        color: var(--gray-500);
+        font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
+    }}
+
+    /* Streamlit Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: var(--space-2);
+        padding: var(--space-2);
+        background: var(--surface);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+    }}
+
+    .stTabs [data-baseweb="tab"] {{
+        background: transparent;
+        border-radius: var(--radius-lg);
+        padding: var(--space-2) var(--space-5);
+        color: var(--gray-600);
+        font-weight: 500;
+        font-family: var(--font-hebrew);
+        transition: all 0.2s ease;
+    }}
+
+    .stTabs [data-baseweb="tab"]:hover {{
+        background: var(--gray-100);
+        color: var(--gray-900);
+    }}
+
+    .stTabs [aria-selected="true"] {{
+        background: var(--primary-50);
+        color: var(--primary-700) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+    }}
+
     /* Modern Sidebar */
     .sidebar-modern {{
         background: var(--surface-elevated);
@@ -354,13 +601,13 @@ def get_modern_css():
         z-index: 1000;
         overflow-y: auto;
     }}
-    
+
     .sidebar-header {{
         margin-bottom: var(--space-8);
         padding-bottom: var(--space-4);
         border-bottom: 1px solid var(--border);
     }}
-    
+
     .sidebar-title {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_xl']['size']};
         font-weight: 700;
@@ -368,24 +615,24 @@ def get_modern_css():
         margin: 0;
         font-family: var(--font-hebrew);
     }}
-    
+
     .sidebar-subtitle {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
         color: var(--gray-600);
         margin: var(--space-1) 0 0 0;
         font-family: var(--font-hebrew);
     }}
-    
+
     .nav-list {{
         list-style: none;
         margin: 0;
         padding: 0;
     }}
-    
+
     .nav-item {{
         margin-bottom: var(--space-1);
     }}
-    
+
     .nav-link {{
         display: flex;
         align-items: center;
@@ -396,83 +643,101 @@ def get_modern_css():
         transition: all 0.2s ease;
         font-family: var(--font-hebrew);
     }}
-    
+
     .nav-link:hover {{
         background: var(--gray-100);
         color: var(--gray-900);
     }}
-    
+
     .nav-item.active .nav-link {{
         background: var(--primary-50);
         color: var(--primary-700);
     }}
-    
+
     .nav-icon {{
         margin-left: var(--space-3);
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_lg']['size']};
     }}
-    
+
     .nav-text {{
         font-size: {ModernDesignSystem.TYPOGRAPHY['text_sm']['size']};
         font-weight: 500;
     }}
-    
+
     /* Responsive Design */
     @media (max-width: {ModernDesignSystem.BREAKPOINTS['mobile']}) {{
         .page-container {{
             padding: var(--space-4) var(--space-3);
         }}
-        
+
+        .hero-banner {{
+            padding: var(--space-8);
+        }}
+
+        .hero-stats {{
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }}
+
+        .hero-actions {{
+            flex-direction: column;
+        }}
+
         .metric-card-modern {{
             margin-bottom: var(--space-3);
             padding: var(--space-4);
         }}
-        
+
         .section-header-modern {{
             flex-direction: column;
             gap: var(--space-4);
         }}
-        
+
         .section-title {{
             font-size: {ModernDesignSystem.TYPOGRAPHY['text_xl']['size']};
         }}
-        
+
         .sidebar-modern {{
             transform: translateX(100%);
             transition: transform 0.3s ease;
         }}
-        
+
         .sidebar-modern.open {{
             transform: translateX(0);
         }}
     }}
-    
+
     @media (max-width: 480px) {{
         .page-container {{
             padding: var(--space-3) var(--space-2);
         }}
-        
+
+        .hero-stats {{
+            display: grid;
+            grid-template-columns: 1fr;
+        }}
+
         .metric-card-modern {{
             padding: var(--space-4);
         }}
-        
+
         .metric-card-value {{
             font-size: {ModernDesignSystem.TYPOGRAPHY['text_2xl']['size']};
         }}
     }}
-    
+
     /* Micro-interactions */
     .loading-shimmer {{
         background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
         background-size: 200% 100%;
         animation: shimmer 1.5s infinite;
     }}
-    
+
     @keyframes shimmer {{
         0% {{ background-position: -200% 0; }}
         100% {{ background-position: 200% 0; }}
     }}
-    
+
     /* Override Streamlit default styles */
     .stButton > button {{
         background-color: var(--primary);
@@ -484,13 +749,13 @@ def get_modern_css():
         transition: all 0.2s ease;
         font-family: var(--font-hebrew);
     }}
-    
+
     .stButton > button:hover {{
         background-color: var(--primary-700);
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }}
-    
+
     .stMetric {{
         background: var(--surface-elevated);
         border: 1px solid var(--border);
@@ -498,26 +763,26 @@ def get_modern_css():
         padding: var(--space-4);
         box-shadow: var(--shadow-sm);
     }}
-    
+
     .stDataFrame {{
         border-radius: var(--radius-lg);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
     }}
-    
+
     .stAlert {{
         border-radius: var(--radius-lg);
         border: none;
         box-shadow: var(--shadow-sm);
     }}
-    
+
     /* Main Content Area */
     .main .block-container {{
         padding-top: var(--space-8);
         padding-bottom: var(--space-8);
         max-width: 1200px;
     }}
-    
+
     /* Activity Items */
     .activity-item {{
         display: flex;
@@ -530,29 +795,29 @@ def get_modern_css():
         margin-bottom: var(--space-2);
         transition: all 0.2s ease;
     }}
-    
+
     .activity-item:hover {{
         background: var(--gray-50);
         border-color: var(--primary-200);
     }}
-    
+
     .activity-content {{
         display: flex;
         flex-direction: column;
         gap: var(--space-1);
     }}
-    
+
     .activity-amount {{
         font-weight: 600;
         color: var(--gray-900);
         font-size: var(--text-base);
     }}
-    
+
     .activity-date {{
         font-size: var(--text-sm);
         color: var(--gray-500);
     }}
-    
+
     /* Modern Alerts */
     .modern-alert {{
         padding: var(--space-4);
@@ -564,23 +829,23 @@ def get_modern_css():
         background: var(--surface-elevated);
         box-shadow: var(--shadow-sm);
     }}
-    
+
     .alert-content {{
         display: flex;
         align-items: center;
         gap: var(--space-2);
     }}
-    
+
     .alert-icon {{
         font-size: var(--text-lg);
     }}
-    
+
     .alert-message {{
         font-size: var(--text-sm);
         color: var(--gray-700);
         font-family: var(--font-hebrew);
     }}
-    
+
     /* Chart Cards */
     .chart-card {{
         background: var(--surface-elevated);
@@ -590,7 +855,7 @@ def get_modern_css():
         box-shadow: var(--shadow-sm);
         margin-bottom: var(--space-4);
     }}
-    
+
     .chart-card-title {{
         font-size: var(--text-lg);
         font-weight: 600;
@@ -598,13 +863,13 @@ def get_modern_css():
         margin: 0 0 var(--space-4) 0;
         font-family: var(--font-hebrew);
     }}
-    
+
     .chart-empty-state {{
         text-align: center;
         padding: var(--space-8);
         color: var(--gray-500);
     }}
-    
+
     /* Page Actions */
     .page-action-button {{
         background: var(--primary);
@@ -618,17 +883,17 @@ def get_modern_css():
         transition: all 0.2s ease;
         font-family: var(--font-hebrew);
     }}
-    
+
     .page-action-button:hover {{
         background: var(--primary-700);
         transform: translateY(-1px);
     }}
-    
+
     .page-action-button.secondary {{
         background: var(--gray-100);
         color: var(--gray-700);
     }}
-    
+
     .page-action-button.secondary:hover {{
         background: var(--gray-200);
     }}

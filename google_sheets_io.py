@@ -1,9 +1,9 @@
-import pandas as pd
-import gspread
-from google.oauth2.service_account import Credentials
-from typing import Optional
 import os
+
+import gspread
+import pandas as pd
 import streamlit as st
+from google.oauth2.service_account import Credentials
 
 # Define the scope
 SCOPES = [
@@ -50,8 +50,7 @@ def show_service_account_upload():
     key_input = st.text_area("הדבק כאן את תוכן קובץ המפתח (JSON)", height=300)
     if st.button("בדוק ושמור מפתח חדש"):
         import json
-        from google.auth.exceptions import DefaultCredentialsError
-        import io
+
         try:
             key_data = json.loads(key_input)
             # בדיקה בסיסית
@@ -61,8 +60,8 @@ def show_service_account_upload():
                     st.error(f"המפתח חסר שדה חובה: {field}")
                     return False
             # בדוק את המפתח מול Google
-            from google.oauth2.service_account import Credentials
             from google.auth.transport.requests import Request
+            from google.oauth2.service_account import Credentials
             creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
             creds.refresh(Request())
             # אם הגענו לכאן – המפתח תקין
@@ -78,13 +77,13 @@ def show_service_account_upload():
 def check_service_account_validity():
     """Check if the service account key is valid and display a user-friendly error if not, including setup instructions."""
     import json
-    from google.auth.exceptions import DefaultCredentialsError
+
     from google.auth.transport.requests import Request
     try:
         if not os.path.exists(SERVICE_ACCOUNT_FILE):
             show_service_account_upload()
             return False
-        with open(SERVICE_ACCOUNT_FILE, 'r', encoding='utf-8') as f:
+        with open(SERVICE_ACCOUNT_FILE, encoding='utf-8') as f:
             key_data = json.load(f)
         # Basic checks
         required_fields = ["type", "private_key", "client_email", "token_uri"]
@@ -100,7 +99,7 @@ def check_service_account_validity():
         # Try to get a token (will fail if key is invalid/expired)
         creds.refresh(Request())
         return True
-    except Exception as e:
+    except Exception:
         show_service_account_upload()
         return False
 
@@ -129,7 +128,7 @@ def show_google_sheets_setup_instructions():
     try:
         if os.path.exists(SERVICE_ACCOUNT_FILE):
             import json
-            with open(SERVICE_ACCOUNT_FILE, 'r', encoding='utf-8') as f:
+            with open(SERVICE_ACCOUNT_FILE, encoding='utf-8') as f:
                 key_data = json.load(f)
             email = key_data.get("client_email", None)
             if email:
@@ -228,7 +227,7 @@ def _map_columns_to_expected(df, sheet_name):
         elif sheet_name == "Widows":
             # Mapping for widows sheet - simplified mapping based on actual data
             column_mapping = {}
-            
+
             # Map based on actual column names from the test
             for col in df.columns:
                 col_str = str(col).strip()
@@ -254,16 +253,16 @@ def _map_columns_to_expected(df, sheet_name):
                     column_mapping[col] = 'תורם'
                 elif col_str == 'איש קשר לתרומה':
                     column_mapping[col] = 'איש קשר לתרומה'
-            
+
             df = df.rename(columns=column_mapping)
-            
+
             expected_columns = ['שם ', 'סכום חודשי', 'חודש התחלה', 'מייל', 'טלפון', 'תעודת זהות', 'מספר ילדים', 'חללים', 'הערות', 'תורם', 'איש קשר לתרומה']
             for col in expected_columns:
                 if col not in df.columns:
                     df[col] = ''
-            
+
             return df
-        
+
         return df
     except Exception as e:
         print(f"Error in column mapping for {sheet_name}: {e}")
@@ -280,25 +279,24 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
             return pd.DataFrame(columns=['שם ', 'סכום חודשי', 'חודש התחלה', 'מייל', 'טלפון', 'תעודת זהות', 'מספר ילדים', 'חללים', 'הערות', 'תורם', 'איש קשר לתרומה'])
         else:
             return pd.DataFrame(columns=['תאריך', 'שם', 'שקלים'])
-    
+
     try:
         sh = gc.open_by_key(SPREADSHEET_ID)
-        
+
         # Map sheet names to actual Google Sheets names
         sheet_mapping = {
-            "Widows": "Almanot",  # Map Widows to Almanot
             "Widows": "Almanot"   # Ensure both names map to Almanot
         }
-        
+
         actual_sheet_name = sheet_mapping.get(sheet_name, sheet_name)
         worksheet = sh.worksheet(actual_sheet_name)
-        
+
         # Get all values (including header row)
         values = worksheet.get_all_values()
         if not values:
             print(f"Sheet '{actual_sheet_name}' is empty")
             return pd.DataFrame()
-        
+
         # For financial sheets (Expenses, Donations, Investors), skip the first 2 rows
         # Row 0: Title (e.g., "עמרי למען משפחות השכול- הוצאות")
         # Row 1: Headers (e.g., "תאריך", "שם לקוח", "סכום")
@@ -314,12 +312,12 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
             # For other sheets, use first row as headers
             headers = _fix_headers(values[0])
             data = values[1:]
-        
+
         df = pd.DataFrame(data, columns=headers)
-        
+
         # Map columns to expected names
         df = _map_columns_to_expected(df, sheet_name)
-        
+
         # Convert date columns to datetime
         if sheet_name in ["Expenses", "Donations", "Investors"]:
             if 'תאריך' in df.columns:
@@ -327,7 +325,7 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
         elif sheet_name == "Widows":
             if 'חודש התחלה' in df.columns:
                 df['חודש התחלה'] = pd.to_datetime(df['חודש התחלה'], errors='coerce')
-        
+
         # Convert amount columns to numeric - handle string amounts
         if sheet_name in ["Expenses", "Donations", "Investors"]:
             if 'שקלים' in df.columns:
@@ -337,7 +335,7 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
                 df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce')
                 # Fill NaN values with 0
                 df['שקלים'] = df['שקלים'].fillna(0)
-        
+
         # Remove rows that contain headers instead of data
         if sheet_name in ["Expenses", "Donations", "Investors"]:
             # Remove rows where the first column contains header-like text
@@ -348,13 +346,13 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
             df = df[~df['שם'].str.contains('שם לקוח|שם תורם|שם משקיע', na=False)]
             # Remove rows where amount column contains header text
             df = df[~df['שקלים'].astype(str).str.contains('סכום', na=False)]
-        
+
         return df
     except Exception as e:
         print(f"שגיאה בטעינת נתונים מ-Google Sheets: {e}")
         print(f"Sheet name: {sheet_name}")
         print(f"Spreadsheet ID: {SPREADSHEET_ID}")
-        
+
         # Create empty DataFrame with expected columns instead of falling back to Excel
         if sheet_name == "Widows":
             return pd.DataFrame(columns=['שם ', 'סכום חודשי', 'חודש התחלה', 'מייל', 'טלפון', 'תעודת זהות', 'מספר ילדים', 'חללים', 'הערות', 'תורם', 'איש קשר לתרומה'])
@@ -368,7 +366,7 @@ def write_sheet(sheet_name: str, df: pd.DataFrame) -> None:
         # No Excel fallback - just print error
         print("Google Sheets not available - cannot save data")
         return
-    
+
     try:
         sh = gc.open_by_key(SPREADSHEET_ID)
         worksheet = sh.worksheet(sheet_name)
@@ -384,11 +382,11 @@ def load_all_data():
     if gc is None:
         print("Google Sheets not available")
         return {}
-    
+
     try:
         sh = gc.open_by_key(SPREADSHEET_ID)
         all_data = {}
-        
+
         for ws in sh.worksheets():
             try:
                 values = ws.get_all_values()
@@ -396,7 +394,7 @@ def load_all_data():
                 if not values:
                     all_data[ws.title] = pd.DataFrame()
                     continue
-                
+
                 # For financial sheets (Expenses, Donations, Investors), skip the first 2 rows
                 # Row 0: Title (e.g., "עמרי למען משפחות השכול- הוצאות")
                 # Row 1: Headers (e.g., "תאריך", "שם לקוח", "סכום")
@@ -415,18 +413,18 @@ def load_all_data():
 
                 # Create DataFrame
                 df = pd.DataFrame(data, columns=headers)
-                
+
                 # Clean the data
                 df = df.replace('', pd.NA)
-                
+
                 # Apply the same column mapping logic as read_sheet()
                 df = _map_columns_to_expected(df, ws.title)
-                
+
                 # Convert date columns first (before numeric conversion)
                 for col in df.columns:
                     if any(keyword in str(col).lower() for keyword in ['תאריך', 'date', 'חודש', 'month']):
                         df[col] = pd.to_datetime(df[col], errors='coerce')
-                
+
                 # Convert numeric columns (only for amount columns, not date columns)
                 for col in df.columns:
                     if any(keyword in str(col).lower() for keyword in ['סכום', 'amount', 'שקלים', 'מחיר', 'price']):
@@ -435,7 +433,7 @@ def load_all_data():
                         df[col] = df[col].str.replace(',', '.')
                         df[col] = pd.to_numeric(df[col], errors='coerce')
                         df[col] = df[col].fillna(0)
-                
+
                 all_data[ws.title] = df
             except Exception as e:
                 print(f"Error loading sheet '{ws.title}': {e}")
@@ -452,46 +450,46 @@ def read_widow_support_data() -> pd.DataFrame:
     if gc is None:
         print("Google Sheets not available - returning empty DataFrame")
         return pd.DataFrame(columns=[
-            'שם הבחורה', 'כמה ילדים', 'סכום חודשי', 
-            'מתי התחילה לקבל', 'עד מתי תחת תורם', 
+            'שם הבחורה', 'כמה ילדים', 'סכום חודשי',
+            'מתי התחילה לקבל', 'עד מתי תחת תורם',
             'כמה מקבלת בכל חודש', 'תורם'
         ])
-    
+
     try:
         # Open the widow support spreadsheet
         sh = gc.open_by_key(WIDOW_SPREADSHEET_ID)
-        
+
         # Try to find the correct worksheet
         # The gid parameter suggests it might be a specific worksheet
         try:
             # Try "Widows Support" first
             worksheet = sh.worksheet("Widows Support")
-        except:
+        except Exception:
             try:
                 # Try other possible names
                 worksheet = sh.worksheet("Widows")
-            except:
+            except Exception:
                 try:
                     worksheet = sh.worksheet("Almanot")
-                except:
+                except Exception:
                     # Get the first worksheet if none of the above work
                     worksheet = sh.sheet1
-        
+
         # Get all values
         values = worksheet.get_all_values()
         if not values:
             print("Widow support sheet is empty")
             return pd.DataFrame()
-        
+
         # Convert to DataFrame
         df = pd.DataFrame(values[1:], columns=values[0])  # First row as headers
-        
+
         # Clean the data
         df = df.replace('', pd.NA)
-        
+
         print(f"Widow support data loaded: {len(df)} rows")
         return df
-        
+
     except Exception as e:
         print(f"Error reading widow support data: {e}")
-        return pd.DataFrame() 
+        return pd.DataFrame()

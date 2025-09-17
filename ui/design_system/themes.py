@@ -3,19 +3,21 @@ Theme System for Omri Association Dashboard
 Centralized theme definitions and management
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from .colors import ColorSystem
-from .typography import TypographySystem
 from .spacing import SpacingSystem
+from .typography import TypographySystem
+
 
 class ThemeManager:
     """Centralized theme management system"""
-    
+
     def __init__(self):
         self.colors = ColorSystem()
         self.typography = TypographySystem()
         self.spacing = SpacingSystem()
-    
+
     def get_light_theme(self) -> Dict[str, Any]:
         """Get light theme configuration"""
         return {
@@ -43,7 +45,7 @@ class ThemeManager:
             'typography': self.typography.get_text_styles(),
             'spacing': self.spacing.get_spacing_scale(),
         }
-    
+
     def get_dark_theme(self) -> Dict[str, Any]:
         """Get dark theme configuration"""
         return {
@@ -71,7 +73,7 @@ class ThemeManager:
             'typography': self.typography.get_text_styles(),
             'spacing': self.spacing.get_spacing_scale(),
         }
-    
+
     def get_blue_theme(self) -> Dict[str, Any]:
         """Get blue theme configuration"""
         return {
@@ -99,7 +101,7 @@ class ThemeManager:
             'typography': self.typography.get_text_styles(),
             'spacing': self.spacing.get_spacing_scale(),
         }
-    
+
     def get_theme_css(self, theme_name: str = 'light') -> str:
         """Generate CSS for specified theme"""
         if theme_name == 'dark':
@@ -108,9 +110,9 @@ class ThemeManager:
             theme = self.get_blue_theme()
         else:
             theme = self.get_light_theme()
-        
+
         colors = theme['colors']
-        
+
         return f"""
         <style>
         :root {{
@@ -134,43 +136,43 @@ class ThemeManager:
             --color-error: {colors['error']};
             --color-info: {colors['info']};
         }}
-        
+
         /* Typography Variables */
         {self.typography.get_css_variables()}
-        
+
         /* Spacing Variables */
         {self.spacing.get_css_variables()}
-        
+
         /* Base Styles */
         .stApp {{
             background-color: var(--color-background);
             color: var(--color-text-primary);
             font-family: var(--font-primary);
         }}
-        
+
         .main .block-container {{
             background-color: var(--color-background);
             color: var(--color-text-primary);
         }}
-        
+
         /* Typography Styles */
         h1, h2, h3, h4, h5, h6 {{
             color: var(--color-text-primary);
             font-family: var(--font-primary);
         }}
-        
+
         h1 {{ font-size: var(--text-5xl); font-weight: var(--font-bold); }}
         h2 {{ font-size: var(--text-4xl); font-weight: var(--font-bold); }}
         h3 {{ font-size: var(--text-3xl); font-weight: var(--font-semibold); }}
         h4 {{ font-size: var(--text-2xl); font-weight: var(--font-semibold); }}
         h5 {{ font-size: var(--text-xl); font-weight: var(--font-medium); }}
         h6 {{ font-size: var(--text-lg); font-weight: var(--font-medium); }}
-        
+
         p, div, span {{
             color: var(--color-text-primary);
             font-family: var(--font-primary);
         }}
-        
+
         /* Component Styles */
         .metric-card {{
             background-color: var(--color-surface);
@@ -180,27 +182,27 @@ class ThemeManager:
             margin: var(--space-2) 0;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }}
-        
+
         .metric-card:hover {{
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transform: translateY(-1px);
             transition: all 0.2s ease;
         }}
-        
+
         .metric-card h3 {{
             color: var(--color-text-secondary);
             font-size: var(--text-sm);
             font-weight: var(--font-medium);
             margin-bottom: var(--space-2);
         }}
-        
+
         .metric-card h2 {{
             color: var(--color-primary);
             font-size: var(--text-2xl);
             font-weight: var(--font-bold);
             margin: 0;
         }}
-        
+
         /* Button Styles */
         .stButton > button {{
             background-color: var(--color-primary);
@@ -211,19 +213,19 @@ class ThemeManager:
             font-weight: var(--font-medium);
             transition: all 0.2s ease;
         }}
-        
+
         .stButton > button:hover {{
             background-color: var(--color-primary-dark);
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }}
-        
+
         /* Tab Styles */
         .stTabs [data-baseweb="tab-list"] {{
             background-color: var(--color-surface);
             border-bottom: 1px solid var(--color-border);
         }}
-        
+
         .stTabs [data-baseweb="tab"] {{
             color: var(--color-text-secondary);
             font-weight: var(--font-medium);
@@ -231,18 +233,18 @@ class ThemeManager:
             border-bottom: 2px solid transparent;
             transition: all 0.2s ease;
         }}
-        
+
         .stTabs [data-baseweb="tab"]:hover {{
             color: var(--color-text-primary);
             background-color: var(--color-surface-variant);
         }}
-        
+
         .stTabs [data-baseweb="tab"][aria-selected="true"] {{
             color: var(--color-primary);
             border-bottom-color: var(--color-primary);
             background-color: var(--color-background);
         }}
-        
+
         /* Table Styles */
         .stDataFrame {{
             background-color: var(--color-surface);
@@ -250,22 +252,22 @@ class ThemeManager:
             border-radius: var(--space-2);
             overflow: hidden;
         }}
-        
+
         .stDataFrame table {{
             background-color: var(--color-surface);
         }}
-        
+
         .stDataFrame th {{
             background-color: var(--color-primary);
             color: white;
             font-weight: var(--font-semibold);
         }}
-        
+
         .stDataFrame td {{
             background-color: var(--color-surface);
             color: var(--color-text-primary);
         }}
-        
+
         /* Chart Styles */
         .stPlotlyChart {{
             background-color: var(--color-surface);
@@ -273,46 +275,46 @@ class ThemeManager:
             border-radius: var(--space-2);
             padding: var(--space-4);
         }}
-        
+
         /* Alert Styles */
         .stAlert {{
             border-radius: var(--space-2);
             border-left: 4px solid var(--color-primary);
             background-color: var(--color-surface);
         }}
-        
+
         .stSuccess {{
             border-left-color: var(--color-success);
             background-color: rgba(5, 150, 105, 0.1);
         }}
-        
+
         .stWarning {{
             border-left-color: var(--color-warning);
             background-color: rgba(234, 88, 12, 0.1);
         }}
-        
+
         .stError {{
             border-left-color: var(--color-error);
             background-color: rgba(220, 38, 38, 0.1);
         }}
-        
+
         .stInfo {{
             border-left-color: var(--color-info);
             background-color: rgba(37, 99, 235, 0.1);
         }}
-        
+
         /* RTL Support */
         .stApp {{
             direction: rtl;
             text-align: right;
         }}
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {{
             .metric-card {{
                 margin: var(--space-1) 0;
             }}
-            
+
             h1 {{ font-size: var(--text-4xl); }}
             h2 {{ font-size: var(--text-3xl); }}
             h3 {{ font-size: var(--text-2xl); }}

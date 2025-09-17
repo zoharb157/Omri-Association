@@ -3,16 +3,19 @@ Layout Components for Omri Association Dashboard
 Reusable layout components with consistent styling
 """
 
+from typing import Dict, List, Optional
+
 import streamlit as st
-from typing import Optional, List, Dict, Any
+
 from ..design_system.colors import ColorSystem
-from ..design_system.typography import TypographySystem
 from ..design_system.spacing import SpacingSystem
+from ..design_system.typography import TypographySystem
+
 
 class SectionHeader:
     """Modern section header component"""
-    
-    def __init__(self, title: str, subtitle: Optional[str] = None, 
+
+    def __init__(self, title: str, subtitle: Optional[str] = None,
                  icon: Optional[str] = None, actions: Optional[List] = None):
         self.title = title
         self.subtitle = subtitle
@@ -21,13 +24,13 @@ class SectionHeader:
         self.colors = ColorSystem()
         self.typography = TypographySystem()
         self.spacing = SpacingSystem()
-    
+
     def render(self):
         """Render the section header"""
         icon_html = f'<span style="font-size: 1.5rem;">{self.icon}</span>' if self.icon else ''
         actions_html = ''.join([f'<div style="margin-left: var(--space-2);">{action}</div>' for action in self.actions])
         subtitle_html = f'<p style="color: var(--color-text-secondary); font-size: var(--text-base); margin: 0;">{self.subtitle}</p>' if self.subtitle else ''
-        
+
         header_html = f"""
         <div style="
             margin-bottom: var(--space-6);
@@ -63,17 +66,17 @@ class SectionHeader:
             {subtitle_html}
         </div>
         """
-        
+
         st.markdown(header_html, unsafe_allow_html=True)
 
 class Container:
     """Container component for consistent spacing and layout"""
-    
+
     def __init__(self, max_width: str = "1200px", padding: str = "var(--space-4)"):
         self.max_width = max_width
         self.padding = padding
         self.colors = ColorSystem()
-    
+
     def render(self, content_func):
         """Render container with content"""
         container_html = f"""
@@ -83,35 +86,35 @@ class Container:
             padding: {self.padding};
         ">
         """
-        
+
         st.markdown(container_html, unsafe_allow_html=True)
         content_func()
         st.markdown("</div>", unsafe_allow_html=True)
 
 class Grid:
     """Grid system for responsive layouts"""
-    
+
     def __init__(self, columns: int = 12, gap: str = "var(--space-4)"):
         self.columns = columns
         self.gap = gap
         self.spacing = SpacingSystem()
-    
+
     def create_columns(self, sizes: List[int]) -> List:
         """Create columns with specified sizes"""
         if sum(sizes) != self.columns:
             # Normalize sizes to fit grid
             total = sum(sizes)
             sizes = [int((size / total) * self.columns) for size in sizes]
-        
+
         return st.columns(sizes)
-    
+
     def create_responsive_columns(self, breakpoints: Dict[str, List[int]]) -> List:
         """Create responsive columns based on breakpoints"""
         # For now, use the default breakpoint
         default_sizes = breakpoints.get('default', [6, 6])
         return self.create_columns(default_sizes)
 
-def create_section_header(title: str, subtitle: Optional[str] = None, 
+def create_section_header(title: str, subtitle: Optional[str] = None,
                          icon: Optional[str] = None, actions: Optional[List] = None):
     """Create a section header"""
     header = SectionHeader(title, subtitle, icon, actions)

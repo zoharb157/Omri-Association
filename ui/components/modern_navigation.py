@@ -5,11 +5,11 @@ Navigation system with modern UX
 """
 
 import streamlit as st
-from ui.design_system.modern_tokens import ModernDesignSystem
+
 
 def create_modern_tab_navigation():
     """Create modern tab navigation with better styling"""
-    
+
     # Define tabs with icons and labels
     tabs_data = [
         {"label": "🏠 דף הבית", "key": "home"},
@@ -19,13 +19,13 @@ def create_modern_tab_navigation():
         {"label": "🕸️ מפת קשרים", "key": "network"},
         {"label": "🏘️ אזורי מגורים", "key": "residential"}
     ]
-    
+
     # Create custom tab navigation
     tab_html = """
     <div class="modern-tab-navigation">
         <div class="tab-list">
     """
-    
+
     for i, tab in enumerate(tabs_data):
         active_class = "active" if i == 0 else ""
         tab_html += f"""
@@ -34,14 +34,14 @@ def create_modern_tab_navigation():
                 <span class="tab-label">{tab['label'].split(' ', 1)[1]}</span>
             </button>
         """
-    
+
     tab_html += """
         </div>
     </div>
     """
-    
+
     st.markdown(tab_html, unsafe_allow_html=True)
-    
+
     # Add CSS for tab navigation
     tab_css = """
     <style>
@@ -51,14 +51,14 @@ def create_modern_tab_navigation():
         margin-bottom: var(--space-6);
         padding: 0 var(--space-4);
     }
-    
+
     .tab-list {
         display: flex;
         gap: var(--space-1);
         overflow-x: auto;
         padding: var(--space-2) 0;
     }
-    
+
     .tab-button {
         display: flex;
         align-items: center;
@@ -75,61 +75,61 @@ def create_modern_tab_navigation():
         font-size: var(--text-sm);
         font-weight: 500;
     }
-    
+
     .tab-button:hover {
         background: var(--gray-100);
         color: var(--gray-900);
     }
-    
+
     .tab-button.active {
         background: var(--primary-50);
         color: var(--primary-700);
     }
-    
+
     .tab-icon {
         font-size: var(--text-lg);
     }
-    
+
     .tab-label {
         font-size: var(--text-sm);
     }
-    
+
     @media (max-width: 768px) {
         .tab-list {
             gap: var(--space-0);
         }
-        
+
         .tab-button {
             padding: var(--space-2) var(--space-3);
         }
-        
+
         .tab-label {
             display: none;
         }
     }
     </style>
     """
-    
+
     st.markdown(tab_css, unsafe_allow_html=True)
 
 def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
     """Create modern breadcrumb navigation"""
-    
+
     if parent_pages is None:
         parent_pages = []
-    
+
     breadcrumb_html = """
     <nav class="modern-breadcrumb" aria-label="ניווט">
         <ol class="breadcrumb-list">
     """
-    
+
     # Add home link
     breadcrumb_html += """
             <li class="breadcrumb-item">
                 <a href="#" class="breadcrumb-link">🏠 דף הבית</a>
             </li>
     """
-    
+
     # Add parent pages
     for page in parent_pages:
         breadcrumb_html += f"""
@@ -138,7 +138,7 @@ def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
                 <a href="#" class="breadcrumb-link">{page}</a>
             </li>
         """
-    
+
     # Add current page
     breadcrumb_html += f"""
             <li class="breadcrumb-separator">›</li>
@@ -148,9 +148,9 @@ def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
         </ol>
     </nav>
     """
-    
+
     st.markdown(breadcrumb_html, unsafe_allow_html=True)
-    
+
     # Add CSS for breadcrumb
     breadcrumb_css = """
     <style>
@@ -158,7 +158,7 @@ def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
         margin-bottom: var(--space-4);
         padding: var(--space-2) 0;
     }
-    
+
     .breadcrumb-list {
         display: flex;
         align-items: center;
@@ -168,53 +168,53 @@ def create_modern_breadcrumb(current_page: str, parent_pages: list = None):
         font-size: var(--text-sm);
         font-family: var(--font-hebrew);
     }
-    
+
     .breadcrumb-item {
         display: flex;
         align-items: center;
     }
-    
+
     .breadcrumb-separator {
         margin: 0 var(--space-2);
         color: var(--gray-400);
     }
-    
+
     .breadcrumb-link {
         color: var(--gray-600);
         text-decoration: none;
         transition: color 0.2s ease;
     }
-    
+
     .breadcrumb-link:hover {
         color: var(--primary-600);
     }
-    
+
     .breadcrumb-current {
         color: var(--gray-900);
         font-weight: 500;
     }
-    
+
     @media (max-width: 768px) {
         .breadcrumb-list {
             font-size: var(--text-xs);
         }
-        
+
         .breadcrumb-separator {
             margin: 0 var(--space-1);
         }
     }
     </style>
     """
-    
+
     st.markdown(breadcrumb_css, unsafe_allow_html=True)
 
 def create_modern_page_header(title: str, subtitle: str = None, actions: list = None):
     """Create modern page header with actions"""
-    
+
     actions_html = ""
     if actions:
         actions_html = f'<div class="page-actions">{"".join(actions)}</div>'
-    
+
     header_html = f"""
     <div class="modern-page-header">
         <div class="page-header-content">
@@ -224,9 +224,9 @@ def create_modern_page_header(title: str, subtitle: str = None, actions: list = 
         {actions_html}
     </div>
     """
-    
+
     st.markdown(header_html, unsafe_allow_html=True)
-    
+
     # Add CSS for page header
     header_css = """
     <style>
@@ -238,7 +238,7 @@ def create_modern_page_header(title: str, subtitle: str = None, actions: list = 
         padding-bottom: var(--space-4);
         border-bottom: 1px solid var(--border);
     }
-    
+
     .page-title {
         font-size: var(--text-3xl);
         font-weight: 700;
@@ -246,20 +246,20 @@ def create_modern_page_header(title: str, subtitle: str = None, actions: list = 
         margin: 0;
         font-family: var(--font-hebrew);
     }
-    
+
     .page-subtitle {
         font-size: var(--text-lg);
         color: var(--gray-600);
         margin: var(--space-2) 0 0 0;
         font-family: var(--font-hebrew);
     }
-    
+
     .page-actions {
         display: flex;
         gap: var(--space-2);
         align-items: center;
     }
-    
+
     .page-action-button {
         background: var(--primary);
         color: white;
@@ -272,31 +272,31 @@ def create_modern_page_header(title: str, subtitle: str = None, actions: list = 
         transition: all 0.2s ease;
         font-family: var(--font-hebrew);
     }
-    
+
     .page-action-button:hover {
         background: var(--primary-700);
         transform: translateY(-1px);
     }
-    
+
     .page-action-button.secondary {
         background: var(--gray-100);
         color: var(--gray-700);
     }
-    
+
     .page-action-button.secondary:hover {
         background: var(--gray-200);
     }
-    
+
     @media (max-width: 768px) {
         .modern-page-header {
             flex-direction: column;
             gap: var(--space-4);
         }
-        
+
         .page-title {
             font-size: var(--text-2xl);
         }
-        
+
         .page-actions {
             width: 100%;
             justify-content: flex-start;
@@ -304,12 +304,12 @@ def create_modern_page_header(title: str, subtitle: str = None, actions: list = 
     }
     </style>
     """
-    
+
     st.markdown(header_css, unsafe_allow_html=True)
 
 def create_modern_sidebar_navigation():
     """Create modern sidebar navigation"""
-    
+
     sidebar_html = """
     <div class="modern-sidebar">
         <div class="sidebar-header">
@@ -321,7 +321,7 @@ def create_modern_sidebar_navigation():
                 <span class="hamburger"></span>
             </button>
         </div>
-        
+
         <nav class="sidebar-nav">
             <ul class="nav-list">
                 <li class="nav-item active">
@@ -362,7 +362,7 @@ def create_modern_sidebar_navigation():
                 </li>
             </ul>
         </nav>
-        
+
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">👤</div>
@@ -375,9 +375,9 @@ def create_modern_sidebar_navigation():
         </div>
     </div>
     """
-    
+
     st.markdown(sidebar_html, unsafe_allow_html=True)
-    
+
     # Add CSS and JavaScript for sidebar
     sidebar_css = """
     <style>
@@ -394,7 +394,7 @@ def create_modern_sidebar_navigation():
         flex-direction: column;
         transition: transform 0.3s ease;
     }
-    
+
     .sidebar-header {
         display: flex;
         justify-content: space-between;
@@ -402,7 +402,7 @@ def create_modern_sidebar_navigation():
         padding: var(--space-6);
         border-bottom: 1px solid var(--border);
     }
-    
+
     .sidebar-title {
         font-size: var(--text-xl);
         font-weight: 700;
@@ -410,14 +410,14 @@ def create_modern_sidebar_navigation():
         margin: 0;
         font-family: var(--font-hebrew);
     }
-    
+
     .sidebar-subtitle {
         font-size: var(--text-sm);
         color: var(--gray-600);
         margin: var(--space-1) 0 0 0;
         font-family: var(--font-hebrew);
     }
-    
+
     .sidebar-toggle {
         display: none;
         background: none;
@@ -425,7 +425,7 @@ def create_modern_sidebar_navigation():
         cursor: pointer;
         padding: var(--space-2);
     }
-    
+
     .hamburger {
         display: block;
         width: 20px;
@@ -433,7 +433,7 @@ def create_modern_sidebar_navigation():
         background: var(--gray-600);
         position: relative;
     }
-    
+
     .hamburger::before,
     .hamburger::after {
         content: '';
@@ -443,31 +443,31 @@ def create_modern_sidebar_navigation():
         background: var(--gray-600);
         transition: all 0.3s ease;
     }
-    
+
     .hamburger::before {
         top: -6px;
     }
-    
+
     .hamburger::after {
         top: 6px;
     }
-    
+
     .sidebar-nav {
         flex: 1;
         padding: var(--space-4);
         overflow-y: auto;
     }
-    
+
     .nav-list {
         list-style: none;
         margin: 0;
         padding: 0;
     }
-    
+
     .nav-item {
         margin-bottom: var(--space-1);
     }
-    
+
     .nav-link {
         display: flex;
         align-items: center;
@@ -478,39 +478,39 @@ def create_modern_sidebar_navigation():
         transition: all 0.2s ease;
         font-family: var(--font-hebrew);
     }
-    
+
     .nav-link:hover {
         background: var(--gray-100);
         color: var(--gray-900);
     }
-    
+
     .nav-item.active .nav-link {
         background: var(--primary-50);
         color: var(--primary-700);
     }
-    
+
     .nav-icon {
         margin-left: var(--space-3);
         font-size: var(--text-lg);
     }
-    
+
     .nav-text {
         font-size: var(--text-sm);
         font-weight: 500;
     }
-    
+
     .sidebar-footer {
         padding: var(--space-4);
         border-top: 1px solid var(--border);
     }
-    
+
     .user-info {
         display: flex;
         align-items: center;
         gap: var(--space-3);
         margin-bottom: var(--space-3);
     }
-    
+
     .user-avatar {
         width: 40px;
         height: 40px;
@@ -521,20 +521,20 @@ def create_modern_sidebar_navigation():
         justify-content: center;
         font-size: var(--text-lg);
     }
-    
+
     .user-name {
         font-size: var(--text-sm);
         font-weight: 500;
         color: var(--gray-900);
         font-family: var(--font-hebrew);
     }
-    
+
     .user-role {
         font-size: var(--text-xs);
         color: var(--gray-600);
         font-family: var(--font-hebrew);
     }
-    
+
     .logout-button {
         width: 100%;
         background: var(--gray-100);
@@ -547,26 +547,26 @@ def create_modern_sidebar_navigation():
         transition: all 0.2s ease;
         font-family: var(--font-hebrew);
     }
-    
+
     .logout-button:hover {
         background: var(--gray-200);
     }
-    
+
     @media (max-width: 768px) {
         .modern-sidebar {
             transform: translateX(100%);
         }
-        
+
         .modern-sidebar.open {
             transform: translateX(0);
         }
-        
+
         .sidebar-toggle {
             display: block;
         }
     }
     </style>
-    
+
     <script>
     function toggleSidebar() {
         const sidebar = document.querySelector('.modern-sidebar');
@@ -574,7 +574,7 @@ def create_modern_sidebar_navigation():
     }
     </script>
     """
-    
+
     st.markdown(sidebar_css, unsafe_allow_html=True)
 
 

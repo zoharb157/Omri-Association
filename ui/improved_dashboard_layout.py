@@ -4,43 +4,47 @@ Improved Dashboard Layout Module
 Modern, responsive layout with design system integration
 """
 
-import streamlit as st
+import logging
+from typing import Dict, List
+
 import pandas as pd
-from typing import Dict, Any, List, Optional
-from .design_system.themes import ThemeManager
+import streamlit as st
+
+from .components.cards import create_metric_cards
 from .components.layout import (
-    create_section_header, create_container, create_grid,
-    add_spacing, create_metric_row, create_two_column_layout,
-    create_three_column_layout, create_four_column_layout
+    add_spacing,
+    create_section_header,
+    create_two_column_layout,
 )
-from .components.cards import create_metric_cards, create_info_cards
+from .design_system.themes import ThemeManager
+
 
 class ImprovedDashboardLayout:
     """Modern dashboard layout with design system integration"""
-    
+
     def __init__(self):
         self.theme_manager = ThemeManager()
         self.colors = self.theme_manager.colors
         self.typography = self.theme_manager.typography
         self.spacing = self.theme_manager.spacing
-    
+
     def create_main_tabs(self) -> List:
         """Create modern tab structure"""
         return st.tabs([
-            "🏠 דף הבית", 
-            "💰 תקציב", 
-            "👥 תורמים", 
-            "👩 אלמנות", 
+            "🏠 דף הבית",
+            "💰 תקציב",
+            "👥 תורמים",
+            "👩 אלמנות",
             "🕸️ מפת קשרים",
             "📊 דוחות"
         ])
-    
+
     def create_dashboard_header(self):
         """Create modern dashboard header"""
         # Apply theme CSS
         theme_css = self.theme_manager.get_theme_css('light')
         st.markdown(theme_css, unsafe_allow_html=True)
-        
+
         # Main header
         header_html = f"""
         <div style="
@@ -93,9 +97,9 @@ class ImprovedDashboardLayout:
             </div>
         </div>
         """
-        
+
         st.markdown(header_html, unsafe_allow_html=True)
-    
+
     def _create_theme_toggle(self) -> str:
         """Create theme toggle button"""
         return """
@@ -108,12 +112,12 @@ class ImprovedDashboardLayout:
             cursor: pointer;
             font-size: var(--text-sm);
             transition: all 0.2s ease;
-        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" 
+        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'"
            onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
             🌙 עיצוב
         </button>
         """
-    
+
     def _create_refresh_button(self) -> str:
         """Create refresh button"""
         return """
@@ -126,13 +130,13 @@ class ImprovedDashboardLayout:
             cursor: pointer;
             font-size: var(--text-sm);
             transition: all 0.2s ease;
-        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" 
+        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'"
            onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
             🔄 רענן
         </button>
         """
-    
-    def create_overview_section(self, expenses_df: pd.DataFrame, donations_df: pd.DataFrame, 
+
+    def create_overview_section(self, expenses_df: pd.DataFrame, donations_df: pd.DataFrame,
                                donor_stats: Dict, widow_stats: Dict):
         """Create modern overview section"""
         create_section_header(
@@ -140,7 +144,7 @@ class ImprovedDashboardLayout:
             subtitle="תצוגת נתונים מהירה של המצב הנוכחי",
             icon="📊"
         )
-        
+
         # Financial metrics with modern cards
         financial_metrics = [
             {
@@ -172,10 +176,10 @@ class ImprovedDashboardLayout:
                 'color': 'info'
             }
         ]
-        
+
         create_metric_cards(financial_metrics, 4)
         add_spacing(3)
-        
+
         # Organizational metrics
         org_metrics = [
             {
@@ -193,11 +197,11 @@ class ImprovedDashboardLayout:
                 'color': 'primary'
             }
         ]
-        
+
         create_metric_cards(org_metrics, 2)
         add_spacing(3)
-    
-    def create_budget_section(self, expenses_df: pd.DataFrame, donations_df: pd.DataFrame, 
+
+    def create_budget_section(self, expenses_df: pd.DataFrame, donations_df: pd.DataFrame,
                              budget_status: Dict):
         """Create modern budget section"""
         create_section_header(
@@ -205,7 +209,7 @@ class ImprovedDashboardLayout:
             subtitle="ניתוח תקציבי מפורט והוצאות חודשיות",
             icon="💰"
         )
-        
+
         # Budget status cards
         if budget_status and isinstance(budget_status, dict) and len(budget_status) > 0:
             try:
@@ -214,7 +218,7 @@ class ImprovedDashboardLayout:
                 total_monthly_budget = sum(monthly_donations.values()) if monthly_donations else 0
                 total_monthly_expenses = sum(monthly_expenses.values()) if monthly_expenses else 0
                 available_budget = total_monthly_budget - total_monthly_expenses
-                
+
                 budget_metrics = [
                     {
                         'label': 'תקציב חודשי',
@@ -238,17 +242,17 @@ class ImprovedDashboardLayout:
                         'color': 'primary' if available_budget >= 0 else 'error'
                     }
                 ]
-                
+
                 create_metric_cards(budget_metrics, 3)
-                
+
             except Exception as e:
                 st.error("שגיאה בטעינת סטטוס תקציב")
                 logging.error(f"Budget status error: {e}")
         else:
             st.warning("⚠️ לא ניתן לטעון נתוני תקציב חודשי")
-        
+
         add_spacing(3)
-    
+
     def create_donors_section(self, donations_df: pd.DataFrame, donor_stats: Dict):
         """Create modern donors section"""
         create_section_header(
@@ -256,7 +260,7 @@ class ImprovedDashboardLayout:
             subtitle="ניתוח תרומות ותורמים",
             icon="👥"
         )
-        
+
         # Donor statistics
         donor_metrics = [
             {
@@ -281,10 +285,10 @@ class ImprovedDashboardLayout:
                 'color': 'info'
             }
         ]
-        
+
         create_metric_cards(donor_metrics, 3)
         add_spacing(3)
-    
+
     def create_widows_section(self, almanot_df: pd.DataFrame, widow_stats: Dict):
         """Create modern widows section"""
         create_section_header(
@@ -292,7 +296,7 @@ class ImprovedDashboardLayout:
             subtitle="ניהול ותמיכה באלמנות",
             icon="👩"
         )
-        
+
         # Widow statistics
         widow_metrics = [
             {
@@ -310,10 +314,10 @@ class ImprovedDashboardLayout:
                 'color': 'success'
             }
         ]
-        
+
         create_metric_cards(widow_metrics, 2)
         add_spacing(3)
-    
+
     def create_recent_activity_section(self, expenses_df: pd.DataFrame, donations_df: pd.DataFrame):
         """Create modern recent activity section"""
         create_section_header(
@@ -321,9 +325,9 @@ class ImprovedDashboardLayout:
             subtitle="תרומות והוצאות אחרונות",
             icon="📈"
         )
-        
+
         col1, col2 = create_two_column_layout()
-        
+
         with col1:
             st.markdown("#### 🎁 תרומות אחרונות")
             try:
@@ -332,7 +336,7 @@ class ImprovedDashboardLayout:
                     for _, donation in recent_donations.iterrows():
                         donation_date = donation['תאריך']
                         date_str = donation_date.strftime('%d/%m/%Y') if pd.notna(donation_date) else 'תאריך לא מוגדר'
-                        
+
                         activity_html = f"""
                         <div style="
                             background: var(--color-surface);
@@ -361,9 +365,9 @@ class ImprovedDashboardLayout:
                         st.markdown(activity_html, unsafe_allow_html=True)
                 else:
                     st.info("אין תרומות להצגה")
-            except Exception as e:
+            except Exception:
                 st.error("שגיאה בטעינת תרומות אחרונות")
-        
+
         with col2:
             st.markdown("#### 💸 הוצאות אחרונות")
             try:
@@ -372,7 +376,7 @@ class ImprovedDashboardLayout:
                     for _, expense in recent_expenses.iterrows():
                         expense_date = expense['תאריך']
                         date_str = expense_date.strftime('%d/%m/%Y') if pd.notna(expense_date) else 'תאריך לא מוגדר'
-                        
+
                         activity_html = f"""
                         <div style="
                             background: var(--color-surface);
@@ -401,9 +405,9 @@ class ImprovedDashboardLayout:
                         st.markdown(activity_html, unsafe_allow_html=True)
                 else:
                     st.info("אין הוצאות להצגה")
-            except Exception as e:
+            except Exception:
                 st.error("שגיאה בטעינת הוצאות אחרונות")
-        
+
         add_spacing(3)
 
 # Convenience functions for backward compatibility
@@ -412,27 +416,4 @@ def create_main_tabs():
     layout = ImprovedDashboardLayout()
     return layout.create_main_tabs()
 
-def create_dashboard_header():
-    """Create dashboard header"""
-    layout = ImprovedDashboardLayout()
-    layout.create_dashboard_header()
 
-def create_section_header(title: str, subtitle: str = None, icon: str = None):
-    """Create section header"""
-    create_section_header(title, subtitle, icon)
-
-def add_spacing(rem: float = 2):
-    """Add spacing"""
-    add_spacing(rem)
-
-def create_metric_row(metrics: list, columns: int = 4):
-    """Create metric row"""
-    create_metric_row(metrics, columns)
-
-def create_two_column_layout():
-    """Create two column layout"""
-    return create_two_column_layout()
-
-def create_three_column_layout():
-    """Create three column layout"""
-    return create_three_column_layout()

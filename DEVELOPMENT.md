@@ -1,7 +1,7 @@
 # 🛠️ Development Setup
 
 ## Prerequisites
-- Python 3.8+
+- Python 3.10+
 - Git
 - Code editor (VS Code recommended)
 
@@ -11,28 +11,29 @@
 git clone https://github.com/your-username/Omri-Association.git
 cd Omri-Association
 
-# Install development dependencies
+# Install runtime + development dependencies
 pip3 install -r requirements.txt
+pip3 install -r requirements-dev.txt
 
-# Install additional dev tools
-pip3 install black flake8 pytest
+# (Optional) install pre-commit hooks for consistent formatting
+pre-commit install
 
 # Run installation script
 ./install.sh
 ```
 
 ## Code Style
-- Use Black for code formatting
+- Run `ruff check .` and `black .` before committing
 - Follow PEP 8 guidelines
 - Add type hints where possible
 
 ## Testing
 ```bash
-# Run tests (when implemented)
+# Run tests
 pytest
 
 # Format code
 black .
 
 # Lint code
-flake8 .
+ruff check .

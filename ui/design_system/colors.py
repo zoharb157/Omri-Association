@@ -3,27 +3,28 @@ Color System for Omri Association Dashboard
 Centralized color definitions and utilities
 """
 
-from typing import Dict, Any
+from typing import Dict
+
 
 class ColorSystem:
     """Centralized color system for consistent theming"""
-    
+
     # Primary Colors
     PRIMARY_BLUE = "#2563eb"
     PRIMARY_BLUE_LIGHT = "#3b82f6"
     PRIMARY_BLUE_DARK = "#1d4ed8"
-    
+
     # Secondary Colors
     SECONDARY_GRAY = "#64748b"
     SECONDARY_GRAY_LIGHT = "#94a3b8"
     SECONDARY_GRAY_DARK = "#475569"
-    
+
     # Accent Colors
     ACCENT_GREEN = "#059669"
     ACCENT_ORANGE = "#ea580c"
     ACCENT_RED = "#dc2626"
     ACCENT_PURPLE = "#7c3aed"
-    
+
     # Neutral Colors
     WHITE = "#ffffff"
     GRAY_50 = "#f8fafc"
@@ -36,13 +37,13 @@ class ColorSystem:
     GRAY_700 = "#334155"
     GRAY_800 = "#1e293b"
     GRAY_900 = "#0f172a"
-    
+
     # Semantic Colors
     SUCCESS = ACCENT_GREEN
     WARNING = ACCENT_ORANGE
     ERROR = ACCENT_RED
     INFO = PRIMARY_BLUE
-    
+
     @classmethod
     def get_color_palette(cls) -> Dict[str, str]:
         """Get complete color palette"""
@@ -73,7 +74,7 @@ class ColorSystem:
             'error': cls.ERROR,
             'info': cls.INFO,
         }
-    
+
     @classmethod
     def get_semantic_colors(cls) -> Dict[str, str]:
         """Get semantic color mappings"""
@@ -83,7 +84,7 @@ class ColorSystem:
             'error': cls.ERROR,
             'info': cls.INFO,
         }
-    
+
     @classmethod
     def get_chart_colors(cls) -> list:
         """Get color palette for charts"""

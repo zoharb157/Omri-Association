@@ -4,9 +4,9 @@ Dashboard Layout Module
 Handles the main dashboard structure, tabs, and layout
 """
 
-import streamlit as st
+
 import pandas as pd
-from typing import Dict, Any
+import streamlit as st
 
 
 def _get_amount_column(df: pd.DataFrame) -> str:
@@ -20,11 +20,11 @@ def _get_amount_column(df: pd.DataFrame) -> str:
 def create_main_tabs():
     """Create the main tab structure"""
     return st.tabs([
-        "🏠 דף הבית", 
-        "💰 תקציב", 
-        "👥 תורמים", 
-        "👩 אלמנות", 
-        "🕸️ מפת קשרים", 
+        "🏠 דף הבית",
+        "💰 תקציב",
+        "👥 תורמים",
+        "👩 אלמנות",
+        "🕸️ מפת קשרים",
         "🏘️ אזורי מגורים"
     ])
 
@@ -32,35 +32,35 @@ def create_dashboard_header():
     """Create the main dashboard header with refresh button and system status"""
     # Main title
     st.markdown("<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>", unsafe_allow_html=True)
-    
+
     # Clean, professional header with just theme toggle
     col1, col2 = st.columns([4, 1])
-    
+
     with col1:
         # Empty space for clean look
         pass
-    
+
     with col2:
         # Quick theme toggle and performance info
         try:
             from theme_manager import get_current_theme, switch_theme
             current_theme = get_current_theme()
-            
-            if st.button("🌙" if current_theme == 'light' else "☀️", 
+
+            if st.button("🌙" if current_theme == 'light' else "☀️",
                         help="החלף עיצוב"):
                 new_theme = 'dark' if current_theme == 'light' else 'light'
                 switch_theme(new_theme)
                 st.rerun()
         except ImportError:
             pass  # Theme manager not available
-        
+
         # Performance info (only in debug mode)
         if st.session_state.get('debug_mode', False):
             # Simple performance info
             def show_performance_info():
                 st.info("ℹ️ מידע על ביצועים: טעינה מהירה")
             show_performance_info()
-    
+
     add_spacing(1)
 
 def create_section_header(title: str, icon: str = ""):
@@ -106,7 +106,7 @@ def add_spacing(rem: float = 2):
     # Convert rem to design system spacing scale
     spacing_map = {
         0.5: "var(--space-2, 0.5rem)",
-        1: "var(--space-4, 1rem)", 
+        1: "var(--space-4, 1rem)",
         1.5: "var(--space-6, 1.5rem)",
         2: "var(--space-8, 2rem)",
         3: "var(--space-12, 3rem)",
@@ -172,11 +172,11 @@ def create_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.D
 def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame):
     """Create the reports and data export section"""
     create_section_header("📋 דוחות וייצוא נתונים")
-    
+
     # Data Export Section (Quick access to raw data)
     st.markdown("#### 📥 ייצוא נתונים גולמיים")
     col1, col2, col3 = st.columns(3)
-    
+
     with col1:
         if st.button("📊 ייצוא סקירה כללית", use_container_width=True):
             try:
@@ -204,7 +204,7 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                 )
             except Exception as e:
                 st.error(f"שגיאה בייצוא: {e}")
-    
+
     with col2:
         if st.button("👥 ייצוא נתוני תורמים", use_container_width=True):
             try:
@@ -220,7 +220,7 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                     st.warning("אין נתוני תורמים לייצוא")
             except Exception as e:
                 st.error(f"שגיאה בייצוא: {e}")
-    
+
     with col3:
         if st.button("👩 ייצוא נתוני אלמנות", use_container_width=True):
             try:
@@ -236,13 +236,13 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                     st.warning("אין נתוני אלמנות לייצוא")
             except Exception as e:
                 st.error(f"שגיאה בייצוא: {e}")
-    
+
     add_spacing(2)
-    
+
     # Detailed Reports Section
     st.markdown("#### 📊 דוחות מפורטים")
     col1, col2 = create_two_column_layout()
-    
+
     with col1:
         if st.button("📊 דוח חודשי מפורט", use_container_width=True):
             try:
@@ -256,9 +256,9 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                             file_name=filename,
                             mime="application/pdf"
                         )
-            except Exception as e:
+            except Exception:
                 st.error("שגיאה ביצירת דוח חודשי")
-        
+
         if st.button("👥 דוח תורמים מפורט", use_container_width=True):
             try:
                 from reports.reports import generate_donor_report
@@ -271,9 +271,9 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                             file_name=filename,
                             mime="application/pdf"
                         )
-            except Exception as e:
+            except Exception:
                 st.error("שגיאה ביצירת דוח תורמים")
-    
+
     with col2:
         if st.button("👩 דוח אלמנות מפורט", use_container_width=True):
             try:
@@ -287,9 +287,9 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                             file_name=filename,
                             mime="application/pdf"
                         )
-            except Exception as e:
+            except Exception:
                 st.error("שגיאה ביצירת דוח אלמנות")
-        
+
         if st.button("💰 דוח תקציב מפורט", use_container_width=True):
             try:
                 from reports.reports import generate_budget_report
@@ -302,5 +302,5 @@ def create_reports_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                             file_name=filename,
                             mime="application/pdf"
                         )
-            except Exception as e:
+            except Exception:
                 st.error("שגיאה ביצירת דוח תקציב")

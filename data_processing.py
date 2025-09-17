@@ -1,9 +1,8 @@
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import streamlit as st
 import logging
 import traceback
+
+import pandas as pd
+import streamlit as st
 
 
 def _get_amount_column(df: pd.DataFrame) -> str:
@@ -57,13 +56,13 @@ def calculate_monthly_averages(df: pd.DataFrame, value_column: str = 'שקלים
                 'max_monthly': 0,
                 'total_months': 0
             }
-        
+
         # Calculate statistics
         monthly_avg = monthly_totals.mean() if len(monthly_totals) > 0 else 0
         min_monthly = monthly_totals.min() if len(monthly_totals) > 0 else 0
         max_monthly = monthly_totals.max() if len(monthly_totals) > 0 else 0
         total_months = len(monthly_totals)
-        
+
         return {
             'monthly_avg': monthly_avg,
             'min_monthly': min_monthly,
@@ -99,7 +98,7 @@ def calculate_total_support(df: pd.DataFrame, value_column: str = 'סכום חו
         min_support = float(df[value_column].min())
         max_support = float(df[value_column].max())
         support_count = len(df)
-        
+
         return {
             'total_support': total_support,
             'avg_support': avg_support,
@@ -294,7 +293,7 @@ def calculate_expense_statistics(df: pd.DataFrame, value_column: str = 'שקלי
             avg_expense = total_expenses / len(df) if len(df) > 0 else 0
         except (ZeroDivisionError, TypeError):
             avg_expense = 0
-        
+
         # Expense categories - use the correct column name
         name_col = 'שם' if 'שם' in df.columns else df.columns[1] if len(df.columns) > 1 else 'שם'
         if name_col in df.columns:
@@ -302,7 +301,7 @@ def calculate_expense_statistics(df: pd.DataFrame, value_column: str = 'שקלי
             expense_categories = expense_categories.to_dict()
         else:
             expense_categories = {}
-        
+
         # Monthly expenses
         if 'תאריך' in df.columns:
             df['תאריך'] = pd.to_datetime(df['תאריך'], format='%d.%m.%Y', errors='coerce')
@@ -310,7 +309,7 @@ def calculate_expense_statistics(df: pd.DataFrame, value_column: str = 'שקלי
             monthly_expenses = monthly_expenses.to_dict()
         else:
             monthly_expenses = {}
-        
+
         return {
             'total_expenses': total_expenses,
             'avg_expense': avg_expense,
@@ -345,14 +344,14 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
         # Basic statistics - use the correct column name
         name_col = 'שם' if 'שם' in df.columns else df.columns[0] if len(df.columns) > 0 else 'שם'
         total_widows = df[name_col].nunique() if name_col in df.columns else 0
-        
+
         # Ensure value_column contains numeric data
         try:
             # Convert to numeric, handling any non-numeric values
             numeric_values = pd.to_numeric(df[value_column], errors='coerce')
             # Don't fill NaN with 0 - preserve the actual data state
             total_support = numeric_values.sum()
-            
+
             # Count widows by support amount (only 1000 or 2000)
             support_1000_count = int((numeric_values == 1000).sum())
             support_2000_count = int((numeric_values == 2000).sum())
@@ -361,7 +360,7 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
             total_support = 0
             support_1000_count = 0
             support_2000_count = 0
-        
+
         # Support distribution
         if 'שם ' in df.columns:
             try:
@@ -375,7 +374,7 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
                 support_distribution = {}
         else:
             support_distribution = {}
-        
+
         # Monthly support
         if 'חודש התחלה' in df.columns:
             df['חודש התחלה'] = pd.to_datetime(df['חודש התחלה'], format='%d.%m.%Y', errors='coerce')
@@ -383,7 +382,7 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
             monthly_support = monthly_support.to_dict()
         else:
             monthly_support = {}
-        
+
         return {
             'total_widows': total_widows,
             'total_support': total_support,
@@ -408,7 +407,7 @@ def calculate_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFra
     try:
         if not isinstance(expenses_df, pd.DataFrame) or not isinstance(donations_df, pd.DataFrame):
             raise ValueError("הנתונים חייבים להיות DataFrame")
-            
+
         # Calculate monthly trends for expenses
         expense_amount_col = _get_amount_column(expenses_df)
         donation_amount_col = _get_amount_column(donations_df)
@@ -417,7 +416,7 @@ def calculate_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             expenses_df = expenses_df.copy()
             expenses_df['תאריך'] = pd.to_datetime(expenses_df['תאריך'], format='%d.%m.%Y', errors='coerce')
             monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m'))[expense_amount_col].sum()
-            
+
             # Calculate trend and change
             if len(monthly_expenses) > 1:
                 expenses_trend = "עולה" if monthly_expenses.iloc[-1] > monthly_expenses.iloc[0] else "יורד"
@@ -429,13 +428,13 @@ def calculate_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             monthly_expenses = pd.Series()
             expenses_trend = "לא ניתן לחשב"
             expenses_change = 0
-            
+
         # Calculate monthly trends for donations
         if 'תאריך' in donations_df.columns and donation_amount_col:
             donations_df = donations_df.copy()
             donations_df['תאריך'] = pd.to_datetime(donations_df['תאריך'], format='%d.%m.%Y', errors='coerce')
             monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))[donation_amount_col].sum()
-            
+
             # Calculate trend and change
             if len(monthly_donations) > 1:
                 donations_trend = "עולה" if monthly_donations.iloc[-1] > monthly_donations.iloc[0] else "יורד"
@@ -447,7 +446,7 @@ def calculate_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             monthly_donations = pd.Series()
             donations_trend = "לא ניתן לחשב"
             donations_change = 0
-            
+
         # Calculate monthly comparison
         monthly_comparison = {}
         if not monthly_expenses.empty and not monthly_donations.empty:
@@ -458,7 +457,7 @@ def calculate_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFra
                     'donations': monthly_donations[month],
                     'balance': monthly_donations[month] - monthly_expenses[month]
                 }
-            
+
         return {
             'expenses_trend': expenses_trend,
             'donations_trend': donations_trend,
@@ -468,7 +467,7 @@ def calculate_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             'monthly_donations': monthly_donations.to_dict(),
             'monthly_comparison': monthly_comparison
         }
-        
+
     except Exception as e:
         logging.error(f"Error calculating monthly trends: {str(e)}")
         return {
@@ -503,20 +502,20 @@ def calculate_36_month_budget(widows_df: pd.DataFrame, current_support: float) -
     try:
         # Calculate total required support
         total_required = current_support * 36
-        
+
         # Calculate current support for 36 months
         support_36_months = widows_df['סכום חודשי'].sum() * 36
-        
+
         # Calculate difference and percentage
         diff = support_36_months - total_required
         coverage_percentage = (support_36_months / total_required * 100) if total_required > 0 else 0
-        
+
         # Calculate monthly breakdown
         monthly_breakdown = []
         if 'חודש התחלה' in widows_df.columns:
             widows_df['חודש התחלה'] = pd.to_datetime(widows_df['חודש התחלה'], format='%d.%m.%Y', errors='coerce')
             monthly_support = widows_df.groupby(widows_df['חודש התחלה'].dt.strftime('%Y-%m'))['סכום חודשי'].sum()
-            
+
             for month, amount in monthly_support.items():
                 monthly_breakdown.append({
                     'month': month,
@@ -524,7 +523,7 @@ def calculate_36_month_budget(widows_df: pd.DataFrame, current_support: float) -
                     'required': current_support,
                     'difference': amount - current_support
                 })
-        
+
         return {
             'support_36_months': support_36_months,
             'total_required': total_required,
@@ -569,19 +568,19 @@ def calculate_monthly_budget_old(expenses_df, donations_df):
 
         monthly_expenses = expenses_df.groupby(expenses_df['תאריך'].dt.strftime('%Y-%m'))[expense_amount_col].sum()
         monthly_donations = donations_df.groupby(donations_df['תאריך'].dt.strftime('%Y-%m'))[donation_amount_col].sum()
-        
+
         # Align the indices
         common_months = monthly_expenses.index.intersection(monthly_donations.index)
         monthly_expenses = monthly_expenses[common_months]
         monthly_donations = monthly_donations[common_months]
-        
+
         # Calculate budget status
         budget_status = pd.DataFrame({
             'הוצאות': monthly_expenses,
             'תרומות': monthly_donations,
             'יתרה': monthly_donations - monthly_expenses
         })
-        
+
         return budget_status
     except Exception as e:
         st.error(f"שגיאה בחישוב תקציב חודשי: {str(e)}")
@@ -593,7 +592,7 @@ def calculate_budget_forecast(budget_status: dict, months: int) -> dict:
         # Get current monthly averages
         total_expenses = budget_status.get('total_expenses', 0)
         total_donations = budget_status.get('total_donations', 0)
-        
+
         # If no data, return empty forecast
         if total_expenses == 0 and total_donations == 0:
             return {
@@ -603,17 +602,17 @@ def calculate_budget_forecast(budget_status: dict, months: int) -> dict:
                 'monthly_forecast': [],
                 'forecast_months': months
             }
-        
+
         # Calculate monthly averages (assuming 12 months of data, or use 1 if no data)
         data_months = 12 if total_expenses > 0 or total_donations > 0 else 1
         current_monthly_expenses = total_expenses / data_months
         current_monthly_donations = total_donations / data_months
-        
+
         # Calculate forecast
         total_expenses_forecast = current_monthly_expenses * months
         total_donations_forecast = current_monthly_donations * months
         balance = total_donations_forecast - total_expenses_forecast
-        
+
         # Create monthly forecast breakdown
         monthly_forecast = []
         for i in range(1, months + 1):
@@ -624,7 +623,7 @@ def calculate_budget_forecast(budget_status: dict, months: int) -> dict:
                 'יתרה': current_monthly_donations - current_monthly_expenses,
                 'יחס כיסוי': (current_monthly_donations / current_monthly_expenses) if current_monthly_expenses > 0 else 0
             })
-        
+
         return {
             'total_expenses': total_expenses_forecast,
             'total_donations': total_donations_forecast,
@@ -632,7 +631,7 @@ def calculate_budget_forecast(budget_status: dict, months: int) -> dict:
             'monthly_forecast': monthly_forecast,
             'forecast_months': months
         }
-        
+
     except Exception as e:
         logging.error(f"Error calculating budget forecast: {str(e)}")
         return {
@@ -641,4 +640,4 @@ def calculate_budget_forecast(budget_status: dict, months: int) -> dict:
             'balance': 0,
             'monthly_forecast': [],
             'forecast_months': months
-        } 
+        }

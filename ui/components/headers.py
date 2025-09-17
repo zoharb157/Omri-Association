@@ -5,12 +5,14 @@ Consistent header creation with design system integration
 """
 
 import streamlit as st
+
 from ui.design_system.modern_tokens import ModernDesignSystem
+
 
 def create_section_header(title: str, icon: str = "", level: int = 3, description: str = ""):
     """Create consistent section headers with proper styling"""
     icon_text = f"{icon} " if icon else ""
-    
+
     # Create header using Streamlit's native components
     if level == 1:
         st.title(f"{icon_text}{title}")
@@ -20,7 +22,7 @@ def create_section_header(title: str, icon: str = "", level: int = 3, descriptio
         st.subheader(f"{icon_text}{title}")
     else:
         st.markdown(f"### {icon_text}{title}")
-    
+
     # Add description if provided
     if description:
         st.markdown(f"""
@@ -40,7 +42,7 @@ def create_section_header(title: str, icon: str = "", level: int = 3, descriptio
 def create_page_title(title: str, subtitle: str = "", icon: str = ""):
     """Create main page title with optional subtitle"""
     icon_text = f"{icon} " if icon else ""
-    
+
     if subtitle:
         title_html = f"""
         <div class="page-title-container" style="
@@ -90,13 +92,13 @@ def create_page_title(title: str, subtitle: str = "", icon: str = ""):
             </h1>
         </div>
         """
-    
+
     st.markdown(title_html, unsafe_allow_html=True)
 
 def create_subsection_header(title: str, icon: str = ""):
     """Create subsection headers for smaller sections"""
     icon_text = f"{icon} " if icon else ""
-    
+
     st.markdown(f"""
     <h4 style="
         color: {ModernDesignSystem.COLORS['gray_900']};
