@@ -33,6 +33,9 @@ st.markdown("<!-- Dashboard Version: 2025-01-17-v2 -->", unsafe_allow_html=True)
 def main():
     """Main entry point for the dashboard - Updated 2025-01-17"""
     try:
+        # Debug: Show version info
+        st.info("🔄 Loading Dashboard v2025-01-17-v2...")
+        
         # Import and run the working dashboard with all tabs
         from ui.dashboard_core import run_dashboard
         run_dashboard()
