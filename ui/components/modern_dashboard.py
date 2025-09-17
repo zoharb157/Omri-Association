@@ -59,15 +59,7 @@ def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.Dat
         # Donations chart
         donations_chart = create_modern_donations_chart(donations_df)
         if donations_chart:
-            chart_html = st.plotly_chart(donations_chart, use_container_width=True, key="donations_chart", output_format="div")
-            from ui.components.modern_cards import create_chart_card
-            create_chart_card(
-                title="תרשים תרומות",
-                subtitle="מגמות תרומות לאורך זמן",
-                empty=False,
-                chart_html=chart_html,
-                caption=None
-            )
+            st.plotly_chart(donations_chart, use_container_width=True, key="donations_chart")
         else:
             from ui.components.modern_cards import create_chart_card
             create_chart_card(
@@ -83,14 +75,7 @@ def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.Dat
         expenses_chart = create_modern_expenses_pie_chart(expenses_df)
         from ui.components.modern_cards import create_chart_card
         if expenses_chart:
-            chart_html = st.plotly_chart(expenses_chart, use_container_width=True, key="expenses_chart", output_format="div")
-            create_chart_card(
-                title="תרשים הוצאות",
-                subtitle="התפלגות הוצאות",
-                empty=False,
-                chart_html=chart_html,
-                caption=None
-            )
+            st.plotly_chart(expenses_chart, use_container_width=True, key="expenses_chart")
         else:
             create_chart_card(
                 title="תרשים הוצאות",
@@ -121,19 +106,15 @@ def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.Dat
 
     st.markdown('<div class="chart-grid">', unsafe_allow_html=True)
 
+    # Create second row of charts
+    cols2 = st.columns(2)
+    
     with cols2[0]:
         # Donors chart
         donors_chart = create_modern_donors_chart(donors_df)
         from ui.components.modern_cards import create_chart_card
         if donors_chart:
-            chart_html = st.plotly_chart(donors_chart, use_container_width=True, key="donors_chart", output_format="div")
-            create_chart_card(
-                title="תרשים תורמים",
-                subtitle="פילוח תורמים",
-                empty=False,
-                chart_html=chart_html,
-                caption=None
-            )
+            st.plotly_chart(donors_chart, use_container_width=True, key="donors_chart")
         else:
             create_chart_card(
                 title="תרשים תורמים",
@@ -148,14 +129,7 @@ def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.Dat
         widows_chart = create_modern_widows_chart(widows_df)
         from ui.components.modern_cards import create_chart_card
         if widows_chart:
-            chart_html = st.plotly_chart(widows_chart, use_container_width=True, key="widows_chart", output_format="div")
-            create_chart_card(
-                title="תרשים אלמנות",
-                subtitle="פילוח אלמנות",
-                empty=False,
-                chart_html=chart_html,
-                caption=None
-            )
+            st.plotly_chart(widows_chart, use_container_width=True, key="widows_chart")
         else:
             create_chart_card(
                 title="תרשים אלמנות",

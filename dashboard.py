@@ -27,11 +27,11 @@ st.set_page_config(
 st.markdown(get_global_css(), unsafe_allow_html=True)
 
 def main():
-    """Main entry point for the modern dashboard"""
+    """Main entry point for the dashboard"""
     try:
-        # Import and run the modern dashboard (navbar + sections)
-        from ui.modern_dashboard_core import render_dashboard
-        render_dashboard()
+        # Import and run the working dashboard with all tabs
+        from ui.dashboard_core import run_dashboard
+        run_dashboard()
     except ImportError as e:
         st.error(f"❌ שגיאה בטעינת מודולים: {str(e)}")
         st.info("אנא ודא שכל הקבצים הנדרשים קיימים")

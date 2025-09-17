@@ -98,7 +98,7 @@ def create_filter_group(title: str, filters: list, columns: int = 3):
 
             if filter_type == 'checkbox':
                 create_accessible_checkbox(
-                    label=filter_config.get('label', ''),
+                    label=filter_config.get('label', f'Filter {i+1}'),
                     value=filter_config.get('value', False),
                     help_text=filter_config.get('help', ''),
                     key=filter_config.get('key', f"filter_{i}"),
@@ -106,7 +106,7 @@ def create_filter_group(title: str, filters: list, columns: int = 3):
                 )
             elif filter_type == 'selectbox':
                 create_accessible_selectbox(
-                    label=filter_config.get('label', ''),
+                    label=filter_config.get('label', f'Select {i+1}'),
                     options=filter_config.get('options', []),
                     index=filter_config.get('index', 0),
                     help_text=filter_config.get('help', ''),
@@ -115,7 +115,7 @@ def create_filter_group(title: str, filters: list, columns: int = 3):
                 )
             elif filter_type == 'slider':
                 create_accessible_slider(
-                    label=filter_config.get('label', ''),
+                    label=filter_config.get('label', f'Range {i+1}'),
                     min_value=filter_config.get('min_value', 0),
                     max_value=filter_config.get('max_value', 100),
                     value=filter_config.get('value', None),
