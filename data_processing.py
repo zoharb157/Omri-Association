@@ -340,7 +340,7 @@ def calculate_widow_statistics(df: pd.DataFrame, value_column: str = 'סכום �
             'support_distribution': {},
             'monthly_support': []
         }
-    
+
     # Check if value_column exists, if not try alternative columns
     if value_column not in df.columns:
         # Try alternative column names

@@ -68,15 +68,6 @@ def create_modern_navbar(active_section: str = "overview"):
     </style>
     """
     st.markdown(nav_html, unsafe_allow_html=True)
-#!/usr/bin/env python3
-"""
-Modern Layout System for Omri Association Dashboard
-Responsive layout components and grid system
-"""
-
-import streamlit as st
-
-from ui.design_system.modern_tokens import ModernDesignSystem
 
 
 def create_modern_sidebar():

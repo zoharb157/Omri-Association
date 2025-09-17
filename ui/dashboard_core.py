@@ -113,8 +113,7 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
         # Calculate statistics (silent processing)
         budget_status = calculate_monthly_budget(expenses_df, donations_df)
         donor_stats = calculate_donor_statistics(donations_df)
-        
-        
+
         widow_stats = calculate_widow_statistics(almanot_df)
 
         return budget_status, donor_stats, widow_stats

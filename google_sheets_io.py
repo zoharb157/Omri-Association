@@ -424,7 +424,7 @@ def load_all_data():
                 for col in df.columns:
                     col_lower = str(col).lower()
                     # Exclude 'סכום חודשי' from date processing - it's a monetary column, not a date
-                    if (any(keyword in col_lower for keyword in ['תאריך', 'date', 'חודש', 'month']) and 
+                    if (any(keyword in col_lower for keyword in ['תאריך', 'date', 'חודש', 'month']) and
                         'סכום' not in col_lower):
                         df[col] = pd.to_datetime(df[col], errors='coerce')
 

@@ -108,7 +108,7 @@ def create_modern_charts_section(expenses_df: pd.DataFrame, donations_df: pd.Dat
 
     # Create second row of charts
     cols2 = st.columns(2)
-    
+
     with cols2[0]:
         # Donors chart
         donors_chart = create_modern_donors_chart(donors_df)
