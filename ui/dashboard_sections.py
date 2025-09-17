@@ -252,7 +252,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
         st.error("שגיאה בטעינת טבלת אלמנות")
         logging.error(f"Widow charts error: {e}")
 
-    st.markdown('</div>')
+    st.markdown('</div>', unsafe_allow_html=True)
     add_spacing(3)
 
 def create_widows_table_section(almanot_df: pd.DataFrame):
