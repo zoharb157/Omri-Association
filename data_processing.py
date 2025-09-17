@@ -37,7 +37,7 @@ def calculate_monthly_averages(df: pd.DataFrame, value_column: str = 'שקלים
         # Group by month and calculate totals - ensure dates are properly converted
         try:
             df_copy = df.copy()
-            df_copy['תאריך'] = pd.to_datetime(df_copy['תאריך'], errors='coerce')
+            df_copy['תאריך'] = pd.to_datetime(df_copy['תאריך'], errors='coerce', infer_datetime_format=True)
             # Filter out rows with invalid dates
             valid_df = df_copy.dropna(subset=['תאריך'])
             if valid_df.empty:
@@ -136,7 +136,7 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             try:
                 expenses_df_copy = expenses_df.copy()
                 date_col = expenses_df_copy.columns[0]
-                expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy[date_col], errors='coerce')
+                expenses_df_copy['תאריך'] = pd.to_datetime(expenses_df_copy[date_col], errors='coerce', infer_datetime_format=True)
                 valid_expenses = expenses_df_copy.dropna(subset=['תאריך'])
                 if not valid_expenses.empty:
                     monthly_expenses = (
@@ -152,7 +152,7 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
             try:
                 donations_df_copy = donations_df.copy()
                 date_col = donations_df_copy.columns[0]
-                donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy[date_col], errors='coerce')
+                donations_df_copy['תאריך'] = pd.to_datetime(donations_df_copy[date_col], errors='coerce', infer_datetime_format=True)
                 valid_donations = donations_df_copy.dropna(subset=['תאריך'])
                 if not valid_donations.empty:
                     monthly_donations = (

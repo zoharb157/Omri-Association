@@ -99,7 +99,7 @@ def process_dashboard_data(expenses_df: pd.DataFrame, donations_df: pd.DataFrame
                 if 'שקלים' in df.columns:
                     df['שקלים'] = pd.to_numeric(df['שקלים'], errors='coerce').fillna(0)
                 if 'תאריך' in df.columns:
-                    df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce', format='%d/%m/%Y')
+                    df['תאריך'] = pd.to_datetime(df['תאריך'], errors='coerce', infer_datetime_format=True)
 
         if almanot_df is not None and not almanot_df.empty:
             if 'מספר ילדים' in almanot_df.columns:
