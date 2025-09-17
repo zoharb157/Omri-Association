@@ -1,3 +1,16 @@
+#!/usr/bin/env python3
+"""
+Modern Card Components for Omri Association Dashboard
+High-quality card components with modern styling
+"""
+
+import textwrap
+
+import streamlit as st
+
+from ui.components.layout_system import create_section_header
+
+
 def create_chart_card(title: str, subtitle: str = None, empty: bool = False, chart_html: str = "", caption: str = None):
     """Render a chart inside a modern card with title, subtitle, and empty state."""
     header_html = f"""
