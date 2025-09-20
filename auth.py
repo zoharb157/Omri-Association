@@ -9,7 +9,6 @@ import time
 from typing import Any, Dict, Optional
 
 import streamlit as st
-from config import get_setting
 
 
 class AuthManager:
@@ -93,7 +92,7 @@ def logout_user():
 
 def is_authenticated() -> bool:
     """Check if user is authenticated"""
-    if not get_setting("ENABLE_AUTHENTICATION"):
+    if not st.session_state.get("ENABLE_AUTHENTICATION", False):
         return True  # Authentication disabled
 
     if "authenticated" not in st.session_state:
@@ -101,7 +100,7 @@ def is_authenticated() -> bool:
 
     # Check session timeout
     if "login_time" in st.session_state:
-        timeout = get_setting("SESSION_TIMEOUT")
+        timeout = st.session_state.get("SESSION_TIMEOUT", 3600)
         if time.time() - st.session_state.login_time > timeout:
             logout_user()
             return False
@@ -125,7 +124,7 @@ def get_current_user_info() -> Optional[Dict[str, Any]]:
 
 def has_permission(permission: str) -> bool:
     """Check if current user has specific permission"""
-    if not get_setting("ENABLE_AUTHENTICATION"):
+    if not st.session_state.get("ENABLE_AUTHENTICATION", False):
         return True  # All permissions when auth disabled
 
     username = get_current_user()
