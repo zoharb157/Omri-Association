@@ -395,37 +395,10 @@ def create_network_section(
     if "current_tab" not in st.session_state:
         st.session_state.current_tab = "network"
     
-    # Enhanced filter controls with accessibility
-    filter_configs = [
-        {
-            "type": "checkbox",
-            "label": "הצג מחוברים",
-            "value": True,
-            "help": "הצג תורמים ואלמנות עם קשרים",
-            "key": "show_connected",
-        },
-        {
-            "type": "checkbox",
-            "label": "הצג תורמים ללא קשר",
-            "value": True,
-            "help": "הצג תורמים ללא קשרים",
-            "key": "show_unconnected_donors",
-        },
-        {
-            "type": "checkbox",
-            "label": "הצג אלמנות ללא קשר",
-            "value": True,
-            "help": "הצג אלמנות ללא קשרים",
-            "key": "show_unconnected_widows",
-        },
-    ]
-
-    create_filter_group("מסנני מפת קשרים", filter_configs, columns=3)
-
-    # Get filter values
-    show_connected = st.session_state.get("show_connected", True)
-    show_unconnected_donors = st.session_state.get("show_unconnected_donors", True)
-    show_unconnected_widows = st.session_state.get("show_unconnected_widows", True)
+    # Simplified network view without filters
+    show_connected = True
+    show_unconnected_donors = True
+    show_unconnected_widows = True
 
     add_spacing(1)
 
