@@ -432,6 +432,10 @@ def create_network_section(
             key="network_show_unconnected_widows"  # Protected key
         )
 
+    # Set default values for removed filters
+    min_support_amount = 0
+    show_labels = True
+    
     # Validate that all required filters are present
     required_filters = [show_connected, show_unconnected_donors, show_unconnected_widows]
     if not all(isinstance(f, bool) for f in required_filters):
@@ -463,10 +467,6 @@ def create_network_section(
             "min_support_amount": min_support_amount,
             "show_labels": show_labels
         })
-    
-    # Set default values for removed filters
-    min_support_amount = 0
-    show_labels = True
 
     try:
         # Clean monthly support data - ensure all values are numeric and NaN is treated as 0
