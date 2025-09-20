@@ -263,7 +263,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
             # Display table without index and with proper column order
             st.dataframe(
-                sorted_widows[available_columns], 
+                sorted_widows[available_columns],
                 use_container_width=True,
                 hide_index=True
             )
@@ -291,7 +291,7 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
             # Display table without index and with proper column order
             st.dataframe(
-                sorted_widows[available_columns], 
+                sorted_widows[available_columns],
                 use_container_width=True,
                 hide_index=True
             )
@@ -414,9 +414,9 @@ def create_network_section(
     # The user specifically requested these filters to never disappear
     # ============================================================================
     st.markdown("#### 🔍 הגדרות תצוגה")
-    
+
     col1, col2, col3 = st.columns(3)
-    
+
     with col1:
         show_connected = st.checkbox(
             "הצג קשרים קיימים",
@@ -424,7 +424,7 @@ def create_network_section(
             help="הצג קשרים בין תורמים לאלמנות - הגדרה חיונית!",
             key="network_show_connected"  # Protected key
         )
-    
+
     with col2:
         show_unconnected_donors = st.checkbox(
             "הצג תורמים ללא קשרים",
@@ -432,7 +432,7 @@ def create_network_section(
             help="הצג תורמים שאין להם קשרים לאלמנות - הגדרה חיונית!",
             key="network_show_unconnected_donors"  # Protected key
         )
-    
+
     with col3:
         show_unconnected_widows = st.checkbox(
             "הצג אלמנות ללא קשרים",
@@ -444,13 +444,13 @@ def create_network_section(
     # Set default values for removed filters
     min_support_amount = 0  # DEFAULT_MIN_SUPPORT_AMOUNT
     show_labels = True  # DEFAULT_SHOW_LABELS
-    
+
     # Validate that all required filters are present
     required_filters = [show_connected, show_unconnected_donors, show_unconnected_widows]
     if not all(isinstance(f, bool) for f in required_filters):
         st.error("❌ שגיאה: הגדרות הרשת חסרות! אנא רענן את הדף.")
         return
-    
+
     # Clean interface - no status messages
 
     try:
