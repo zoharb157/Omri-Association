@@ -4,11 +4,9 @@ Unit tests for widow import module
 Tests widow data import and processing functionality
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
+
 import pandas as pd
-import tempfile
-import os
 
 from widow_import import (
     WidowImportManager,
@@ -22,7 +20,7 @@ class TestWidowImport:
     def test_widow_import_manager_init(self):
         """Test WidowImportManager initialization"""
         manager = WidowImportManager()
-        
+
         assert manager is not None
         assert hasattr(manager, 'sheet_id')
         assert hasattr(manager, 'tab_name')
@@ -35,9 +33,9 @@ class TestWidowImport:
         mock_st.button = MagicMock(return_value=False)
         mock_st.columns = MagicMock(return_value=[MagicMock(), MagicMock()])
         mock_st.file_uploader = MagicMock(return_value=None)
-        
+
         create_widow_import_section()
-        
+
         mock_st.markdown.assert_called()
 
     @patch("widow_import.st")
@@ -50,10 +48,10 @@ class TestWidowImport:
             "סכום חודשי": [1000, 2000]
         })
         mock_st.error = MagicMock()
-        
+
         manager = WidowImportManager()
         df, new_widows = manager.load_widow_data()
-        
+
         assert isinstance(df, pd.DataFrame)
         assert isinstance(new_widows, list)
 
@@ -63,10 +61,10 @@ class TestWidowImport:
         """Test WidowImportManager load_widow_data error handling"""
         mock_read_data.return_value = None
         mock_st.error = MagicMock()
-        
+
         manager = WidowImportManager()
         df, new_widows = manager.load_widow_data()
-        
+
         assert df.empty
         assert new_widows == []
         mock_st.error.assert_called()
@@ -77,10 +75,10 @@ class TestWidowImport:
         """Test WidowImportManager load_widow_data exception handling"""
         mock_read_data.side_effect = Exception("Data loading error")
         mock_st.error = MagicMock()
-        
+
         manager = WidowImportManager()
         df, new_widows = manager.load_widow_data()
-        
+
         assert df.empty
         assert new_widows == []
         mock_st.error.assert_called()
@@ -88,7 +86,7 @@ class TestWidowImport:
     def test_widow_import_manager_required_columns(self):
         """Test WidowImportManager has required columns defined"""
         manager = WidowImportManager()
-        
+
         assert isinstance(manager.required_columns, list)
         assert len(manager.required_columns) > 0
         assert "שם הבחורה" in manager.required_columns
@@ -96,14 +94,14 @@ class TestWidowImport:
     def test_widow_import_manager_sheet_id(self):
         """Test WidowImportManager has sheet_id defined"""
         manager = WidowImportManager()
-        
+
         assert isinstance(manager.sheet_id, str)
         assert len(manager.sheet_id) > 0
 
     def test_widow_import_manager_tab_name(self):
         """Test WidowImportManager has tab_name defined"""
         manager = WidowImportManager()
-        
+
         assert isinstance(manager.tab_name, str)
         assert len(manager.tab_name) > 0
 
@@ -119,7 +117,7 @@ class TestWidowImport:
         mock_st.error = MagicMock()
         mock_st.info = MagicMock()
         mock_st.warning = MagicMock()
-        
+
         # Should not raise any exceptions
         create_widow_import_section()
 
@@ -131,16 +129,16 @@ class TestWidowImport:
         mock_st.columns = MagicMock(return_value=[MagicMock(), MagicMock()])
         mock_st.file_uploader = MagicMock(return_value=None)
         mock_st.error = MagicMock()
-        
+
         # Should handle exceptions gracefully
         create_widow_import_section()
 
     def test_widow_import_manager_methods_exist(self):
         """Test WidowImportManager has expected methods"""
         manager = WidowImportManager()
-        
+
         assert hasattr(manager, 'load_widow_data')
-        assert callable(getattr(manager, 'load_widow_data'))
+        assert callable(manager.load_widow_data)
 
     @patch("widow_import.st")
     @patch("widow_import.read_widow_support_data")
@@ -148,10 +146,10 @@ class TestWidowImport:
         """Test widow import with empty DataFrame"""
         mock_read_data.return_value = pd.DataFrame()
         mock_st.error = MagicMock()
-        
+
         manager = WidowImportManager()
         df, new_widows = manager.load_widow_data()
-        
+
         assert df.empty
         assert new_widows == []
 
@@ -169,9 +167,9 @@ class TestWidowImport:
         })
         mock_read_data.return_value = valid_data
         mock_st.error = MagicMock()
-        
+
         manager = WidowImportManager()
         df, new_widows = manager.load_widow_data()
-        
+
         assert not df.empty
         assert isinstance(new_widows, list)

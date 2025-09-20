@@ -6,17 +6,17 @@ Main dashboard components with modern styling
 
 import pandas as pd
 import streamlit as st
-
-from ui.components.layout_system import create_modern_alert, create_responsive_grid
-from ui.components.modern_cards import (
-    create_dashboard_kpis,
-    create_section_header,
-)
 from ui.components.modern_charts import (
     create_modern_donations_chart,
     create_modern_donors_chart,
     create_modern_expenses_pie_chart,
     create_modern_widows_chart,
+)
+
+from ui.components.layout_system import create_modern_alert, create_responsive_grid
+from ui.components.modern_cards import (
+    create_dashboard_kpis,
+    create_section_header,
 )
 
 

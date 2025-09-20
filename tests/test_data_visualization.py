@@ -4,16 +4,14 @@ Unit tests for data visualization module
 Tests chart creation and visualization functionality
 """
 
-import pytest
-from unittest.mock import MagicMock, patch
 import pandas as pd
 
 from data_visualization import (
     create_budget_distribution_chart,
+    create_comparison_chart,
+    create_donor_contribution_chart,
     create_monthly_trends,
     create_widows_support_chart,
-    create_donor_contribution_chart,
-    create_comparison_chart,
 )
 
 
@@ -27,17 +25,17 @@ class TestDataVisualization:
             "שקלים": [100, 200, 300],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart = create_budget_distribution_chart(expenses_df)
-        
+
         assert chart is not None
 
     def test_create_budget_distribution_chart_empty_data(self):
         """Test create_budget_distribution_chart with empty data"""
         empty_df = pd.DataFrame()
-        
+
         chart = create_budget_distribution_chart(empty_df)
-        
+
         assert chart is None
 
     def test_create_monthly_trends_basic(self):
@@ -50,17 +48,17 @@ class TestDataVisualization:
             "שקלים": [500, 600, 700],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart is not None
 
     def test_create_monthly_trends_empty_data(self):
         """Test create_monthly_trends with empty data"""
         empty_df = pd.DataFrame()
-        
+
         chart = create_monthly_trends(empty_df, empty_df)
-        
+
         assert chart is None
 
     def test_create_widows_support_chart_basic(self):
@@ -69,17 +67,17 @@ class TestDataVisualization:
             "סכום חודשי": [1000, 2000, 3000],
             "שם": ["Widow 1", "Widow 2", "Widow 3"]
         })
-        
+
         chart = create_widows_support_chart(almanot_df)
-        
+
         assert chart is not None
 
     def test_create_widows_support_chart_empty_data(self):
         """Test create_widows_support_chart with empty data"""
         empty_df = pd.DataFrame()
-        
+
         chart = create_widows_support_chart(empty_df)
-        
+
         assert chart is None
 
     def test_create_donor_contribution_chart_basic(self):
@@ -88,17 +86,17 @@ class TestDataVisualization:
             "שקלים": [100, 200, 300],
             "שם": ["Donor 1", "Donor 2", "Donor 3"]
         })
-        
+
         chart = create_donor_contribution_chart(donations_df)
-        
+
         assert chart is not None
 
     def test_create_donor_contribution_chart_empty_data(self):
         """Test create_donor_contribution_chart with empty data"""
         empty_df = pd.DataFrame()
-        
+
         chart = create_donor_contribution_chart(empty_df)
-        
+
         assert chart is None
 
     def test_create_comparison_chart_basic(self):
@@ -111,18 +109,18 @@ class TestDataVisualization:
             "שקלים": [500, 600, 700],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         create_comparison_chart(expenses_df, donations_df)
-        
+
         # Function doesn't return anything, just creates chart
         assert True
 
     def test_create_comparison_chart_empty_data(self):
         """Test create_comparison_chart with empty data"""
         empty_df = pd.DataFrame()
-        
+
         create_comparison_chart(empty_df, empty_df)
-        
+
         # Function doesn't return anything, just creates chart
         assert True
 
@@ -137,10 +135,10 @@ class TestDataVisualization:
             "שקלים": [500, 600, float('nan')],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_budget_distribution_chart(expenses_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -155,10 +153,10 @@ class TestDataVisualization:
             "שקלים": [500, 600, -100],  # Negative donation (return?)
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_budget_distribution_chart(expenses_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -173,10 +171,10 @@ class TestDataVisualization:
             "שקלים": [5000000, 6000000, 7000000],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_budget_distribution_chart(expenses_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -191,10 +189,10 @@ class TestDataVisualization:
             "שקלים": [500, "600", 700.25],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_budget_distribution_chart(expenses_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -209,10 +207,10 @@ class TestDataVisualization:
             "שקלים": [500, 600],
             "תאריך": ["2024-01-01", "2024-01-02"]
         })
-        
+
         chart1 = create_budget_distribution_chart(expenses_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -227,10 +225,10 @@ class TestDataVisualization:
             "שקלים": [500, 600, 700],
             "תאריך": ["2024-01-01", "invalid_date", "2024-01-03"]
         })
-        
+
         chart1 = create_budget_distribution_chart(expenses_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -246,10 +244,10 @@ class TestDataVisualization:
             "שם": ["תורם 1", "תורם 2", "תורם 3"],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_donor_contribution_chart(donations_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -266,10 +264,10 @@ class TestDataVisualization:
             "שם": [long_name, "Donor 2", "Donor 3"],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_donor_contribution_chart(donations_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None
 
@@ -285,9 +283,9 @@ class TestDataVisualization:
             "שם": ["Donor!@#$%", "Donor^&*()", "Donor_+-=[]"],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         chart1 = create_donor_contribution_chart(donations_df)
         chart2 = create_monthly_trends(expenses_df, donations_df)
-        
+
         assert chart1 is not None
         assert chart2 is not None

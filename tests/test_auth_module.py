@@ -4,15 +4,14 @@ Unit tests for authentication module
 Tests authentication functionality and edge cases
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 from auth import (
     check_auth_and_redirect,
     is_authenticated,
-    show_user_info,
-    show_login_form,
     login_user,
+    show_login_form,
+    show_user_info,
 )
 
 
@@ -23,9 +22,9 @@ class TestAuthModule:
     def test_check_auth_and_redirect_authenticated(self, mock_st):
         """Test check_auth_and_redirect when user is authenticated"""
         mock_st.session_state = {"authenticated": True}
-        
+
         result = check_auth_and_redirect()
-        
+
         assert result is True
 
     @patch("auth.st")
@@ -40,18 +39,18 @@ class TestAuthModule:
         mock_st.text_input.return_value = "test_user"
         mock_st.form_submit_button = MagicMock(return_value=True)
         mock_st.columns = MagicMock(return_value=[MagicMock(), MagicMock()])
-        
+
         result = check_auth_and_redirect()
-        
+
         assert result is False
 
     @patch("auth.st")
     def test_is_authenticated_true(self, mock_st):
         """Test is_authenticated returns True when user is authenticated"""
         mock_st.session_state = {"authenticated": True}
-        
+
         result = is_authenticated()
-        
+
         assert result is True
 
     @patch("auth.st")
@@ -61,9 +60,9 @@ class TestAuthModule:
         mock_session_state.get = MagicMock(side_effect=lambda key, default: {"ENABLE_AUTHENTICATION": True, "authenticated": False}.get(key, default))
         mock_session_state.authenticated = False
         mock_st.session_state = mock_session_state
-        
+
         result = is_authenticated()
-        
+
         assert result is False
 
     @patch("auth.st")
@@ -72,9 +71,9 @@ class TestAuthModule:
         mock_session_state = MagicMock()
         mock_session_state.get = MagicMock(side_effect=lambda key, default: {"ENABLE_AUTHENTICATION": True}.get(key, default))
         mock_st.session_state = mock_session_state
-        
+
         result = is_authenticated()
-        
+
         assert result is False
 
     @patch("auth.st")
@@ -88,9 +87,9 @@ class TestAuthModule:
         mock_st.sidebar = MagicMock()
         mock_st.sidebar.markdown = MagicMock()
         mock_st.sidebar.button = MagicMock(return_value=False)
-        
+
         show_user_info()
-        
+
         mock_st.sidebar.markdown.assert_called()
 
     @patch("auth.st")
@@ -104,9 +103,9 @@ class TestAuthModule:
         mock_st.sidebar = MagicMock()
         mock_st.sidebar.markdown = MagicMock()
         mock_st.sidebar.button = MagicMock(return_value=False)
-        
+
         show_user_info()
-        
+
         # When get_current_user_info returns None, markdown should not be called
         mock_st.sidebar.markdown.assert_not_called()
 
@@ -118,40 +117,40 @@ class TestAuthModule:
         mock_st.text_input.return_value = "test_user"
         mock_st.form_submit_button = MagicMock(return_value=True)
         mock_st.columns = MagicMock(return_value=[MagicMock(), MagicMock()])
-        
+
         show_login_form()
-        
+
         mock_st.form.assert_called_once()
 
     def test_login_user_valid(self):
         """Test login_user with valid credentials"""
         result = login_user("admin", "admin123")
-        
+
         assert result is True
 
     def test_login_user_invalid(self):
         """Test login_user with invalid credentials"""
         result = login_user("wrong_user", "wrong_pass")
-        
+
         assert result is False
 
     def test_login_user_empty(self):
         """Test login_user with empty credentials"""
         result = login_user("", "")
-        
+
         assert result is False
 
     def test_login_user_none(self):
         """Test login_user with None credentials"""
         result = login_user(None, None)
-        
+
         assert result is False
 
     @patch("auth.st")
     def test_auth_module_error_handling(self, mock_st):
         """Test authentication module error handling"""
         mock_st.session_state = MagicMock(side_effect=Exception("Session error"))
-        
+
         # Should handle errors gracefully
         result = is_authenticated()
         assert result is False
@@ -165,9 +164,9 @@ class TestAuthModule:
         mock_st.text_input = MagicMock(return_value="test_user")
         mock_st.form_submit_button = MagicMock(return_value=True)
         mock_st.columns = MagicMock(return_value=[MagicMock(), MagicMock()])
-        
+
         result = check_auth_and_redirect()
-        
+
         assert result is False
 
     @patch("auth.st")
@@ -176,6 +175,6 @@ class TestAuthModule:
         mock_st.session_state = MagicMock(side_effect=Exception("Session error"))
         mock_st.sidebar = MagicMock()
         mock_st.sidebar.markdown = MagicMock()
-        
+
         # Should not raise exception
         show_user_info()

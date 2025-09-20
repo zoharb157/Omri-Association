@@ -4,18 +4,14 @@ Unit tests for reports module
 Tests report generation functionality
 """
 
-import pytest
-from unittest.mock import MagicMock, patch
 import pandas as pd
-import tempfile
-import os
 
 from reports.reports import (
+    clean_text_for_pdf,
     generate_budget_report,
     generate_donor_report,
-    generate_widows_report,
     generate_monthly_report,
-    clean_text_for_pdf,
+    generate_widows_report,
 )
 
 
@@ -51,17 +47,17 @@ class TestReportsModule:
             "שם": ["Widow 1", "Widow 2"],
             "סכום חודשי": [1000, 2000]
         })
-        
+
         filename = generate_monthly_report(expenses_df, donations_df, almanot_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_monthly_report_empty(self):
         """Test generate_monthly_report with empty data"""
         empty_df = pd.DataFrame()
-        
+
         filename = generate_monthly_report(empty_df, empty_df, empty_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_budget_report_basic(self):
@@ -74,17 +70,17 @@ class TestReportsModule:
             "שקלים": [500, 600, 700],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         filename = generate_budget_report(expenses_df, donations_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_budget_report_empty(self):
         """Test generate_budget_report with empty data"""
         empty_df = pd.DataFrame()
-        
+
         filename = generate_budget_report(empty_df, empty_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_donor_report_basic(self):
@@ -94,17 +90,17 @@ class TestReportsModule:
             "שם": ["Donor 1", "Donor 2", "Donor 3"],
             "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
         })
-        
+
         filename = generate_donor_report(donations_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_donor_report_empty(self):
         """Test generate_donor_report with empty data"""
         empty_df = pd.DataFrame()
-        
+
         filename = generate_donor_report(empty_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_widows_report_basic(self):
@@ -114,17 +110,17 @@ class TestReportsModule:
             "סכום חודשי": [1000, 2000, 3000],
             "גיל": [65, 70, 75]
         })
-        
+
         filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(filename, str)
 
     def test_generate_widows_report_empty(self):
         """Test generate_widows_report with empty data"""
         empty_df = pd.DataFrame()
-        
+
         filename = generate_widows_report(empty_df)
-        
+
         assert isinstance(filename, str)
 
     def test_reports_with_nan_values(self):
@@ -141,11 +137,11 @@ class TestReportsModule:
             "שם": ["Widow 1", "Widow 2"],
             "סכום חודשי": [1000, float('nan')]
         })
-        
+
         budget_filename = generate_budget_report(expenses_df, donations_df)
         donor_filename = generate_donor_report(donations_df)
         widows_filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(budget_filename, str)
         assert isinstance(donor_filename, str)
         assert isinstance(widows_filename, str)
@@ -164,11 +160,11 @@ class TestReportsModule:
             "שם": ["Widow 1", "Widow 2"],
             "סכום חודשי": [1000, -500]  # Negative support (debt?)
         })
-        
+
         budget_filename = generate_budget_report(expenses_df, donations_df)
         donor_filename = generate_donor_report(donations_df)
         widows_filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(budget_filename, str)
         assert isinstance(donor_filename, str)
         assert isinstance(widows_filename, str)
@@ -188,11 +184,11 @@ class TestReportsModule:
             "שם": ["אלמנה 1", "אלמנה 2"],
             "סכום חודשי": [1000, 2000]
         })
-        
+
         budget_filename = generate_budget_report(expenses_df, donations_df)
         donor_filename = generate_donor_report(donations_df)
         widows_filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(budget_filename, str)
         assert isinstance(donor_filename, str)
         assert isinstance(widows_filename, str)
@@ -212,11 +208,11 @@ class TestReportsModule:
             "שם": ["Widow!@#$%", "Widow^&*()"],
             "סכום חודשי": [1000, 2000]
         })
-        
+
         budget_filename = generate_budget_report(expenses_df, donations_df)
         donor_filename = generate_donor_report(donations_df)
         widows_filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(budget_filename, str)
         assert isinstance(donor_filename, str)
         assert isinstance(widows_filename, str)
@@ -237,11 +233,11 @@ class TestReportsModule:
             "שם": [long_name, "Widow 2"],
             "סכום חודשי": [1000, 2000]
         })
-        
+
         budget_filename = generate_budget_report(expenses_df, donations_df)
         donor_filename = generate_donor_report(donations_df)
         widows_filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(budget_filename, str)
         assert isinstance(donor_filename, str)
         assert isinstance(widows_filename, str)
@@ -261,11 +257,11 @@ class TestReportsModule:
             "שם": ["Widow 1", "Widow 2"],
             "סכום חודשי": [1000, "2000.75"]
         })
-        
+
         budget_filename = generate_budget_report(expenses_df, donations_df)
         donor_filename = generate_donor_report(donations_df)
         widows_filename = generate_widows_report(almanot_df)
-        
+
         assert isinstance(budget_filename, str)
         assert isinstance(donor_filename, str)
         assert isinstance(widows_filename, str)
