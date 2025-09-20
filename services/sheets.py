@@ -52,7 +52,9 @@ def fetch_dashboard_frames() -> dict[str, pd.DataFrame]:
         frames["Investors"] = investors
 
     # Support both the legacy "Almanot" sheet and the newer "Widows" sheet name.
-    widows = all_data.get("Widows") or all_data.get("Almanot")
+    widows = all_data.get("Widows")
+    if widows is None:
+        widows = all_data.get("Almanot")
     if isinstance(widows, pd.DataFrame):
         frames["Widows"] = widows
 
