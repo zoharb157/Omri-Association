@@ -1,10 +1,8 @@
-import numpy as np
 import pandas as pd
-import pytest
 
 from data_processing import (
-    calculate_monthly_budget,
     calculate_donor_statistics,
+    calculate_monthly_budget,
     calculate_widow_statistics,
 )
 

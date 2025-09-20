@@ -1,14 +1,14 @@
-import pandas as pd
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from ui.dashboard_sections import create_network_section
+import pandas as pd
+
 from tests.fixtures.sample_data import (
+    sample_almanot_df,
     sample_donations_df,
     sample_expenses_df,
-    sample_almanot_df,
     sample_investors_df,
 )
+from ui.dashboard_sections import create_network_section
 
 
 class TestNetworkVisualization:
