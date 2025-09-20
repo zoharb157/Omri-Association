@@ -19,7 +19,8 @@ from data_visualization import (
     create_monthly_trends,
     create_widows_support_chart,
 )
-from ui.components.forms import create_filter_group
+
+# Removed unused import: create_filter_group
 from ui.components.simple_ui import (
     create_simple_metric_row,
     create_simple_section_header,
