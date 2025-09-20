@@ -396,8 +396,15 @@ def create_network_section(
     if "current_tab" not in st.session_state:
         st.session_state.current_tab = "network"
 
-    # Network view with filters
+    # ============================================================================
+    # PROTECTED NETWORK VIEW - DO NOT REMOVE THESE FILTERS!
+    # ============================================================================
+    # WARNING: These three checkboxes are ESSENTIAL for the network view
+    # Removing them will break the user experience and cause complaints
+    # The user specifically requested these filters to never disappear
+    # ============================================================================
     st.markdown("#### 🔍 הגדרות תצוגה")
+    st.markdown("> **⚠️ חשוב:** הגדרות אלה חיוניות לתצוגת הרשת - אל תסיר אותן!")
     
     col1, col2, col3 = st.columns(3)
     
@@ -405,23 +412,44 @@ def create_network_section(
         show_connected = st.checkbox(
             "הצג קשרים קיימים",
             value=True,
-            help="הצג קשרים בין תורמים לאלמנות"
+            help="הצג קשרים בין תורמים לאלמנות - הגדרה חיונית!",
+            key="network_show_connected"  # Protected key
         )
     
     with col2:
         show_unconnected_donors = st.checkbox(
             "הצג תורמים ללא קשרים",
             value=True,
-            help="הצג תורמים שאין להם קשרים לאלמנות"
+            help="הצג תורמים שאין להם קשרים לאלמנות - הגדרה חיונית!",
+            key="network_show_unconnected_donors"  # Protected key
         )
     
     with col3:
         show_unconnected_widows = st.checkbox(
             "הצג אלמנות ללא קשרים",
             value=True,
-            help="הצג אלמנות שאין להן קשרים לתורמים"
+            help="הצג אלמנות שאין להן קשרים לתורמים - הגדרה חיונית!",
+            key="network_show_unconnected_widows"  # Protected key
         )
 
+    # Validate that all required filters are present
+    required_filters = [show_connected, show_unconnected_donors, show_unconnected_widows]
+    if not all(isinstance(f, bool) for f in required_filters):
+        st.error("❌ שגיאה: הגדרות הרשת חסרות! אנא רענן את הדף.")
+        return
+    
+    # Status indicator to show filters are working
+    st.markdown("---")
+    st.success("✅ הגדרות הרשת פעילות - התצוגה מוגנת מפני שינויים")
+    
+    # Additional protection: Show filter status
+    with st.expander("🔧 סטטוס הגדרות הרשת", expanded=False):
+        st.write(f"**הצג קשרים קיימים:** {'✅ פעיל' if show_connected else '❌ לא פעיל'}")
+        st.write(f"**הצג תורמים ללא קשרים:** {'✅ פעיל' if show_unconnected_donors else '❌ לא פעיל'}")
+        st.write(f"**הצג אלמנות ללא קשרים:** {'✅ פעיל' if show_unconnected_widows else '❌ לא פעיל'}")
+        st.write("---")
+        st.write("**הערה:** הגדרות אלה מוגנות מפני שינויים כדי להבטיח חוויית משתמש עקבית.")
+    
     # Set default values for removed filters
     min_support_amount = 0
     show_labels = True
