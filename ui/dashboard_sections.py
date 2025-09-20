@@ -404,7 +404,6 @@ def create_network_section(
     # The user specifically requested these filters to never disappear
     # ============================================================================
     st.markdown("#### 🔍 הגדרות תצוגה")
-    st.markdown("> **⚠️ חשוב:** הגדרות אלה חיוניות לתצוגת הרשת - אל תסיר אותן!")
     
     col1, col2, col3 = st.columns(3)
     
@@ -442,31 +441,7 @@ def create_network_section(
         st.error("❌ שגיאה: הגדרות הרשת חסרות! אנא רענן את הדף.")
         return
     
-    # Status indicator to show filters are working
-    st.markdown("---")
-    st.success("✅ הגדרות הרשת פעילות - התצוגה מוגנת מפני שינויים")
-    
-    # Additional protection: Show filter status
-    with st.expander("🔧 סטטוס הגדרות הרשת", expanded=False):
-        st.write(f"**הצג קשרים קיימים:** {'✅ פעיל' if show_connected else '❌ לא פעיל'}")
-        st.write(f"**הצג תורמים ללא קשרים:** {'✅ פעיל' if show_unconnected_donors else '❌ לא פעיל'}")
-        st.write(f"**הצג אלמנות ללא קשרים:** {'✅ פעיל' if show_unconnected_widows else '❌ לא פעיל'}")
-        st.write("---")
-        st.write("**הערה:** הגדרות אלה מוגנות מפני שינויים כדי להבטיח חוויית משתמש עקבית.")
-        
-        # Protection against code changes
-        st.warning("⚠️ **אזהרה למפתחים:** אל תסיר או תשנה את שלושת ה-checkbox-ים האלה!")
-        st.info("ℹ️ **מידע טכני:** כל checkbox יש לו key ייחודי ומוגן מפני שינויים.")
-        
-        # Show current state for debugging
-        st.write("**מצב נוכחי:**")
-        st.json({
-            "show_connected": show_connected,
-            "show_unconnected_donors": show_unconnected_donors,
-            "show_unconnected_widows": show_unconnected_widows,
-            "min_support_amount": min_support_amount,
-            "show_labels": show_labels
-        })
+    # Clean interface - no status messages
 
     try:
         # Clean monthly support data - ensure all values are numeric and NaN is treated as 0

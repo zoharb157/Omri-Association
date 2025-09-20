@@ -21,14 +21,6 @@ def _get_amount_column(df: pd.DataFrame) -> str:
 def create_main_tabs():
     """Create the main tab structure"""
     try:
-        # ============================================================================
-        # PROTECTED TABS - DO NOT REMOVE OR MODIFY!
-        # ============================================================================
-        # WARNING: These 6 tabs are essential for navigation
-        # Removing any tab will break the user experience
-        # The order and names are critical for the dashboard functionality
-        # ============================================================================
-        
         return st.tabs(
             ["🏠 דף הבית", "💰 תקציב", "👥 תורמים", "👩 אלמנות", "🕸️ מפת קשרים", "🏘️ אזורי מגורים"]
         )
