@@ -390,6 +390,11 @@ def create_network_section(
 ):
     """Create the network visualization section with all our improvements"""
     create_simple_section_header("🕸️ מפת קשרים")
+    
+    # Initialize tab state to prevent redirect to main page
+    if "current_tab" not in st.session_state:
+        st.session_state.current_tab = "network"
+    
     # Enhanced filter controls with accessibility
     filter_configs = [
         {

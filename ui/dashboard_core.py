@@ -300,8 +300,12 @@ def run_dashboard():
             expenses_df, donations_df, almanot_df
         )
 
-        # Create tabs
+        # Create tabs with proper state management
         tab1, tab2, tab3, tab4, tab5, tab6 = create_main_tabs()
+        
+        # Ensure we stay on the current tab when filters change
+        if "current_tab" not in st.session_state:
+            st.session_state.current_tab = "home"
 
         # Render Home Tab
         with tab1:
