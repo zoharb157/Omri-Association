@@ -396,11 +396,53 @@ def create_network_section(
     if "current_tab" not in st.session_state:
         st.session_state.current_tab = "network"
 
-    # Simplified network view without filters
-    show_connected = True
-    show_unconnected_donors = True
-    show_unconnected_widows = True
+    # Network view with filters
+    st.markdown("#### 🔍 הגדרות תצוגה")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        show_connected = st.checkbox(
+            "הצג קשרים קיימים",
+            value=True,
+            help="הצג קשרים בין תורמים לאלמנות"
+        )
+    
+    with col2:
+        show_unconnected_donors = st.checkbox(
+            "הצג תורמים ללא קשרים",
+            value=True,
+            help="הצג תורמים שאין להם קשרים לאלמנות"
+        )
+    
+    with col3:
+        show_unconnected_widows = st.checkbox(
+            "הצג אלמנות ללא קשרים",
+            value=True,
+            help="הצג אלמנות שאין להן קשרים לתורמים"
+        )
 
+    # Additional filter options
+    st.markdown("#### 🎛️ אפשרויות נוספות")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        min_support_amount = st.number_input(
+            "סכום תמיכה מינימלי",
+            min_value=0,
+            value=0,
+            step=100,
+            help="הצג רק אלמנות עם סכום תמיכה מעל הסכום הנבחר"
+        )
+    
+    with col2:
+        show_labels = st.checkbox(
+            "הצג תוויות",
+            value=True,
+            help="הצג שמות על הצמתים ברשת"
+        )
+    
     add_spacing(1)
 
     try:
@@ -409,6 +451,9 @@ def create_network_section(
             almanot_df["סכום חודשי"] = pd.to_numeric(
                 almanot_df["סכום חודשי"], errors="coerce"
             ).fillna(0)
+            
+            # Apply minimum support amount filter
+            almanot_df = almanot_df[almanot_df["סכום חודשי"] >= min_support_amount]
 
         # Create nodes and edges for the network
         nodes = []
@@ -551,7 +596,7 @@ def create_network_section(
                 nodes.append(
                     {
                         "id": widow_name,
-                        "label": widow_name,
+                        "label": widow_name if show_labels else "",
                         "group": "widow_unconnected",
                         "title": "אלמנה ללא קשר",
                         "color": "#ffb347",  # Light orange for unconnected widows
@@ -566,7 +611,7 @@ def create_network_section(
                 nodes.append(
                     {
                         "id": donor,
-                        "label": donor,
+                        "label": donor if show_labels else "",
                         "group": "donor_connected",
                         "title": "תורם מחובר",
                         "color": "#1f77b4",  # Blue for connected donors
@@ -579,7 +624,7 @@ def create_network_section(
                 nodes.append(
                     {
                         "id": widow,
-                        "label": widow,
+                        "label": widow if show_labels else "",
                         "group": "widow_connected",
                         "title": "אלמנה מחוברת",
                         "color": "#ff7f0e",  # Orange for connected widows
@@ -594,7 +639,7 @@ def create_network_section(
                 nodes.append(
                     {
                         "id": donor_name,
-                        "label": donor_name,
+                        "label": donor_name if show_labels else "",
                         "group": "donor_unconnected",
                         "title": "תורם ללא קשר",
                         "color": "#87ceeb",  # Light blue for unconnected donors

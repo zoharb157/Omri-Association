@@ -127,7 +127,14 @@ class TestDashboardCore:
                         )
                         mock_process.return_value = ({}, {}, {})
                         mock_check.return_value = True
-                        mock_tabs.return_value = (MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock())
+                        mock_tabs.return_value = (
+                            MagicMock(),
+                            MagicMock(),
+                            MagicMock(),
+                            MagicMock(),
+                            MagicMock(),
+                            MagicMock(),
+                        )
 
                         # Should not raise any exceptions
                         run_dashboard()
@@ -177,7 +184,9 @@ class TestDashboardCore:
         widow_stats = {"total_widows": 3, "total_support": 500}
 
         # Should not raise any exceptions
-        render_home_tab(expenses_df, donations_df, almanot_df, budget_status, donor_stats, widow_stats)
+        render_home_tab(
+            expenses_df, donations_df, almanot_df, budget_status, donor_stats, widow_stats
+        )
 
     def test_render_network_tab_structure(self):
         """Test network tab rendering structure"""

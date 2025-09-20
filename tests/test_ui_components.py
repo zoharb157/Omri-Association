@@ -33,10 +33,7 @@ class TestUIComponents:
         mock_st.checkbox = MagicMock(return_value=True)
 
         result = create_accessible_checkbox(
-            label="Test Checkbox",
-            value=True,
-            help_text="Test help",
-            key="test_key"
+            label="Test Checkbox", value=True, help_text="Test help", key="test_key"
         )
 
         assert result is True
@@ -52,7 +49,7 @@ class TestUIComponents:
             options=["Option 1", "Option 2"],
             index=0,
             help_text="Test help",
-            key="test_key"
+            key="test_key",
         )
 
         assert result == "Option 1"
@@ -69,7 +66,7 @@ class TestUIComponents:
             max_value=100,
             value=50,
             help_text="Test help",
-            key="test_key"
+            key="test_key",
         )
 
         assert result == 50
@@ -108,9 +105,7 @@ class TestUIComponents:
         mock_st.text_input = MagicMock(return_value="search query")
 
         result = create_search_input(
-            label="Search",
-            placeholder="Enter search term...",
-            key="search_key"
+            label="Search", placeholder="Enter search term...", key="search_key"
         )
 
         assert result == "search query"
@@ -142,10 +137,16 @@ class TestUIComponents:
     @patch("ui.dashboard_layout.st")
     def test_create_main_tabs(self, mock_st):
         """Test main tabs creation"""
-        mock_st.tabs = MagicMock(return_value=(
-            MagicMock(), MagicMock(), MagicMock(),
-            MagicMock(), MagicMock(), MagicMock()
-        ))
+        mock_st.tabs = MagicMock(
+            return_value=(
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+            )
+        )
 
         tabs = create_main_tabs()
 
@@ -176,12 +177,7 @@ class TestUIComponents:
             mock_st.checkbox = MagicMock(return_value=False)
 
             # Test with None values
-            result = create_accessible_checkbox(
-                label=None,
-                value=None,
-                help_text=None,
-                key=None
-            )
+            result = create_accessible_checkbox(label=None, value=None, help_text=None, key=None)
 
             # Should handle None values gracefully
             assert result is False

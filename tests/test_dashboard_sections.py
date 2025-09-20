@@ -38,6 +38,19 @@ class TestDashboardSections:
         mock_st.session_state = mock_session_state
         mock_st.markdown = MagicMock()
         mock_st.plotly_chart = MagicMock()
+        
+        # Mock columns to return different values based on the call
+        def mock_columns(num_cols):
+            if num_cols == 3:
+                return [MagicMock(), MagicMock(), MagicMock()]
+            elif num_cols == 2:
+                return [MagicMock(), MagicMock()]
+            else:
+                return [MagicMock() for _ in range(num_cols)]
+        
+        mock_st.columns = MagicMock(side_effect=mock_columns)
+        mock_st.checkbox = MagicMock(return_value=True)
+        mock_st.number_input = MagicMock(return_value=0)
 
         expenses_df = sample_expenses_df()
         donations_df = sample_donations_df()
@@ -121,6 +134,19 @@ class TestDashboardSections:
             mock_st.session_state = mock_session_state
             mock_st.markdown = MagicMock()
             mock_st.plotly_chart = MagicMock()
+            
+            # Mock columns to return different values based on the call
+            def mock_columns(num_cols):
+                if num_cols == 3:
+                    return [MagicMock(), MagicMock(), MagicMock()]
+                elif num_cols == 2:
+                    return [MagicMock(), MagicMock()]
+                else:
+                    return [MagicMock() for _ in range(num_cols)]
+            
+            mock_st.columns = MagicMock(side_effect=mock_columns)
+            mock_st.checkbox = MagicMock(return_value=True)
+            mock_st.number_input = MagicMock(return_value=0)
 
             # Create empty dataframes
             empty_expenses = pd.DataFrame()
@@ -142,6 +168,19 @@ class TestDashboardSections:
             mock_st.session_state = mock_session_state
             mock_st.markdown = MagicMock()
             mock_st.plotly_chart = MagicMock()
+            
+            # Mock columns to return different values based on the call
+            def mock_columns(num_cols):
+                if num_cols == 3:
+                    return [MagicMock(), MagicMock(), MagicMock()]
+                elif num_cols == 2:
+                    return [MagicMock(), MagicMock()]
+                else:
+                    return [MagicMock() for _ in range(num_cols)]
+            
+            mock_st.columns = MagicMock(side_effect=mock_columns)
+            mock_st.checkbox = MagicMock(return_value=True)
+            mock_st.number_input = MagicMock(return_value=0)
 
             # Create dataframes with missing columns
             expenses_df = pd.DataFrame({"amount": [100, 200]})
@@ -159,19 +198,13 @@ class TestDashboardSections:
             mock_st.plotly_chart = MagicMock()
 
             # Create test data with known values
-            expenses_df = pd.DataFrame({
-                "amount": [100, 200, 300],
-                "date": ["2024-01-01", "2024-01-02", "2024-01-03"]
-            })
-            donations_df = pd.DataFrame({
-                "amount": [500, 400, 300],
-                "date": ["2024-01-01", "2024-01-02", "2024-01-03"]
-            })
-            budget_status = {
-                "total_donations": 1200,
-                "total_expenses": 600,
-                "balance": 600
-            }
+            expenses_df = pd.DataFrame(
+                {"amount": [100, 200, 300], "date": ["2024-01-01", "2024-01-02", "2024-01-03"]}
+            )
+            donations_df = pd.DataFrame(
+                {"amount": [500, 400, 300], "date": ["2024-01-01", "2024-01-02", "2024-01-03"]}
+            )
+            budget_status = {"total_donations": 1200, "total_expenses": 600, "balance": 600}
 
             # Should not raise any exceptions
             create_budget_section(expenses_df, donations_df, budget_status, "budget")
@@ -183,16 +216,14 @@ class TestDashboardSections:
             mock_st.plotly_chart = MagicMock()
 
             # Test with different data types
-            donations_df = pd.DataFrame({
-                "amount": [100.5, 200.0, 300.75],
-                "donor_name": ["Donor A", "Donor B", "Donor C"],
-                "date": ["2024-01-01", "2024-01-02", "2024-01-03"]
-            })
-            donor_stats = {
-                "total_donors": 3,
-                "total_donations": 601.25,
-                "average_donation": 200.42
-            }
+            donations_df = pd.DataFrame(
+                {
+                    "amount": [100.5, 200.0, 300.75],
+                    "donor_name": ["Donor A", "Donor B", "Donor C"],
+                    "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                }
+            )
+            donor_stats = {"total_donors": 3, "total_donations": 601.25, "average_donation": 200.42}
 
             # Should handle various data types gracefully
             create_donors_section(donations_df, donor_stats)
