@@ -1,11 +1,14 @@
 import logging
 import traceback
+from typing import Dict, List, Optional, Union
 
 import pandas as pd
 import streamlit as st
 
+from config import Config
 
-def _get_amount_column(df: pd.DataFrame) -> str:
+
+def _get_amount_column(df: pd.DataFrame) -> Optional[str]:
     """Return the standard amount column name used across sheets."""
     if not isinstance(df, pd.DataFrame):
         return None
@@ -15,7 +18,7 @@ def _get_amount_column(df: pd.DataFrame) -> str:
     return None
 
 
-def _get_name_column(df: pd.DataFrame) -> str:
+def _get_name_column(df: pd.DataFrame) -> Optional[str]:
     """Return the standard name column for donor/expense tables."""
     if not isinstance(df, pd.DataFrame):
         return None
@@ -25,7 +28,8 @@ def _get_name_column(df: pd.DataFrame) -> str:
     return None
 
 
-def calculate_monthly_averages(df: pd.DataFrame, value_column: str = "שקלים") -> dict:
+@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+def calculate_monthly_averages(df: pd.DataFrame, value_column: str = "שקלים") -> Dict[str, Union[int, float]]:
     """Calculate monthly averages and statistics"""
     if not isinstance(df, pd.DataFrame) or value_column not in df.columns or df.empty:
         return {"monthly_avg": 0, "min_monthly": 0, "max_monthly": 0, "total_months": 0}
@@ -101,6 +105,7 @@ def calculate_total_support(df: pd.DataFrame, value_column: str = "סכום חו
         }
 
 
+@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
 def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFrame) -> dict:
     """Calculate monthly budget statistics"""
     try:
@@ -219,7 +224,8 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
         }
 
 
-def calculate_donor_statistics(df: pd.DataFrame, value_column: str = "שקלים") -> dict:
+@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+def calculate_donor_statistics(df: pd.DataFrame, value_column: str = "שקלים") -> Dict[str, Union[int, float, List[Dict[str, Union[str, int, float]]]]]:
     """Calculate donor statistics"""
     if not isinstance(df, pd.DataFrame) or df.empty:
         return {
@@ -336,6 +342,7 @@ def calculate_expense_statistics(df: pd.DataFrame, value_column: str = "שקלי
         }
 
 
+@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
 def calculate_widow_statistics(df: pd.DataFrame, value_column: str = "סכום חודשי") -> dict:
     """Calculate widow statistics with detailed analysis"""
     if not isinstance(df, pd.DataFrame) or df.empty:

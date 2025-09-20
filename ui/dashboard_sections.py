@@ -11,6 +11,8 @@ from typing import Dict
 import pandas as pd
 import streamlit as st
 
+from config import Config
+
 # Removed unused imports: calculate_donor_statistics, calculate_monthly_budget, calculate_widow_statistics
 # CI Fix: Ensure linting passes
 from data_visualization import (
@@ -410,7 +412,7 @@ def create_network_section(
     with col1:
         show_connected = st.checkbox(
             "הצג קשרים קיימים",
-            value=True,
+            value=Config.UI.DEFAULT_SHOW_CONNECTED,
             help="הצג קשרים בין תורמים לאלמנות - הגדרה חיונית!",
             key="network_show_connected"  # Protected key
         )
@@ -418,7 +420,7 @@ def create_network_section(
     with col2:
         show_unconnected_donors = st.checkbox(
             "הצג תורמים ללא קשרים",
-            value=True,
+            value=Config.UI.DEFAULT_SHOW_UNCONNECTED_DONORS,
             help="הצג תורמים שאין להם קשרים לאלמנות - הגדרה חיונית!",
             key="network_show_unconnected_donors"  # Protected key
         )
@@ -426,14 +428,14 @@ def create_network_section(
     with col3:
         show_unconnected_widows = st.checkbox(
             "הצג אלמנות ללא קשרים",
-            value=True,
+            value=Config.UI.DEFAULT_SHOW_UNCONNECTED_WIDOWS,
             help="הצג אלמנות שאין להן קשרים לתורמים - הגדרה חיונית!",
             key="network_show_unconnected_widows"  # Protected key
         )
 
     # Set default values for removed filters
-    min_support_amount = 0
-    show_labels = True
+    min_support_amount = Config.UI.DEFAULT_MIN_SUPPORT_AMOUNT
+    show_labels = Config.UI.DEFAULT_SHOW_LABELS
     
     # Validate that all required filters are present
     required_filters = [show_connected, show_unconnected_donors, show_unconnected_widows]

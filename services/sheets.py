@@ -5,7 +5,9 @@ from __future__ import annotations
 import logging
 
 import pandas as pd
+import streamlit as st
 
+from config import Config
 from google_sheets_io import load_all_data
 
 LOGGER = logging.getLogger(__name__)
@@ -21,6 +23,7 @@ def _empty_frames() -> dict[str, pd.DataFrame]:
     }
 
 
+@st.cache_data(ttl=Config.DATA_CACHE_TTL)  # Cache for 5 minutes
 def fetch_dashboard_frames() -> dict[str, pd.DataFrame]:
     """Fetch all dashboard sheets, normalising missing data.
 

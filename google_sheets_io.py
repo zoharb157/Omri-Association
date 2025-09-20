@@ -1,3 +1,4 @@
+import logging
 import os
 
 import gspread
@@ -8,12 +9,12 @@ from google.oauth2.service_account import Credentials
 # Define the scope
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
-# Path to your service account file
-SERVICE_ACCOUNT_FILE = "service_account.json"
+from config import Config
 
-# Spreadsheet IDs
-SPREADSHEET_ID = "1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo"  # Main dashboard data
-WIDOW_SPREADSHEET_ID = "1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8"  # New widow data
+# Get configuration from environment variables
+SERVICE_ACCOUNT_FILE = Config.SERVICE_ACCOUNT_FILE
+SPREADSHEET_ID = Config.SPREADSHEET_ID
+WIDOW_SPREADSHEET_ID = Config.WIDOW_SPREADSHEET_ID
 
 # Initialize Google Sheets client
 gc = None
@@ -22,11 +23,11 @@ try:
         # Authenticate and create a client
         creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
         gc = gspread.authorize(creds)
-        print("Google Sheets connection established successfully!")
+        logging.info("Google Sheets connection established successfully!")
     else:
-        print("Warning: service_account.json not found. Falling back to Excel files.")
+        logging.warning("service_account.json not found. Falling back to Excel files.")
 except Exception as e:
-    print(f"Warning: Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+    logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
 
 
 def show_service_account_upload():
@@ -48,7 +49,7 @@ def show_service_account_upload():
 3. הדבק את תוכן המפתח כאן:
 """
     )
-    key_input = st.text_area("הדבק כאן את תוכן קובץ המפתח (JSON)", height=300)
+    key_input = st.text_area("הדבק כאן את תוכן קובץ המפתח (JSON)", height=Config.UI.SERVICE_ACCOUNT_TEXTAREA_HEIGHT)
     if st.button("בדוק ושמור מפתח חדש"):
         import json
 
@@ -282,7 +283,7 @@ def _map_columns_to_expected(df, sheet_name):
 
         return df
     except Exception as e:
-        print(f"Error in column mapping for {sheet_name}: {e}")
+        logging.error(f"Error in column mapping for {sheet_name}: {e}")
         # Return the original DataFrame if mapping fails
         return df
 
@@ -291,7 +292,7 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
     """Read a worksheet from Google Sheets and return as a DataFrame."""
     if gc is None:
         # No Excel fallback - return empty DataFrame with expected columns
-        print("Google Sheets not available - returning empty DataFrame")
+        logging.warning("Google Sheets not available - returning empty DataFrame")
         if sheet_name == "Widows":
             return pd.DataFrame(
                 columns=[
@@ -323,7 +324,7 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
         # Get all values (including header row)
         values = worksheet.get_all_values()
         if not values:
-            print(f"Sheet '{actual_sheet_name}' is empty")
+            logging.warning(f"Sheet '{actual_sheet_name}' is empty")
             return pd.DataFrame()
 
         # For financial sheets (Expenses, Donations, Investors), skip the first 2 rows
@@ -335,7 +336,7 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
                 headers = _fix_headers(values[1])  # Use row 1 as headers
                 data = values[2:]  # Start from row 2
             else:
-                print(f"Sheet '{actual_sheet_name}' has insufficient data")
+                logging.warning(f"Sheet '{actual_sheet_name}' has insufficient data")
                 return pd.DataFrame()
         else:
             # For other sheets, use first row as headers
@@ -380,9 +381,9 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
 
         return df
     except Exception as e:
-        print(f"שגיאה בטעינת נתונים מ-Google Sheets: {e}")
-        print(f"Sheet name: {sheet_name}")
-        print(f"Spreadsheet ID: {SPREADSHEET_ID}")
+        logging.error(f"שגיאה בטעינת נתונים מ-Google Sheets: {e}")
+        logging.error(f"Sheet name: {sheet_name}")
+        logging.error(f"Spreadsheet ID: {SPREADSHEET_ID}")
 
         # Create empty DataFrame with expected columns instead of falling back to Excel
         if sheet_name == "Widows":
@@ -409,7 +410,7 @@ def write_sheet(sheet_name: str, df: pd.DataFrame) -> None:
     """Write a DataFrame to a worksheet in Google Sheets (overwrites existing data)."""
     if gc is None:
         # No Excel fallback - just print error
-        print("Google Sheets not available - cannot save data")
+        logging.warning("Google Sheets not available - cannot save data")
         return
 
     try:
@@ -417,16 +418,16 @@ def write_sheet(sheet_name: str, df: pd.DataFrame) -> None:
         worksheet = sh.worksheet(sheet_name)
         worksheet.clear()
         worksheet.update([df.columns.values.tolist()] + df.values.tolist())
-        print(f"Data saved successfully to Google Sheets: {sheet_name}")
+        logging.info(f"Data saved successfully to Google Sheets: {sheet_name}")
     except Exception as e:
-        print(f"Error writing to Google Sheets: {e}")
-        print("Data could not be saved")
+        logging.error(f"Error writing to Google Sheets: {e}")
+        logging.error("Data could not be saved")
 
 
 def load_all_data():
     """Load ALL data from ALL sheets in the Google Spreadsheet."""
     if gc is None:
-        print("Google Sheets not available")
+        logging.warning("Google Sheets not available")
         return {}
 
     try:
@@ -491,19 +492,19 @@ def load_all_data():
 
                 all_data[ws.title] = df
             except Exception as e:
-                print(f"Error loading sheet '{ws.title}': {e}")
+                logging.error(f"Error loading sheet '{ws.title}': {e}")
                 all_data[ws.title] = pd.DataFrame()
         return all_data
 
     except Exception as e:
-        print(f"Error loading all data: {e}")
+        logging.error(f"Error loading all data: {e}")
         return {}
 
 
 def read_widow_support_data() -> pd.DataFrame:
     """Read widow support data from the new widow support spreadsheet."""
     if gc is None:
-        print("Google Sheets not available - returning empty DataFrame")
+        logging.warning("Google Sheets not available - returning empty DataFrame")
         return pd.DataFrame(
             columns=[
                 "שם הבחורה",
@@ -539,7 +540,7 @@ def read_widow_support_data() -> pd.DataFrame:
         # Get all values
         values = worksheet.get_all_values()
         if not values:
-            print("Widow support sheet is empty")
+            logging.warning("Widow support sheet is empty")
             return pd.DataFrame()
 
         # Convert to DataFrame
@@ -548,9 +549,9 @@ def read_widow_support_data() -> pd.DataFrame:
         # Clean the data
         df = df.replace("", pd.NA)
 
-        print(f"Widow support data loaded: {len(df)} rows")
+        logging.info(f"Widow support data loaded: {len(df)} rows")
         return df
 
     except Exception as e:
-        print(f"Error reading widow support data: {e}")
+        logging.error(f"Error reading widow support data: {e}")
         return pd.DataFrame()

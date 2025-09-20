@@ -5,10 +5,12 @@ Handles core dashboard logic, data loading, and processing
 """
 
 import logging
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 
 import pandas as pd
 import streamlit as st
+
+from config import Config
 
 from alerts import (
     check_budget_alerts,
@@ -39,6 +41,7 @@ from ui.dashboard_sections import (
 )
 
 
+@st.cache_data(ttl=Config.DATA_CACHE_TTL)  # Cache for 5 minutes
 def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load all dashboard data from Google Sheets with enhanced loading states and error handling"""
     try:
@@ -98,6 +101,7 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
         return None, None, None, None
 
 
+@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
 def process_dashboard_data(
     expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame
 ) -> Tuple[Dict, Dict, Dict]:
@@ -162,13 +166,13 @@ def process_dashboard_data(
 
 
 def create_alerts_section(
-    budget_status: Dict,
+    budget_status: Dict[str, Any],
     expenses_df: pd.DataFrame,
     donations_df: pd.DataFrame,
     almanot_df: pd.DataFrame,
-    donor_stats: Dict,
-    widow_stats: Dict,
-):
+    donor_stats: Dict[str, Any],
+    widow_stats: Dict[str, Any],
+) -> None:
     """Create the alerts section"""
     try:
         all_alerts = []
@@ -214,10 +218,10 @@ def render_home_tab(
     expenses_df: pd.DataFrame,
     donations_df: pd.DataFrame,
     almanot_df: pd.DataFrame,
-    budget_status: Dict,
-    donor_stats: Dict,
-    widow_stats: Dict,
-):
+    budget_status: Dict[str, Any],
+    donor_stats: Dict[str, Any],
+    widow_stats: Dict[str, Any],
+) -> None:
     """Render the home tab content - clean and focused"""
 
     # 1. OVERVIEW & KEY METRICS (Executive summary - most important numbers)
@@ -238,7 +242,7 @@ def render_network_tab(
     donations_df: pd.DataFrame,
     almanot_df: pd.DataFrame,
     investors_df: pd.DataFrame,
-):
+) -> None:
     """Render the network tab content"""
     create_network_section(expenses_df, donations_df, almanot_df, investors_df)
 
@@ -246,7 +250,7 @@ def render_network_tab(
 # Removed unused tab render functions for cleaner code
 
 
-def run_dashboard():
+def run_dashboard() -> None:
     """Main dashboard execution function with authentication"""
     try:
         logging.info("=== STARTING DASHBOARD ===")

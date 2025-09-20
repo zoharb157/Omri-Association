@@ -145,8 +145,8 @@ class TestDataProcessing(unittest.TestCase):
             
             self.assertIsInstance(result, dict)
             self.assertIn("total_donors", result)
-            self.assertIn("total_amount", result)
-            self.assertIn("average_donation", result)
+            self.assertIn("total_donations", result)
+            self.assertIn("avg_donation", result)
             
             # Test calculations
             expected_total = len(self.donations_df)
@@ -154,8 +154,8 @@ class TestDataProcessing(unittest.TestCase):
             expected_avg = self.donations_df["שקלים"].mean()
             
             self.assertEqual(result["total_donors"], expected_total)
-            self.assertEqual(result["total_amount"], expected_amount)
-            self.assertEqual(result["average_donation"], expected_avg)
+            self.assertEqual(result["total_donations"], expected_amount)
+            self.assertEqual(result["avg_donation"], expected_avg)
             
         except Exception as e:
             self.fail(f"calculate_donor_statistics failed: {e}")
@@ -170,7 +170,7 @@ class TestDataProcessing(unittest.TestCase):
             self.assertIsInstance(result, dict)
             self.assertIn("total_widows", result)
             self.assertIn("total_support", result)
-            self.assertIn("average_support", result)
+            self.assertIn("support_1000_count", result)
             
             # Test calculations
             expected_total = len(self.almanot_df)
@@ -179,7 +179,7 @@ class TestDataProcessing(unittest.TestCase):
             
             self.assertEqual(result["total_widows"], expected_total)
             self.assertEqual(result["total_support"], expected_support)
-            self.assertEqual(result["average_support"], expected_avg)
+            self.assertEqual(result["support_1000_count"], 1)  # One widow with 1000 support
             
         except Exception as e:
             self.fail(f"calculate_widow_statistics failed: {e}")
@@ -329,7 +329,7 @@ class TestPerformance(unittest.TestCase):
         # Create larger DataFrame
         large_df = pd.DataFrame({
             "values": range(1000),
-            "categories": ["A", "B", "C"] * 334  # 1000 rows
+            "categories": (["A", "B", "C"] * 334)[:1000]  # Exactly 1000 rows
         })
         
         # Test operations

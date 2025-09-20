@@ -6,35 +6,28 @@ Provides basic login/logout functionality
 
 import hashlib
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import streamlit as st
+
+from config import Config
 
 
 class AuthManager:
     """Authentication manager for the dashboard"""
 
-    def __init__(self):
-        self.users = {
-            "admin": {
-                "password_hash": self._hash_password("admin123"),
-                "role": "admin",
-                "name": "מנהל מערכת",
-                "permissions": ["read", "write", "admin", "export", "settings"],
-            },
-            "user": {
-                "password_hash": self._hash_password("user123"),
-                "role": "user",
-                "name": "משתמש רגיל",
-                "permissions": ["read", "export"],
-            },
-            "viewer": {
-                "password_hash": self._hash_password("view123"),
-                "role": "viewer",
-                "name": "צופה בלבד",
-                "permissions": ["read"],
-            },
-        }
+    def __init__(self) -> None:
+        # Load users from configuration
+        users_config = Config.get_auth_users()
+        self.users = {}
+        
+        for username, user_config in users_config.items():
+            self.users[username] = {
+                "password_hash": self._hash_password(user_config["password"]),
+                "role": user_config["role"],
+                "name": user_config["name"],
+                "permissions": user_config["permissions"],
+            }
 
     def _hash_password(self, password: str) -> str:
         """Hash password using SHA-256"""
@@ -78,7 +71,7 @@ def login_user(username: str, password: str) -> bool:
     return False
 
 
-def logout_user():
+def logout_user() -> None:
     """Logout user and clear session state"""
     if "authenticated" in st.session_state:
         del st.session_state.authenticated
@@ -92,7 +85,7 @@ def logout_user():
 
 def is_authenticated() -> bool:
     """Check if user is authenticated"""
-    if not st.session_state.get("ENABLE_AUTHENTICATION", False):
+    if not st.session_state.get("ENABLE_AUTHENTICATION", Config.ENABLE_AUTHENTICATION):
         return True  # Authentication disabled
 
     if "authenticated" not in st.session_state:
@@ -100,7 +93,7 @@ def is_authenticated() -> bool:
 
     # Check session timeout
     if "login_time" in st.session_state:
-        timeout = st.session_state.get("SESSION_TIMEOUT", 3600)
+        timeout = st.session_state.get("SESSION_TIMEOUT", Config.SESSION_TIMEOUT)
         if time.time() - st.session_state.login_time > timeout:
             logout_user()
             return False
@@ -124,7 +117,7 @@ def get_current_user_info() -> Optional[Dict[str, Any]]:
 
 def has_permission(permission: str) -> bool:
     """Check if current user has specific permission"""
-    if not st.session_state.get("ENABLE_AUTHENTICATION", False):
+    if not st.session_state.get("ENABLE_AUTHENTICATION", Config.ENABLE_AUTHENTICATION):
         return True  # All permissions when auth disabled
 
     username = get_current_user()
@@ -140,7 +133,7 @@ def require_auth():
         st.stop()
 
 
-def show_login_form():
+def show_login_form() -> None:
     """Show login form in Streamlit"""
     st.markdown("### 🔐 התחברות למערכת")
 
@@ -181,7 +174,7 @@ def show_login_form():
         )
 
 
-def show_user_info():
+def show_user_info() -> None:
     """Show current user information"""
     if is_authenticated():
         user_info = get_current_user_info()
@@ -200,7 +193,7 @@ def show_user_info():
             st.session_state.show_login = True
 
 
-def check_auth_and_redirect():
+def check_auth_and_redirect() -> bool:
     """Check authentication and redirect to login if needed"""
     if not is_authenticated():
         show_login_form()
