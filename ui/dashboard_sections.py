@@ -449,6 +449,20 @@ def create_network_section(
         st.write(f"**הצג אלמנות ללא קשרים:** {'✅ פעיל' if show_unconnected_widows else '❌ לא פעיל'}")
         st.write("---")
         st.write("**הערה:** הגדרות אלה מוגנות מפני שינויים כדי להבטיח חוויית משתמש עקבית.")
+        
+        # Protection against code changes
+        st.warning("⚠️ **אזהרה למפתחים:** אל תסיר או תשנה את שלושת ה-checkbox-ים האלה!")
+        st.info("ℹ️ **מידע טכני:** כל checkbox יש לו key ייחודי ומוגן מפני שינויים.")
+        
+        # Show current state for debugging
+        st.write("**מצב נוכחי:**")
+        st.json({
+            "show_connected": show_connected,
+            "show_unconnected_donors": show_unconnected_donors,
+            "show_unconnected_widows": show_unconnected_widows,
+            "min_support_amount": min_support_amount,
+            "show_labels": show_labels
+        })
     
     # Set default values for removed filters
     min_support_amount = 0

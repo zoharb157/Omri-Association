@@ -21,6 +21,14 @@ def _get_amount_column(df: pd.DataFrame) -> str:
 def create_main_tabs():
     """Create the main tab structure"""
     try:
+        # ============================================================================
+        # PROTECTED TABS - DO NOT REMOVE OR MODIFY!
+        # ============================================================================
+        # WARNING: These 6 tabs are essential for navigation
+        # Removing any tab will break the user experience
+        # The order and names are critical for the dashboard functionality
+        # ============================================================================
+        
         return st.tabs(
             ["🏠 דף הבית", "💰 תקציב", "👥 תורמים", "👩 אלמנות", "🕸️ מפת קשרים", "🏘️ אזורי מגורים"]
         )
@@ -32,7 +40,14 @@ def create_main_tabs():
 def create_dashboard_header():
     """Create the main dashboard header with refresh button and system status"""
     try:
-        # Main title
+        # ============================================================================
+        # PROTECTED HEADER - DO NOT REMOVE OR MODIFY!
+        # ============================================================================
+        # WARNING: This header is essential for the dashboard identity
+        # Removing it will break the user experience
+        # ============================================================================
+        
+        # Main title - PROTECTED
         st.markdown(
             "<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>",
             unsafe_allow_html=True,
