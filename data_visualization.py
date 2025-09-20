@@ -85,30 +85,64 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
 def create_budget_distribution_chart(df: pd.DataFrame):
     """Create budget distribution pie chart"""
     try:
-        if not isinstance(df, pd.DataFrame):
-            st.error("הנתונים חייבים להיות DataFrame")
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            logging.warning("Empty or invalid DataFrame provided to budget distribution chart")
             return None
 
-        if "קטגוריה" not in df.columns or "שקלים" not in df.columns:
-            st.error("עמודות 'קטגוריה' ו'שקלים' חסרות")
+        # Check if we have the required amount column
+        amount_col = None
+        for col in ("שקלים", "סכום"):
+            if col in df.columns:
+                amount_col = col
+                break
+        
+        if not amount_col:
+            logging.warning("No amount column found in DataFrame")
             return None
 
-        # Group by category and sum amounts
-        category_totals = df.groupby("קטגוריה")["שקלים"].sum().reset_index()
+        # If we have a category column, use it
+        if "קטגוריה" in df.columns:
+            # Group by category and sum amounts
+            category_totals = df.groupby("קטגוריה")[amount_col].sum().reset_index()
+            names_col = "קטגוריה"
+            title = "התפלגות הוצאות לפי קטגוריה"
+        else:
+            # Fallback: group by name (supplier/client) if no category column
+            name_col = None
+            for col in ("שם", "שם לקוח", "שם ספק"):
+                if col in df.columns:
+                    name_col = col
+                    break
+            
+            if not name_col:
+                logging.warning("No name or category column found for grouping")
+                return None
+            
+            # Group by name and sum amounts
+            category_totals = df.groupby(name_col)[amount_col].sum().reset_index()
+            names_col = name_col
+            title = "התפלגות הוצאות לפי ספק/לקוח"
+
+        # Filter out empty or zero amounts
+        category_totals = category_totals[category_totals[amount_col] > 0]
+        
+        if category_totals.empty:
+            logging.warning("No valid data for budget distribution chart")
+            return None
 
         # Create pie chart
         fig = px.pie(
             category_totals,
-            values="שקלים",
-            names="קטגוריה",
-            title="התפלגות הוצאות לפי קטגוריה",
+            values=amount_col,
+            names=names_col,
+            title=title,
             color_discrete_sequence=px.colors.qualitative.Set3,
         )
 
         fig.update_traces(
             textposition="inside",
             textinfo="percent+label",
-            hovertemplate="<b>%{label}</b><br>סכום: ₪%{value:,.0f}<br>אחוז: %{percent}<extra></extra>",
+            hovertemplate=f"<b>%{{label}}</b><br>סכום: ₪%{{value:,.0f}}<br>אחוז: %{{percent}}<extra></extra>",
         )
 
         fig.update_layout(
@@ -121,7 +155,6 @@ def create_budget_distribution_chart(df: pd.DataFrame):
 
     except Exception as e:
         logging.error(f"Error creating budget distribution chart: {e}")
-        st.error(f"שגיאה ביצירת תרשים התפלגות: {e}")
         return None
 
 

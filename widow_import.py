@@ -254,6 +254,7 @@ class WidowImportManager:
                 st.dataframe(
                     filtered_df[available_columns],
                     use_container_width=True,
+                    hide_index=True,
                     column_config={
                         "widow_name": "שם",
                         "children_count": "ילדים",

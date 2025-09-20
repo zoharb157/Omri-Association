@@ -255,13 +255,18 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
         st.markdown("#### 📋 טבלת כל האלמנות")
 
         # Show all widows with key information
-        display_columns = ["שם", "מספר ילדים", "סכום חודשי", "תורם"]
+        display_columns = ["תורם", "סכום חודשי", "מספר ילדים", "שם"]
         available_columns = [col for col in display_columns if col in almanot_df.columns]
 
         if len(available_columns) > 0:
             # Sort by monthly amount (descending) to show supported widows first
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
-            st.dataframe(sorted_widows[available_columns], use_container_width=True)
+            # Display table without index and with proper column order
+            st.dataframe(
+                sorted_widows[available_columns], 
+                use_container_width=True,
+                hide_index=True
+            )
         else:
             st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
 
@@ -278,13 +283,18 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
     create_simple_section_header("👩 טבלת כל האלמנות")
     try:
         # Show all widows with key information
-        display_columns = ["שם", "מספר ילדים", "סכום חודשי", "תורם"]
+        display_columns = ["תורם", "סכום חודשי", "מספר ילדים", "שם"]
         available_columns = [col for col in display_columns if col in almanot_df.columns]
 
         if len(available_columns) > 0:
             # Sort by monthly amount (descending) to show supported widows first
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
-            st.dataframe(sorted_widows[available_columns], use_container_width=True)
+            # Display table without index and with proper column order
+            st.dataframe(
+                sorted_widows[available_columns], 
+                use_container_width=True,
+                hide_index=True
+            )
         else:
             st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
 

@@ -140,11 +140,27 @@ class ThemeManager:
 
         .stDataFrame {{
             background-color: {theme_colors['secondary_background_color']};
+            direction: ltr !important;
         }}
 
         .stDataFrame table {{
             background-color: {theme_colors['secondary_background_color']};
             color: {theme_colors['text_color']};
+            direction: ltr !important;
+            text-align: left !important;
+        }}
+
+        /* Hide index column and ensure left-to-right display */
+        .stDataFrame table th:first-child,
+        .stDataFrame table td:first-child {{
+            display: none !important;
+        }}
+
+        /* Force table cells to be left-to-right */
+        .stDataFrame table th,
+        .stDataFrame table td {{
+            direction: ltr !important;
+            text-align: left !important;
         }}
 
         .stDataFrame th {{
