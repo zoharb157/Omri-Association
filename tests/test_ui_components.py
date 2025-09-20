@@ -4,8 +4,7 @@ Unit tests for UI components functionality
 Tests form components, layout system, and other UI elements
 """
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from ui.components.forms import (
     create_accessible_checkbox,
@@ -19,9 +18,9 @@ from ui.components.simple_ui import (
     create_simple_section_header,
 )
 from ui.dashboard_layout import (
-    create_main_tabs,
-    create_dashboard_header,
     add_spacing,
+    create_dashboard_header,
+    create_main_tabs,
 )
 
 
@@ -144,7 +143,7 @@ class TestUIComponents:
     def test_create_main_tabs(self, mock_st):
         """Test main tabs creation"""
         mock_st.tabs = MagicMock(return_value=(
-            MagicMock(), MagicMock(), MagicMock(), 
+            MagicMock(), MagicMock(), MagicMock(),
             MagicMock(), MagicMock(), MagicMock()
         ))
 

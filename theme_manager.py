@@ -6,8 +6,6 @@ Provides dark/light mode switching and theme customization
 
 import streamlit as st
 
-from config import get_setting, set_setting
-
 
 class ThemeManager:
     """Manages dashboard themes and appearance"""
@@ -54,7 +52,7 @@ class ThemeManager:
 
     def get_current_theme(self) -> str:
         """Get current theme name"""
-        return get_setting("ENABLE_DARK_MODE", False) and "dark" or "light"
+        return st.session_state.get("ENABLE_DARK_MODE", False) and "dark" or "light"
 
     def get_theme_colors(self, theme_name: str = None) -> dict:
         """Get colors for specified theme"""
@@ -66,9 +64,9 @@ class ThemeManager:
     def switch_theme(self, theme_name: str):
         """Switch to specified theme"""
         if theme_name == "dark":
-            set_setting("ENABLE_DARK_MODE", True)
+            st.session_state["ENABLE_DARK_MODE"] = True
         else:
-            set_setting("ENABLE_DARK_MODE", False)
+            st.session_state["ENABLE_DARK_MODE"] = False
 
     def apply_theme_css(self):
         """Apply theme CSS to Streamlit"""

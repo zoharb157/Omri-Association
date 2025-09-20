@@ -4,23 +4,23 @@ Unit tests for dashboard sections functionality
 Tests individual dashboard sections and components
 """
 
-import pandas as pd
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from ui.dashboard_sections import (
-    create_network_section,
-    create_budget_section,
-    create_donors_section,
-    create_widows_section,
-    create_residential_breakdown_section,
-    create_overview_section,
-)
+import pandas as pd
+
 from tests.fixtures.sample_data import (
+    sample_almanot_df,
     sample_donations_df,
     sample_expenses_df,
-    sample_almanot_df,
     sample_investors_df,
+)
+from ui.dashboard_sections import (
+    create_budget_section,
+    create_donors_section,
+    create_network_section,
+    create_overview_section,
+    create_residential_breakdown_section,
+    create_widows_section,
 )
 
 

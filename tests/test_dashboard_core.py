@@ -4,22 +4,22 @@ Unit tests for dashboard core functionality
 Tests the main dashboard logic and data processing
 """
 
-import pandas as pd
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+import pandas as pd
+
+from tests.fixtures.sample_data import (
+    sample_almanot_df,
+    sample_donations_df,
+    sample_expenses_df,
+    sample_investors_df,
+)
 from ui.dashboard_core import (
     load_dashboard_data,
     process_dashboard_data,
-    run_dashboard,
     render_home_tab,
     render_network_tab,
-)
-from tests.fixtures.sample_data import (
-    sample_donations_df,
-    sample_expenses_df,
-    sample_almanot_df,
-    sample_investors_df,
+    run_dashboard,
 )
 
 
