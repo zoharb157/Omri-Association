@@ -28,12 +28,19 @@ st.set_page_config(
 st.markdown(get_global_css(), unsafe_allow_html=True)
 
 # Version indicator for deployment verification
-st.markdown("<!-- Dashboard Version: 2025-01-17-v2 -->", unsafe_allow_html=True)
+st.markdown("<!-- Dashboard Version: 2025-01-17-v3 - FORCE DEPLOY -->", unsafe_allow_html=True)
+
+# Force deployment refresh - this should trigger the modern UI
+if st.session_state.get('force_refresh', False):
+    st.rerun()
 
 
 def main():
     """Main entry point for the dashboard - Updated 2025-01-17"""
     try:
+        # Show version info for debugging
+        st.info("🔄 Dashboard v2025-01-17-v3 - Modern UI Loading...")
+        
         # Import and run the working dashboard with all tabs
         from ui.dashboard_core import run_dashboard
 
