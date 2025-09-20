@@ -6,7 +6,7 @@ Provides basic login/logout functionality
 
 import hashlib
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import streamlit as st
 
@@ -20,7 +20,7 @@ class AuthManager:
         # Load users from configuration
         users_config = Config.get_auth_users()
         self.users = {}
-        
+
         for username, user_config in users_config.items():
             self.users[username] = {
                 "password_hash": self._hash_password(user_config["password"]),

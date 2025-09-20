@@ -6,13 +6,11 @@ Only contains functions that are actually used
 
 import streamlit as st
 
-from ui.design_system.modern_tokens import ModernDesignSystem
-
 
 def create_section_header(title: str, subtitle: str = None, actions: list = None):
     """Create a modern section header with optional subtitle and actions."""
     icon_text = f"{title} " if title else ""
-    
+
     header_html = f"""
     <div class="section-header">
         <h2 class="section-title">{icon_text}</h2>
@@ -37,7 +35,7 @@ def create_section_header(title: str, subtitle: str = None, actions: list = None
     }}
     </style>
     """
-    
+
     st.markdown(header_html, unsafe_allow_html=True)
 
 
@@ -45,7 +43,7 @@ def create_metrics_grid(metrics: list, columns: int = 4):
     """Create a responsive grid of metric cards."""
     if not metrics:
         return
-    
+
     cols = st.columns(columns)
     for i, metric in enumerate(metrics):
         with cols[i % columns]:
@@ -63,9 +61,9 @@ def create_metric_card(title: str, value: str, delta: str = None, help_text: str
     if delta:
         delta_class = "positive" if delta.startswith("+") else "negative"
         delta_html = f'<div class="metric-delta {delta_class}">{delta}</div>'
-    
+
     help_html = f'<div class="metric-help">{help_text}</div>' if help_text else ''
-    
+
     card_html = f"""
     <div class="metric-card">
         <div class="metric-title">{title}</div>
@@ -115,5 +113,5 @@ def create_metric_card(title: str, value: str, delta: str = None, help_text: str
     }}
     </style>
     """
-    
+
     st.markdown(card_html, unsafe_allow_html=True)

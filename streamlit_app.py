@@ -5,6 +5,7 @@ This is the main entry point for Streamlit Cloud deployment
 """
 
 import logging
+
 import streamlit as st
 
 # Import the main dashboard function

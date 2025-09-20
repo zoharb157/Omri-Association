@@ -38,7 +38,7 @@ def create_dashboard_header():
         # WARNING: This header is essential for the dashboard identity
         # Removing it will break the user experience
         # ============================================================================
-        
+
         # Main title - PROTECTED
         st.markdown(
             "<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>",

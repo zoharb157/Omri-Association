@@ -11,7 +11,6 @@ import pandas as pd
 import streamlit as st
 
 # Config import moved to avoid circular imports
-
 from alerts import (
     check_budget_alerts,
     check_data_quality_alerts,

@@ -628,5 +628,5 @@ def calculate_36_month_budget(widows_df: pd.DataFrame, current_support: float) -
         }
 
 
-# Removed unused functions: calculate_monthly_averages_old, calculate_total_support_old, 
+# Removed unused functions: calculate_monthly_averages_old, calculate_total_support_old,
 # calculate_monthly_budget_old, calculate_budget_forecast

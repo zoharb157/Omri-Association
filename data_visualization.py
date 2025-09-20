@@ -1,5 +1,4 @@
 import logging
-import uuid
 
 import pandas as pd
 import plotly.express as px
@@ -95,7 +94,7 @@ def create_budget_distribution_chart(df: pd.DataFrame):
             if col in df.columns:
                 amount_col = col
                 break
-        
+
         if not amount_col:
             logging.warning("No amount column found in DataFrame")
             return None
@@ -113,11 +112,11 @@ def create_budget_distribution_chart(df: pd.DataFrame):
                 if col in df.columns:
                     name_col = col
                     break
-            
+
             if not name_col:
                 logging.warning("No name or category column found for grouping")
                 return None
-            
+
             # Group by name and sum amounts
             category_totals = df.groupby(name_col)[amount_col].sum().reset_index()
             names_col = name_col
@@ -125,7 +124,7 @@ def create_budget_distribution_chart(df: pd.DataFrame):
 
         # Filter out empty or zero amounts
         category_totals = category_totals[category_totals[amount_col] > 0]
-        
+
         if category_totals.empty:
             logging.warning("No valid data for budget distribution chart")
             return None
@@ -142,7 +141,7 @@ def create_budget_distribution_chart(df: pd.DataFrame):
         fig.update_traces(
             textposition="inside",
             textinfo="percent+label",
-            hovertemplate=f"<b>%{{label}}</b><br>סכום: ₪%{{value:,.0f}}<br>אחוז: %{{percent}}<extra></extra>",
+            hovertemplate="<b>%{label}</b><br>סכום: ₪%{value:,.0f}<br>אחוז: %{percent}<extra></extra>",
         )
 
         fig.update_layout(
