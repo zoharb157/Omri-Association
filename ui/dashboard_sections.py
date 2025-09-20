@@ -398,27 +398,52 @@ def create_network_section(
 
     # Network view with filters
     st.markdown("#### 🔍 הגדרות תצוגה")
-
+    
     col1, col2, col3 = st.columns(3)
-
+    
     with col1:
         show_connected = st.checkbox(
-            "הצג קשרים קיימים", value=True, help="הצג קשרים בין תורמים לאלמנות"
+            "הצג קשרים קיימים",
+            value=True,
+            help="הצג קשרים בין תורמים לאלמנות"
         )
-
+    
     with col2:
         show_unconnected_donors = st.checkbox(
-            "הצג תורמים ללא קשרים", value=True, help="הצג תורמים שאין להם קשרים לאלמנות"
+            "הצג תורמים ללא קשרים",
+            value=True,
+            help="הצג תורמים שאין להם קשרים לאלמנות"
         )
-
+    
     with col3:
         show_unconnected_widows = st.checkbox(
-            "הצג אלמנות ללא קשרים", value=True, help="הצג אלמנות שאין להן קשרים לתורמים"
+            "הצג אלמנות ללא קשרים",
+            value=True,
+            help="הצג אלמנות שאין להן קשרים לתורמים"
         )
 
-    # Set default values for removed filters
-    min_support_amount = 0
-    show_labels = True
+    # Additional filter options
+    st.markdown("#### 🎛️ אפשרויות נוספות")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        min_support_amount = st.number_input(
+            "סכום תמיכה מינימלי",
+            min_value=0,
+            value=0,
+            step=100,
+            help="הצג רק אלמנות עם סכום תמיכה מעל הסכום הנבחר"
+        )
+    
+    with col2:
+        show_labels = st.checkbox(
+            "הצג תוויות",
+            value=True,
+            help="הצג שמות על הצמתים ברשת"
+        )
+    
+    add_spacing(1)
 
     try:
         # Clean monthly support data - ensure all values are numeric and NaN is treated as 0
