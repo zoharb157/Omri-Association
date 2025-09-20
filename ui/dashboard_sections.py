@@ -398,23 +398,23 @@ def create_network_section(
 
     # Network view with filters
     st.markdown("#### 🔍 הגדרות תצוגה")
-    
+
     col1, col2, col3 = st.columns(3)
-    
+
     with col1:
         show_connected = st.checkbox(
             "הצג קשרים קיימים",
             value=True,
             help="הצג קשרים בין תורמים לאלמנות"
         )
-    
+
     with col2:
         show_unconnected_donors = st.checkbox(
             "הצג תורמים ללא קשרים",
             value=True,
             help="הצג תורמים שאין להם קשרים לאלמנות"
         )
-    
+
     with col3:
         show_unconnected_widows = st.checkbox(
             "הצג אלמנות ללא קשרים",
@@ -424,9 +424,9 @@ def create_network_section(
 
     # Additional filter options
     st.markdown("#### 🎛️ אפשרויות נוספות")
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         min_support_amount = st.number_input(
             "סכום תמיכה מינימלי",
@@ -435,14 +435,14 @@ def create_network_section(
             step=100,
             help="הצג רק אלמנות עם סכום תמיכה מעל הסכום הנבחר"
         )
-    
+
     with col2:
         show_labels = st.checkbox(
             "הצג תוויות",
             value=True,
             help="הצג שמות על הצמתים ברשת"
         )
-    
+
     add_spacing(1)
 
     try:
@@ -451,7 +451,7 @@ def create_network_section(
             almanot_df["סכום חודשי"] = pd.to_numeric(
                 almanot_df["סכום חודשי"], errors="coerce"
             ).fillna(0)
-            
+
             # Apply minimum support amount filter
             almanot_df = almanot_df[almanot_df["סכום חודשי"] >= min_support_amount]
 

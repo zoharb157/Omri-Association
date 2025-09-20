@@ -13,20 +13,24 @@ def create_accessible_checkbox(
     label: str, value: bool = False, help_text: str = "", key: str = None, disabled: bool = False
 ):
     """Create accessible checkbox with proper ARIA attributes"""
-    return st.checkbox(
-        label=label,
-        value=value,
-        help=help_text,
-        key=key,
-        disabled=disabled,
-        # Add accessibility attributes
-        kwargs={
-            "aria-label": f"{label}. {help_text}" if help_text else label,
-            "role": "checkbox",
-            "aria-checked": str(value).lower(),
-            "aria-disabled": str(disabled).lower(),
-        },
-    )
+    try:
+        return st.checkbox(
+            label=label,
+            value=value,
+            help=help_text,
+            key=key,
+            disabled=disabled,
+            # Add accessibility attributes
+            kwargs={
+                "aria-label": f"{label}. {help_text}" if help_text else label,
+                "role": "checkbox",
+                "aria-checked": str(value).lower(),
+                "aria-disabled": str(disabled).lower(),
+            },
+        )
+    except Exception:
+        # Return default value if checkbox creation fails
+        return value
 
 
 def create_accessible_selectbox(
@@ -38,20 +42,24 @@ def create_accessible_selectbox(
     disabled: bool = False,
 ):
     """Create accessible selectbox with proper ARIA attributes"""
-    return st.selectbox(
-        label=label,
-        options=options,
-        index=index,
-        help=help_text,
-        key=key,
-        disabled=disabled,
-        kwargs={
-            "aria-label": f"{label}. {help_text}" if help_text else label,
-            "role": "combobox",
-            "aria-expanded": "false",
-            "aria-disabled": str(disabled).lower(),
-        },
-    )
+    try:
+        return st.selectbox(
+            label=label,
+            options=options,
+            index=index,
+            help=help_text,
+            key=key,
+            disabled=disabled,
+            kwargs={
+                "aria-label": f"{label}. {help_text}" if help_text else label,
+                "role": "combobox",
+                "aria-expanded": "false",
+                "aria-disabled": str(disabled).lower(),
+            },
+        )
+    except Exception:
+        # Return default value if selectbox creation fails
+        return options[index] if options and 0 <= index < len(options) else None
 
 
 def create_accessible_slider(
@@ -64,27 +72,35 @@ def create_accessible_slider(
     disabled: bool = False,
 ):
     """Create accessible slider with proper ARIA attributes"""
-    return st.slider(
-        label=label,
-        min_value=min_value,
-        max_value=max_value,
-        value=value,
-        help=help_text,
-        key=key,
-        disabled=disabled,
-        kwargs={
-            "aria-label": f"{label}. {help_text}" if help_text else label,
-            "role": "slider",
-            "aria-valuemin": str(min_value),
-            "aria-valuemax": str(max_value),
-            "aria-valuenow": str(value) if value else str((min_value + max_value) / 2),
-            "aria-disabled": str(disabled).lower(),
-        },
-    )
+    try:
+        return st.slider(
+            label=label,
+            min_value=min_value,
+            max_value=max_value,
+            value=value,
+            help=help_text,
+            key=key,
+            disabled=disabled,
+            kwargs={
+                "aria-label": f"{label}. {help_text}" if help_text else label,
+                "role": "slider",
+                "aria-valuemin": str(min_value),
+                "aria-valuemax": str(max_value),
+                "aria-valuenow": str(value) if value else str((min_value + max_value) / 2),
+                "aria-disabled": str(disabled).lower(),
+            },
+        )
+    except Exception:
+        # Return default value if slider creation fails
+        return value if value is not None else (min_value + max_value) / 2
 
 
 def create_filter_group(title: str, filters: list, columns: int = 3):
     """Create a group of filters with consistent styling"""
+
+    # Handle None or empty filters
+    if not filters:
+        return {}
 
     # Create section header
     st.markdown(
@@ -114,40 +130,52 @@ def create_filter_group(title: str, filters: list, columns: int = 3):
 
     # Create filter columns
     cols = st.columns(columns)
+    results = {}
 
     for i, filter_config in enumerate(filters):
         with cols[i % columns]:
             filter_type = filter_config.get("type", "checkbox")
+            filter_key = filter_config.get("key", f"filter_{i}")
 
-            if filter_type == "checkbox":
-                create_accessible_checkbox(
-                    label=filter_config.get("label", f"Filter {i+1}"),
-                    value=filter_config.get("value", False),
-                    help_text=filter_config.get("help", ""),
-                    key=filter_config.get("key", f"filter_{i}"),
-                    disabled=filter_config.get("disabled", False),
-                )
-            elif filter_type == "selectbox":
-                create_accessible_selectbox(
-                    label=filter_config.get("label", f"Select {i+1}"),
-                    options=filter_config.get("options", []),
-                    index=filter_config.get("index", 0),
-                    help_text=filter_config.get("help", ""),
-                    key=filter_config.get("key", f"filter_{i}"),
-                    disabled=filter_config.get("disabled", False),
-                )
-            elif filter_type == "slider":
-                create_accessible_slider(
-                    label=filter_config.get("label", f"Range {i+1}"),
-                    min_value=filter_config.get("min_value", 0),
-                    max_value=filter_config.get("max_value", 100),
-                    value=filter_config.get("value", None),
-                    help_text=filter_config.get("help", ""),
-                    key=filter_config.get("key", f"filter_{i}"),
-                    disabled=filter_config.get("disabled", False),
-                )
+            try:
+                if filter_type == "checkbox":
+                    result = create_accessible_checkbox(
+                        label=filter_config.get("label", f"Filter {i+1}"),
+                        value=filter_config.get("value", False),
+                        help_text=filter_config.get("help", ""),
+                        key=filter_key,
+                        disabled=filter_config.get("disabled", False),
+                    )
+                elif filter_type == "selectbox":
+                    result = create_accessible_selectbox(
+                        label=filter_config.get("label", f"Select {i+1}"),
+                        options=filter_config.get("options", []),
+                        index=filter_config.get("index", 0),
+                        help_text=filter_config.get("help", ""),
+                        key=filter_key,
+                        disabled=filter_config.get("disabled", False),
+                    )
+                elif filter_type == "slider":
+                    result = create_accessible_slider(
+                        label=filter_config.get("label", f"Range {i+1}"),
+                        min_value=filter_config.get("min_value", 0),
+                        max_value=filter_config.get("max_value", 100),
+                        value=filter_config.get("value", None),
+                        help_text=filter_config.get("help", ""),
+                        key=filter_key,
+                        disabled=filter_config.get("disabled", False),
+                    )
+                else:
+                    # Handle invalid filter types
+                    result = None
+
+                results[filter_key] = result
+            except Exception:
+                # Handle any errors in filter creation
+                results[filter_key] = None
 
     st.markdown("</div>", unsafe_allow_html=True)
+    return results
 
 
 def create_search_input(label: str = "חיפוש", placeholder: str = "הקלד לחיפוש...", key: str = None):
@@ -186,16 +214,20 @@ def create_search_input(label: str = "חיפוש", placeholder: str = "הקלד 
 
     st.markdown(search_html, unsafe_allow_html=True)
 
-    return st.text_input(
-        label=label,
-        placeholder=placeholder,
-        key=key,
-        kwargs={
-            "aria-label": f"{label}. {placeholder}",
-            "role": "searchbox",
-            "autocomplete": "off",
-        },
-    )
+    try:
+        return st.text_input(
+            label=label,
+            placeholder=placeholder,
+            key=key,
+            kwargs={
+                "aria-label": f"{label}. {placeholder}",
+                "role": "searchbox",
+                "autocomplete": "off",
+            },
+        )
+    except Exception:
+        # Return empty string if text input creation fails
+        return ""
 
 
 def create_date_range_picker(label: str = "טווח תאריכים", key: str = None):

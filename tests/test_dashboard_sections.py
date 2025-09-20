@@ -38,7 +38,7 @@ class TestDashboardSections:
         mock_st.session_state = mock_session_state
         mock_st.markdown = MagicMock()
         mock_st.plotly_chart = MagicMock()
-        
+
         # Mock columns to return different values based on the call
         def mock_columns(num_cols):
             if num_cols == 3:
@@ -47,7 +47,7 @@ class TestDashboardSections:
                 return [MagicMock(), MagicMock()]
             else:
                 return [MagicMock() for _ in range(num_cols)]
-        
+
         mock_st.columns = MagicMock(side_effect=mock_columns)
         mock_st.checkbox = MagicMock(return_value=True)
         mock_st.number_input = MagicMock(return_value=0)
@@ -134,7 +134,7 @@ class TestDashboardSections:
             mock_st.session_state = mock_session_state
             mock_st.markdown = MagicMock()
             mock_st.plotly_chart = MagicMock()
-            
+
             # Mock columns to return different values based on the call
             def mock_columns(num_cols):
                 if num_cols == 3:
@@ -143,7 +143,7 @@ class TestDashboardSections:
                     return [MagicMock(), MagicMock()]
                 else:
                     return [MagicMock() for _ in range(num_cols)]
-            
+
             mock_st.columns = MagicMock(side_effect=mock_columns)
             mock_st.checkbox = MagicMock(return_value=True)
             mock_st.number_input = MagicMock(return_value=0)
@@ -168,7 +168,7 @@ class TestDashboardSections:
             mock_st.session_state = mock_session_state
             mock_st.markdown = MagicMock()
             mock_st.plotly_chart = MagicMock()
-            
+
             # Mock columns to return different values based on the call
             def mock_columns(num_cols):
                 if num_cols == 3:
@@ -177,7 +177,7 @@ class TestDashboardSections:
                     return [MagicMock(), MagicMock()]
                 else:
                     return [MagicMock() for _ in range(num_cols)]
-            
+
             mock_st.columns = MagicMock(side_effect=mock_columns)
             mock_st.checkbox = MagicMock(return_value=True)
             mock_st.number_input = MagicMock(return_value=0)

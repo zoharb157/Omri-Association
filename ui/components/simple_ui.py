@@ -22,36 +22,48 @@ def create_simple_metric_card(
 def create_simple_metric_row(metrics: list, columns: int = 4):
     """Create a row of metric cards using native Streamlit components"""
 
-    # Create columns
-    cols = st.columns(columns)
+    # Handle None or empty metrics
+    if not metrics:
+        return
 
-    for i, metric in enumerate(metrics):
-        with cols[i]:
-            # Extract metric data
-            label = metric.get("label", "")
-            value = metric.get("value", "")
-            help_text = metric.get("help", "")
-            trend = metric.get("trend", None)
+    try:
+        # Create columns
+        cols = st.columns(columns)
 
-            # Create metric card
-            create_simple_metric_card(label, value, help_text, trend)
+        for i, metric in enumerate(metrics):
+            with cols[i % len(cols)]:
+                # Extract metric data
+                label = metric.get("label", "")
+                value = metric.get("value", "")
+                help_text = metric.get("help", "")
+                trend = metric.get("trend", None)
+
+                # Create metric card
+                create_simple_metric_card(label, value, help_text, trend)
+    except Exception:
+        # Handle any errors in metric row creation gracefully
+        pass
 
 
 def create_simple_section_header(title: str, description: str = "", icon: str = ""):
     """Create a simple section header using native Streamlit components"""
 
-    # Add icon if provided
-    if icon:
-        st.subheader(f"{icon} {title}")
-    else:
-        st.subheader(title)
+    try:
+        # Add icon if provided
+        if icon:
+            st.subheader(f"{icon} {title}")
+        else:
+            st.subheader(title)
 
-    # Add description if provided
-    if description:
-        st.caption(description)
+        # Add description if provided
+        if description:
+            st.caption(description)
 
-    # Add some spacing
-    st.markdown("---")
+        # Add some spacing
+        st.markdown("---")
+    except Exception:
+        # Handle any errors in section header creation gracefully
+        pass
 
 
 def create_simple_info_card(title: str, content: str, icon: str = ""):

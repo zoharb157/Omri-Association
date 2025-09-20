@@ -20,49 +20,57 @@ def _get_amount_column(df: pd.DataFrame) -> str:
 
 def create_main_tabs():
     """Create the main tab structure"""
-    return st.tabs(
-        ["🏠 דף הבית", "💰 תקציב", "👥 תורמים", "👩 אלמנות", "🕸️ מפת קשרים", "🏘️ אזורי מגורים"]
-    )
+    try:
+        return st.tabs(
+            ["🏠 דף הבית", "💰 תקציב", "👥 תורמים", "👩 אלמנות", "🕸️ מפת קשרים", "🏘️ אזורי מגורים"]
+        )
+    except Exception:
+        # Return empty list if tabs creation fails
+        return []
 
 
 def create_dashboard_header():
     """Create the main dashboard header with refresh button and system status"""
-    # Main title
-    st.markdown(
-        "<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>",
-        unsafe_allow_html=True,
-    )
+    try:
+        # Main title
+        st.markdown(
+            "<h1 style='text-align: center; color: #1f77b4; margin-bottom: 1rem;'>מערכת ניהול עמותת עמרי</h1>",
+            unsafe_allow_html=True,
+        )
 
-    # Clean, professional header with just theme toggle
-    col1, col2 = st.columns([4, 1])
+        # Clean, professional header with just theme toggle
+        col1, col2 = st.columns([4, 1])
 
-    with col1:
-        # Empty space for clean look
+        with col1:
+            # Empty space for clean look
+            pass
+
+        with col2:
+            # Quick theme toggle and performance info
+            try:
+                from theme_manager import get_current_theme, switch_theme
+
+                current_theme = get_current_theme()
+
+                if st.button("🌙" if current_theme == "light" else "☀️", help="החלף עיצוב"):
+                    new_theme = "dark" if current_theme == "light" else "light"
+                    switch_theme(new_theme)
+                    st.rerun()
+            except ImportError:
+                pass  # Theme manager not available
+
+            # Performance info (only in debug mode)
+            if st.session_state.get("debug_mode", False):
+                # Simple performance info
+                def show_performance_info():
+                    st.info("ℹ️ מידע על ביצועים: טעינה מהירה")
+
+                show_performance_info()
+
+        add_spacing(1)
+    except Exception:
+        # Handle any errors in header creation gracefully
         pass
-
-    with col2:
-        # Quick theme toggle and performance info
-        try:
-            from theme_manager import get_current_theme, switch_theme
-
-            current_theme = get_current_theme()
-
-            if st.button("🌙" if current_theme == "light" else "☀️", help="החלף עיצוב"):
-                new_theme = "dark" if current_theme == "light" else "light"
-                switch_theme(new_theme)
-                st.rerun()
-        except ImportError:
-            pass  # Theme manager not available
-
-        # Performance info (only in debug mode)
-        if st.session_state.get("debug_mode", False):
-            # Simple performance info
-            def show_performance_info():
-                st.info("ℹ️ מידע על ביצועים: טעינה מהירה")
-
-            show_performance_info()
-
-    add_spacing(1)
 
 
 def create_section_header(title: str, icon: str = ""):
@@ -114,17 +122,21 @@ def create_three_column_layout():
 
 def add_spacing(rem: float = 2):
     """Add consistent spacing between sections using design system tokens"""
-    # Convert rem to design system spacing scale
-    spacing_map = {
-        0.5: "var(--space-2, 0.5rem)",
-        1: "var(--space-4, 1rem)",
-        1.5: "var(--space-6, 1.5rem)",
-        2: "var(--space-8, 2rem)",
-        3: "var(--space-12, 3rem)",
-        4: "var(--space-16, 4rem)",
-    }
-    spacing_value = spacing_map.get(rem, f"{rem}rem")
-    st.markdown(f"<div style='margin: {spacing_value} 0;'></div>", unsafe_allow_html=True)
+    try:
+        # Convert rem to design system spacing scale
+        spacing_map = {
+            0.5: "var(--space-2, 0.5rem)",
+            1: "var(--space-4, 1rem)",
+            1.5: "var(--space-6, 1.5rem)",
+            2: "var(--space-8, 2rem)",
+            3: "var(--space-12, 3rem)",
+            4: "var(--space-16, 4rem)",
+        }
+        spacing_value = spacing_map.get(rem, f"{rem}rem")
+        st.markdown(f"<div style='margin: {spacing_value} 0;'></div>", unsafe_allow_html=True)
+    except Exception:
+        # Handle any errors in spacing creation gracefully
+        pass
 
 
 def create_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.DataFrame):
