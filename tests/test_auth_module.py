@@ -57,7 +57,12 @@ class TestAuthModule:
     def test_is_authenticated_false(self, mock_st):
         """Test is_authenticated returns False when user is not authenticated"""
         mock_session_state = MagicMock()
-        mock_session_state.get = MagicMock(side_effect=lambda key, default: {"ENABLE_AUTHENTICATION": True, "authenticated": False}.get(key, default))
+        mock_session_state.get = MagicMock(
+            side_effect=lambda key, default: {
+                "ENABLE_AUTHENTICATION": True,
+                "authenticated": False,
+            }.get(key, default)
+        )
         mock_session_state.authenticated = False
         mock_st.session_state = mock_session_state
 
@@ -69,7 +74,9 @@ class TestAuthModule:
     def test_is_authenticated_missing_key(self, mock_st):
         """Test is_authenticated returns False when key is missing"""
         mock_session_state = MagicMock()
-        mock_session_state.get = MagicMock(side_effect=lambda key, default: {"ENABLE_AUTHENTICATION": True}.get(key, default))
+        mock_session_state.get = MagicMock(
+            side_effect=lambda key, default: {"ENABLE_AUTHENTICATION": True}.get(key, default)
+        )
         mock_st.session_state = mock_session_state
 
         result = is_authenticated()
@@ -82,7 +89,11 @@ class TestAuthModule:
     def test_show_user_info(self, mock_get_user_info, mock_is_authenticated, mock_st):
         """Test show_user_info displays user information"""
         mock_is_authenticated.return_value = True
-        mock_get_user_info.return_value = {"name": "test_user", "role": "admin", "permissions": ["read", "write"]}
+        mock_get_user_info.return_value = {
+            "name": "test_user",
+            "role": "admin",
+            "permissions": ["read", "write"],
+        }
         mock_st.session_state = {"username": "test_user", "role": "admin"}
         mock_st.sidebar = MagicMock()
         mock_st.sidebar.markdown = MagicMock()

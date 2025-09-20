@@ -22,9 +22,9 @@ class TestWidowImport:
         manager = WidowImportManager()
 
         assert manager is not None
-        assert hasattr(manager, 'sheet_id')
-        assert hasattr(manager, 'tab_name')
-        assert hasattr(manager, 'required_columns')
+        assert hasattr(manager, "sheet_id")
+        assert hasattr(manager, "tab_name")
+        assert hasattr(manager, "required_columns")
 
     @patch("widow_import.st")
     def test_create_widow_import_section(self, mock_st):
@@ -42,11 +42,9 @@ class TestWidowImport:
     @patch("widow_import.read_widow_support_data")
     def test_widow_import_manager_load_data(self, mock_read_data, mock_st):
         """Test WidowImportManager load_widow_data method"""
-        mock_read_data.return_value = pd.DataFrame({
-            "שם הבחורה": ["Widow 1", "Widow 2"],
-            "כמה ילדים": [2, 3],
-            "סכום חודשי": [1000, 2000]
-        })
+        mock_read_data.return_value = pd.DataFrame(
+            {"שם הבחורה": ["Widow 1", "Widow 2"], "כמה ילדים": [2, 3], "סכום חודשי": [1000, 2000]}
+        )
         mock_st.error = MagicMock()
 
         manager = WidowImportManager()
@@ -137,7 +135,7 @@ class TestWidowImport:
         """Test WidowImportManager has expected methods"""
         manager = WidowImportManager()
 
-        assert hasattr(manager, 'load_widow_data')
+        assert hasattr(manager, "load_widow_data")
         assert callable(manager.load_widow_data)
 
     @patch("widow_import.st")
@@ -157,14 +155,16 @@ class TestWidowImport:
     @patch("widow_import.read_widow_support_data")
     def test_widow_import_with_valid_data(self, mock_read_data, mock_st):
         """Test widow import with valid data"""
-        valid_data = pd.DataFrame({
-            "שם הבחורה": ["Widow 1", "Widow 2"],
-            "כמה ילדים": [2, 3],
-            "סכום חודשי": [1000, 2000],
-            "מתי התחילה לקבל": ["2024-01-01", "2024-02-01"],
-            "עד מתי תחת תורם": ["2025-01-01", "2025-02-01"],
-            "כמה מקבלת בכל חודש": [1000, 2000]
-        })
+        valid_data = pd.DataFrame(
+            {
+                "שם הבחורה": ["Widow 1", "Widow 2"],
+                "כמה ילדים": [2, 3],
+                "סכום חודשי": [1000, 2000],
+                "מתי התחילה לקבל": ["2024-01-01", "2024-02-01"],
+                "עד מתי תחת תורם": ["2025-01-01", "2025-02-01"],
+                "כמה מקבלת בכל חודש": [1000, 2000],
+            }
+        )
         mock_read_data.return_value = valid_data
         mock_st.error = MagicMock()
 

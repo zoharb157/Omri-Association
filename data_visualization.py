@@ -121,13 +121,17 @@ def create_monthly_trends(expenses_df: pd.DataFrame, donations_df: pd.DataFrame)
             expenses_df_copy = expenses_df.copy()
             expenses_df_copy["תאריך"] = pd.to_datetime(expenses_df_copy["תאריך"], errors="coerce")
             # Convert amount column to numeric, handling mixed data types
-            expenses_df_copy[expenses_amount_col] = pd.to_numeric(expenses_df_copy[expenses_amount_col], errors='coerce').fillna(0)
+            expenses_df_copy[expenses_amount_col] = pd.to_numeric(
+                expenses_df_copy[expenses_amount_col], errors="coerce"
+            ).fillna(0)
             valid_expenses = expenses_df_copy.dropna(subset=["תאריך"])
 
             donations_df_copy = donations_df.copy()
             donations_df_copy["תאריך"] = pd.to_datetime(donations_df_copy["תאריך"], errors="coerce")
             # Convert amount column to numeric, handling mixed data types
-            donations_df_copy[donations_amount_col] = pd.to_numeric(donations_df_copy[donations_amount_col], errors='coerce').fillna(0)
+            donations_df_copy[donations_amount_col] = pd.to_numeric(
+                donations_df_copy[donations_amount_col], errors="coerce"
+            ).fillna(0)
             valid_donations = donations_df_copy.dropna(subset=["תאריך"])
 
             if valid_expenses.empty or valid_donations.empty:
@@ -224,7 +228,7 @@ def create_budget_distribution_chart(df: pd.DataFrame):
 
     try:
         # Convert amount column to numeric, handling mixed data types
-        df[amount_col] = pd.to_numeric(df[amount_col], errors='coerce').fillna(0)
+        df[amount_col] = pd.to_numeric(df[amount_col], errors="coerce").fillna(0)
 
         # Group by name and calculate totals
         budget_data = df.groupby(name_col)[amount_col].sum().reset_index()
@@ -304,7 +308,7 @@ def create_widows_support_chart(df: pd.DataFrame):
         return None
     try:
         # Convert amount column to numeric, handling mixed data types
-        df["סכום חודשי"] = pd.to_numeric(df["סכום חודשי"], errors='coerce').fillna(0)
+        df["סכום חודשי"] = pd.to_numeric(df["סכום חודשי"], errors="coerce").fillna(0)
 
         # Group by name and calculate totals
         support_data = df.groupby(name_col)["סכום חודשי"].sum().reset_index()
@@ -378,7 +382,9 @@ def create_donor_contribution_chart(donations_df: pd.DataFrame):
             return None
 
         # Convert amount column to numeric, handling mixed data types
-        donations_df[amount_col] = pd.to_numeric(donations_df[amount_col], errors='coerce').fillna(0)
+        donations_df[amount_col] = pd.to_numeric(donations_df[amount_col], errors="coerce").fillna(
+            0
+        )
 
         # Calculate total donations by donor
         donor_totals = donations_df.groupby(name_col)[amount_col].sum().sort_values(ascending=False)

@@ -112,9 +112,13 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
 
         # Convert amount columns to numeric, handling mixed data types
         if expense_amount_col:
-            expenses_df[expense_amount_col] = pd.to_numeric(expenses_df[expense_amount_col], errors="coerce").fillna(0)
+            expenses_df[expense_amount_col] = pd.to_numeric(
+                expenses_df[expense_amount_col], errors="coerce"
+            ).fillna(0)
         if donation_amount_col:
-            donations_df[donation_amount_col] = pd.to_numeric(donations_df[donation_amount_col], errors="coerce").fillna(0)
+            donations_df[donation_amount_col] = pd.to_numeric(
+                donations_df[donation_amount_col], errors="coerce"
+            ).fillna(0)
 
         total_expenses = expenses_df[expense_amount_col].sum() if expense_amount_col else 0
         total_donations = donations_df[donation_amount_col].sum() if donation_amount_col else 0

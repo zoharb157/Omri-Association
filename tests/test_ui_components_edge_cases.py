@@ -181,10 +181,16 @@ class TestUIComponentsEdgeCases:
     @patch("ui.dashboard_layout.st")
     def test_create_main_tabs_with_errors(self, mock_st):
         """Test create main tabs with errors"""
-        mock_st.tabs = MagicMock(return_value=(
-            MagicMock(), MagicMock(), MagicMock(),
-            MagicMock(), MagicMock(), MagicMock()
-        ))
+        mock_st.tabs = MagicMock(
+            return_value=(
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+            )
+        )
 
         # Should not raise exceptions
         tabs = create_main_tabs()

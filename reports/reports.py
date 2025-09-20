@@ -185,7 +185,9 @@ def generate_widows_report(widows_df):
         if "שם " in widows_df.columns and "סכום חודשי" in widows_df.columns:
             # Convert amount column to numeric, handling mixed data types
             widows_df_copy = widows_df.copy()
-            widows_df_copy["סכום חודשי"] = pd.to_numeric(widows_df_copy["סכום חודשי"], errors='coerce').fillna(0)
+            widows_df_copy["סכום חודשי"] = pd.to_numeric(
+                widows_df_copy["סכום חודשי"], errors="coerce"
+            ).fillna(0)
             widows_sorted = widows_df_copy.sort_values("סכום חודשי", ascending=False)
             logger.info(f"Processing {len(widows_sorted)} widows")
             for _, row in widows_sorted.iterrows():
@@ -245,8 +247,12 @@ def generate_donor_report(donations_df):
         if "שם" in donations_df.columns and "שקלים" in donations_df.columns:
             # Convert amount column to numeric, handling mixed data types
             donations_df_copy = donations_df.copy()
-            donations_df_copy["שקלים"] = pd.to_numeric(donations_df_copy["שקלים"], errors='coerce').fillna(0)
-            donor_totals = donations_df_copy.groupby("שם")["שקלים"].sum().sort_values(ascending=False)
+            donations_df_copy["שקלים"] = pd.to_numeric(
+                donations_df_copy["שקלים"], errors="coerce"
+            ).fillna(0)
+            donor_totals = (
+                donations_df_copy.groupby("שם")["שקלים"].sum().sort_values(ascending=False)
+            )
             total_donations = donations_df_copy["שקלים"].sum()
             logger.info(f"Total donations: {total_donations}")
             logger.info(f"Number of donors: {len(donor_totals)}")
@@ -320,10 +326,12 @@ def generate_budget_report(expenses_df, donations_df):
             # Convert date column to datetime and amount column to numeric
             expenses_df_copy = expenses_df.copy()
             expenses_df_copy["תאריך"] = pd.to_datetime(expenses_df_copy["תאריך"], errors="coerce")
-            expenses_df_copy["שקלים"] = pd.to_numeric(expenses_df_copy["שקלים"], errors='coerce').fillna(0)
-            monthly_expenses = expenses_df_copy.groupby(expenses_df_copy["תאריך"].dt.strftime("%Y-%m"))[
-                "שקלים"
-            ].sum()
+            expenses_df_copy["שקלים"] = pd.to_numeric(
+                expenses_df_copy["שקלים"], errors="coerce"
+            ).fillna(0)
+            monthly_expenses = expenses_df_copy.groupby(
+                expenses_df_copy["תאריך"].dt.strftime("%Y-%m")
+            )["שקלים"].sum()
             logger.info(f"Monthly expenses: {monthly_expenses.to_dict()}")
         else:
             monthly_expenses = pd.Series()
@@ -333,10 +341,12 @@ def generate_budget_report(expenses_df, donations_df):
             # Convert date column to datetime and amount column to numeric
             donations_df_copy = donations_df.copy()
             donations_df_copy["תאריך"] = pd.to_datetime(donations_df_copy["תאריך"], errors="coerce")
-            donations_df_copy["שקלים"] = pd.to_numeric(donations_df_copy["שקלים"], errors='coerce').fillna(0)
-            monthly_donations = donations_df_copy.groupby(donations_df_copy["תאריך"].dt.strftime("%Y-%m"))[
-                "שקלים"
-            ].sum()
+            donations_df_copy["שקלים"] = pd.to_numeric(
+                donations_df_copy["שקלים"], errors="coerce"
+            ).fillna(0)
+            monthly_donations = donations_df_copy.groupby(
+                donations_df_copy["תאריך"].dt.strftime("%Y-%m")
+            )["שקלים"].sum()
             logger.info(f"Monthly donations: {monthly_donations.to_dict()}")
         else:
             monthly_donations = pd.Series()
@@ -358,14 +368,18 @@ def generate_budget_report(expenses_df, donations_df):
         # Use the converted data for totals
         if "שקלים" in expenses_df.columns:
             expenses_df_copy = expenses_df.copy()
-            expenses_df_copy["שקלים"] = pd.to_numeric(expenses_df_copy["שקלים"], errors='coerce').fillna(0)
+            expenses_df_copy["שקלים"] = pd.to_numeric(
+                expenses_df_copy["שקלים"], errors="coerce"
+            ).fillna(0)
             total_expenses = expenses_df_copy["שקלים"].sum()
         else:
             total_expenses = 0
 
         if "שקלים" in donations_df.columns:
             donations_df_copy = donations_df.copy()
-            donations_df_copy["שקלים"] = pd.to_numeric(donations_df_copy["שקלים"], errors='coerce').fillna(0)
+            donations_df_copy["שקלים"] = pd.to_numeric(
+                donations_df_copy["שקלים"], errors="coerce"
+            ).fillna(0)
             total_donations = donations_df_copy["שקלים"].sum()
         else:
             total_donations = 0

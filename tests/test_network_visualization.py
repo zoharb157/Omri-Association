@@ -50,7 +50,12 @@ class TestNetworkVisualization:
         create_network_section(expenses_df, donations_df, almanot_df, investors_df)
 
         # Test 2: Only connected relationships
-        mock_st.checkbox.side_effect = [True, False, False, True]  # show_connected=True, others=False
+        mock_st.checkbox.side_effect = [
+            True,
+            False,
+            False,
+            True,
+        ]  # show_connected=True, others=False
         create_network_section(expenses_df, donations_df, almanot_df, investors_df)
 
         # Test 3: Only unconnected donors
@@ -97,7 +102,7 @@ class TestNetworkVisualization:
                 sample_expenses_df(),
                 sample_donations_df(),
                 sample_almanot_df(),
-                sample_investors_df()
+                sample_investors_df(),
             )
 
     @patch("ui.dashboard_sections.st")
@@ -192,23 +197,16 @@ class TestNetworkVisualization:
         mock_st.number_input = MagicMock(return_value=0)
 
         # Test with invalid data types
-        expenses_df = pd.DataFrame({
-            "שקלים": ["invalid", "200", None],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
-        })
-        donations_df = pd.DataFrame({
-            "שקלים": [300, "invalid", None],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
-        })
-        almanot_df = pd.DataFrame({
-            "שם": ["Widow1", "Widow2"],
-            "סכום חודשי": ["invalid", 2000],
-            "גיל": [65, 70]
-        })
-        investors_df = pd.DataFrame({
-            "שם": ["Investor1", "Investor2"],
-            "סכום": [10000, "invalid"]
-        })
+        expenses_df = pd.DataFrame(
+            {"שקלים": ["invalid", "200", None], "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]}
+        )
+        donations_df = pd.DataFrame(
+            {"שקלים": [300, "invalid", None], "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]}
+        )
+        almanot_df = pd.DataFrame(
+            {"שם": ["Widow1", "Widow2"], "סכום חודשי": ["invalid", 2000], "גיל": [65, 70]}
+        )
+        investors_df = pd.DataFrame({"שם": ["Investor1", "Investor2"], "סכום": [10000, "invalid"]})
 
         # Should handle invalid data types gracefully
         create_network_section(expenses_df, donations_df, almanot_df, investors_df)
@@ -240,23 +238,22 @@ class TestNetworkVisualization:
         mock_st.number_input = MagicMock(return_value=0)
 
         # Create large datasets
-        large_expenses = pd.DataFrame({
-            "שקלים": [100] * 1000,
-            "תאריך": pd.date_range("2024-01-01", periods=1000, freq="D")
-        })
-        large_donations = pd.DataFrame({
-            "שקלים": [200] * 1000,
-            "תאריך": pd.date_range("2024-01-01", periods=1000, freq="D")
-        })
-        large_almanot = pd.DataFrame({
-            "שם": [f"Widow{i}" for i in range(1000)],
-            "סכום חודשי": [1500] * 1000,
-            "גיל": [65] * 1000
-        })
-        large_investors = pd.DataFrame({
-            "שם": [f"Investor{i}" for i in range(1000)],
-            "סכום": [10000] * 1000
-        })
+        large_expenses = pd.DataFrame(
+            {"שקלים": [100] * 1000, "תאריך": pd.date_range("2024-01-01", periods=1000, freq="D")}
+        )
+        large_donations = pd.DataFrame(
+            {"שקלים": [200] * 1000, "תאריך": pd.date_range("2024-01-01", periods=1000, freq="D")}
+        )
+        large_almanot = pd.DataFrame(
+            {
+                "שם": [f"Widow{i}" for i in range(1000)],
+                "סכום חודשי": [1500] * 1000,
+                "גיל": [65] * 1000,
+            }
+        )
+        large_investors = pd.DataFrame(
+            {"שם": [f"Investor{i}" for i in range(1000)], "סכום": [10000] * 1000}
+        )
 
         # Should handle large datasets without performance issues
         create_network_section(large_expenses, large_donations, large_almanot, large_investors)
