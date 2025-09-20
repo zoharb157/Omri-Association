@@ -31,9 +31,6 @@ st.markdown("<!-- Dashboard Version: 2025-01-17-v3 - ALTERNATIVE ENTRY -->", uns
 def main():
     """Main entry point for the dashboard - Alternative entry point"""
     try:
-        # Show version info for debugging
-        st.info("🔄 Dashboard v2025-01-17-v3 - Modern UI Loading (Alternative Entry)...")
-        
         # Import and run the working dashboard with all tabs
         from ui.dashboard_core import run_dashboard
         run_dashboard()

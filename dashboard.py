@@ -38,9 +38,6 @@ if st.session_state.get('force_refresh', False):
 def main():
     """Main entry point for the dashboard - Updated 2025-01-17"""
     try:
-        # Show version info for debugging
-        st.info("🔄 Dashboard v2025-01-17-v3 - Modern UI Loading...")
-        
         # Import and run the working dashboard with all tabs
         from ui.dashboard_core import run_dashboard
 
