@@ -31,7 +31,7 @@ st.markdown(get_global_css(), unsafe_allow_html=True)
 st.markdown("<!-- Dashboard Version: 2025-01-17-v3 - FORCE DEPLOY -->", unsafe_allow_html=True)
 
 # Force deployment refresh - this should trigger the modern UI
-if st.session_state.get('force_refresh', False):
+if st.session_state.get("force_refresh", False):
     st.rerun()
 
 
