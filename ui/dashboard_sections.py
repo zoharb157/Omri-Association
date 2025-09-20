@@ -422,28 +422,9 @@ def create_network_section(
             help="הצג אלמנות שאין להן קשרים לתורמים"
         )
 
-    # Additional filter options
-    st.markdown("#### 🎛️ אפשרויות נוספות")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        min_support_amount = st.number_input(
-            "סכום תמיכה מינימלי",
-            min_value=0,
-            value=0,
-            step=100,
-            help="הצג רק אלמנות עם סכום תמיכה מעל הסכום הנבחר"
-        )
-    
-    with col2:
-        show_labels = st.checkbox(
-            "הצג תוויות",
-            value=True,
-            help="הצג שמות על הצמתים ברשת"
-        )
-    
-    add_spacing(1)
+    # Set default values for removed filters
+    min_support_amount = 0
+    show_labels = True
 
     try:
         # Clean monthly support data - ensure all values are numeric and NaN is treated as 0
