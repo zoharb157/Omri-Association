@@ -10,7 +10,7 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 import streamlit as st
 
-from config import Config
+# Config import moved to avoid circular imports
 
 from alerts import (
     check_budget_alerts,
@@ -41,7 +41,7 @@ from ui.dashboard_sections import (
 )
 
 
-@st.cache_data(ttl=Config.DATA_CACHE_TTL)  # Cache for 5 minutes
+@st.cache_data(ttl=300)  # Cache for 5 minutes
 def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load all dashboard data from Google Sheets with enhanced loading states and error handling"""
     try:
@@ -101,7 +101,7 @@ def load_dashboard_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.
         return None, None, None, None
 
 
-@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+@st.cache_data(ttl=600)  # Cache for 10 minutes
 def process_dashboard_data(
     expenses_df: pd.DataFrame, donations_df: pd.DataFrame, almanot_df: pd.DataFrame
 ) -> Tuple[Dict, Dict, Dict]:

@@ -9,12 +9,10 @@ from google.oauth2.service_account import Credentials
 # Define the scope
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
-from config import Config
-
 # Get configuration from environment variables
-SERVICE_ACCOUNT_FILE = Config.SERVICE_ACCOUNT_FILE
-SPREADSHEET_ID = Config.SPREADSHEET_ID
-WIDOW_SPREADSHEET_ID = Config.WIDOW_SPREADSHEET_ID
+SERVICE_ACCOUNT_FILE = os.getenv('SERVICE_ACCOUNT_FILE', 'service_account.json')
+SPREADSHEET_ID = os.getenv('SPREADSHEET_ID', '1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo')
+WIDOW_SPREADSHEET_ID = os.getenv('WIDOW_SPREADSHEET_ID', '1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8')
 
 # Initialize Google Sheets client
 gc = None
@@ -49,7 +47,7 @@ def show_service_account_upload():
 3. הדבק את תוכן המפתח כאן:
 """
     )
-    key_input = st.text_area("הדבק כאן את תוכן קובץ המפתח (JSON)", height=Config.UI.SERVICE_ACCOUNT_TEXTAREA_HEIGHT)
+    key_input = st.text_area("הדבק כאן את תוכן קובץ המפתח (JSON)", height=300)
     if st.button("בדוק ושמור מפתח חדש"):
         import json
 

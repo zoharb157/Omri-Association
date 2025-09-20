@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Union
 import pandas as pd
 import streamlit as st
 
-from config import Config
+# Config import moved to avoid circular imports
 
 
 def _get_amount_column(df: pd.DataFrame) -> Optional[str]:
@@ -28,7 +28,7 @@ def _get_name_column(df: pd.DataFrame) -> Optional[str]:
     return None
 
 
-@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+@st.cache_data(ttl=600)  # Cache for 10 minutes
 def calculate_monthly_averages(df: pd.DataFrame, value_column: str = "שקלים") -> Dict[str, Union[int, float]]:
     """Calculate monthly averages and statistics"""
     if not isinstance(df, pd.DataFrame) or value_column not in df.columns or df.empty:
@@ -105,7 +105,7 @@ def calculate_total_support(df: pd.DataFrame, value_column: str = "סכום חו
         }
 
 
-@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+@st.cache_data(ttl=600)  # Cache for 10 minutes
 def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFrame) -> dict:
     """Calculate monthly budget statistics"""
     try:
@@ -224,7 +224,7 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
         }
 
 
-@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+@st.cache_data(ttl=600)  # Cache for 10 minutes
 def calculate_donor_statistics(df: pd.DataFrame, value_column: str = "שקלים") -> Dict[str, Union[int, float, List[Dict[str, Union[str, int, float]]]]]:
     """Calculate donor statistics"""
     if not isinstance(df, pd.DataFrame) or df.empty:
@@ -342,7 +342,7 @@ def calculate_expense_statistics(df: pd.DataFrame, value_column: str = "שקלי
         }
 
 
-@st.cache_data(ttl=Config.STATS_CACHE_TTL)  # Cache for 10 minutes
+@st.cache_data(ttl=600)  # Cache for 10 minutes
 def calculate_widow_statistics(df: pd.DataFrame, value_column: str = "סכום חודשי") -> dict:
     """Calculate widow statistics with detailed analysis"""
     if not isinstance(df, pd.DataFrame) or df.empty:
