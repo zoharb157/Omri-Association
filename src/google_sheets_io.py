@@ -34,10 +34,12 @@ def get_google_sheets_client():
             logging.info(f"Service account in secrets: {'service_account' in st.secrets}")
         
         # Try to get service account from Streamlit secrets first
-        if hasattr(st, "secrets") and "service_account" in st.secrets:
+        if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
             import json
 
-            service_account_info = json.loads(st.secrets["service_account"])
+            # Try service_account first, then fallback to secrets
+            secret_key = "service_account" if "service_account" in st.secrets else "secrets"
+            service_account_info = json.loads(st.secrets[secret_key])
             creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
             gc = gspread.authorize(creds)
             logging.info(
@@ -121,8 +123,10 @@ def check_service_account_validity():
             logging.info(f"Validation - Service account in secrets: {'service_account' in st.secrets}")
         
         # Check Streamlit secrets first
-        if hasattr(st, "secrets") and "service_account" in st.secrets:
-            key_data = json.loads(st.secrets["service_account"])
+        if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
+            # Try service_account first, then fallback to secrets
+            secret_key = "service_account" if "service_account" in st.secrets else "secrets"
+            key_data = json.loads(st.secrets[secret_key])
             # Basic checks
             required_fields = ["type", "private_key", "client_email", "token_uri"]
             for field in required_fields:
