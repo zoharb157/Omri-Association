@@ -51,7 +51,7 @@ def create_metrics_grid(metrics: list, columns: int = 4):
                 title=metric.get("title", ""),
                 value=metric.get("value", ""),
                 delta=metric.get("delta", None),
-                help_text=metric.get("help", None)
+                help_text=metric.get("help", None),
             )
 
 
@@ -62,7 +62,7 @@ def create_metric_card(title: str, value: str, delta: str = None, help_text: str
         delta_class = "positive" if delta.startswith("+") else "negative"
         delta_html = f'<div class="metric-delta {delta_class}">{delta}</div>'
 
-    help_html = f'<div class="metric-help">{help_text}</div>' if help_text else ''
+    help_html = f'<div class="metric-help">{help_text}</div>' if help_text else ""
 
     card_html = f"""
     <div class="metric-card">

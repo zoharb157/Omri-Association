@@ -29,7 +29,9 @@ def _get_name_column(df: pd.DataFrame) -> Optional[str]:
 
 
 @st.cache_data(ttl=600)  # Cache for 10 minutes
-def calculate_monthly_averages(df: pd.DataFrame, value_column: str = "שקלים") -> Dict[str, Union[int, float]]:
+def calculate_monthly_averages(
+    df: pd.DataFrame, value_column: str = "שקלים"
+) -> Dict[str, Union[int, float]]:
     """Calculate monthly averages and statistics"""
     if not isinstance(df, pd.DataFrame) or value_column not in df.columns or df.empty:
         return {"monthly_avg": 0, "min_monthly": 0, "max_monthly": 0, "total_months": 0}
@@ -225,7 +227,9 @@ def calculate_monthly_budget(expenses_df: pd.DataFrame, donations_df: pd.DataFra
 
 
 @st.cache_data(ttl=600)  # Cache for 10 minutes
-def calculate_donor_statistics(df: pd.DataFrame, value_column: str = "שקלים") -> Dict[str, Union[int, float, List[Dict[str, Union[str, int, float]]]]]:
+def calculate_donor_statistics(
+    df: pd.DataFrame, value_column: str = "שקלים"
+) -> Dict[str, Union[int, float, List[Dict[str, Union[str, int, float]]]]]:
     """Calculate donor statistics"""
     if not isinstance(df, pd.DataFrame) or df.empty:
         return {

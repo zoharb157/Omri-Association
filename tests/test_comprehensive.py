@@ -15,28 +15,35 @@ import pandas as pd
 # Add the current directory to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 class TestDataIntegrity(unittest.TestCase):
     """Test data integrity and validation"""
 
     def setUp(self):
         """Set up test data"""
-        self.sample_expenses = pd.DataFrame({
-            "שקלים": [100, 200, 300, 400, 500],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
-            "קטגוריה": ["אוכל", "דלק", "תחבורה", "אוכל", "דלק"]
-        })
+        self.sample_expenses = pd.DataFrame(
+            {
+                "שקלים": [100, 200, 300, 400, 500],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
+                "קטגוריה": ["אוכל", "דלק", "תחבורה", "אוכל", "דלק"],
+            }
+        )
 
-        self.sample_donations = pd.DataFrame({
-            "שם": ["תורם א", "תורם ב", "תורם ג", "תורם ד", "תורם ה"],
-            "שקלים": [300, 400, 500, 600, 700],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
-        })
+        self.sample_donations = pd.DataFrame(
+            {
+                "שם": ["תורם א", "תורם ב", "תורם ג", "תורם ד", "תורם ה"],
+                "שקלים": [300, 400, 500, 600, 700],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
+            }
+        )
 
-        self.sample_almanot = pd.DataFrame({
-            "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג", "אלמנה ד", "אלמנה ה"],
-            "סכום חודשי": [1000, 2000, 3000, 4000, 5000],
-            "עיר": ["תל אביב", "ירושלים", "חיפה", "תל אביב", "ירושלים"]
-        })
+        self.sample_almanot = pd.DataFrame(
+            {
+                "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג", "אלמנה ד", "אלמנה ה"],
+                "סכום חודשי": [1000, 2000, 3000, 4000, 5000],
+                "עיר": ["תל אביב", "ירושלים", "חיפה", "תל אביב", "ירושלים"],
+            }
+        )
 
     def test_dataframe_creation(self):
         """Test DataFrame creation and basic operations"""
@@ -63,11 +70,13 @@ class TestDataIntegrity(unittest.TestCase):
     def test_missing_data_handling(self):
         """Test handling of missing data"""
         # Create DataFrame with missing values
-        df_with_nulls = pd.DataFrame({
-            "שקלים": [100, None, 300, 400, None],
-            "תאריך": ["2024-01-01", "2024-01-02", None, "2024-01-04", "2024-01-05"],
-            "קטגוריה": ["אוכל", "דלק", "תחבורה", None, "דלק"]
-        })
+        df_with_nulls = pd.DataFrame(
+            {
+                "שקלים": [100, None, 300, 400, None],
+                "תאריך": ["2024-01-01", "2024-01-02", None, "2024-01-04", "2024-01-05"],
+                "קטגוריה": ["אוכל", "דלק", "תחבורה", None, "דלק"],
+            }
+        )
 
         # Test null handling
         self.assertTrue(df_with_nulls["שקלים"].isnull().any())
@@ -90,28 +99,35 @@ class TestDataIntegrity(unittest.TestCase):
         self.assertIn("דלק", category_groups.index)
         self.assertIn("תחבורה", category_groups.index)
 
+
 class TestDataProcessing(unittest.TestCase):
     """Test data processing functions"""
 
     def setUp(self):
         """Set up test data"""
-        self.expenses_df = pd.DataFrame({
-            "שקלים": [100, 200, 300, 400, 500],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
-            "קטגוריה": ["אוכל", "דלק", "תחבורה", "אוכל", "דלק"]
-        })
+        self.expenses_df = pd.DataFrame(
+            {
+                "שקלים": [100, 200, 300, 400, 500],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
+                "קטגוריה": ["אוכל", "דלק", "תחבורה", "אוכל", "דלק"],
+            }
+        )
 
-        self.donations_df = pd.DataFrame({
-            "שם": ["תורם א", "תורם ב", "תורם ג", "תורם ד", "תורם ה"],
-            "שקלים": [300, 400, 500, 600, 700],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
-        })
+        self.donations_df = pd.DataFrame(
+            {
+                "שם": ["תורם א", "תורם ב", "תורם ג", "תורם ד", "תורם ה"],
+                "שקלים": [300, 400, 500, 600, 700],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
+            }
+        )
 
-        self.almanot_df = pd.DataFrame({
-            "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג", "אלמנה ד", "אלמנה ה"],
-            "סכום חודשי": [1000, 2000, 3000, 4000, 5000],
-            "עיר": ["תל אביב", "ירושלים", "חיפה", "תל אביב", "ירושלים"]
-        })
+        self.almanot_df = pd.DataFrame(
+            {
+                "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג", "אלמנה ד", "אלמנה ה"],
+                "סכום חודשי": [1000, 2000, 3000, 4000, 5000],
+                "עיר": ["תל אביב", "ירושלים", "חיפה", "תל אביב", "ירושלים"],
+            }
+        )
 
     def test_calculate_monthly_budget(self):
         """Test monthly budget calculation"""
@@ -184,28 +200,35 @@ class TestDataProcessing(unittest.TestCase):
         except Exception as e:
             self.fail(f"calculate_widow_statistics failed: {e}")
 
+
 class TestDataVisualization(unittest.TestCase):
     """Test data visualization functions"""
 
     def setUp(self):
         """Set up test data"""
-        self.expenses_df = pd.DataFrame({
-            "שקלים": [100, 200, 300, 400, 500],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
-            "קטגוריה": ["אוכל", "דלק", "תחבורה", "אוכל", "דלק"]
-        })
+        self.expenses_df = pd.DataFrame(
+            {
+                "שקלים": [100, 200, 300, 400, 500],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
+                "קטגוריה": ["אוכל", "דלק", "תחבורה", "אוכל", "דלק"],
+            }
+        )
 
-        self.donations_df = pd.DataFrame({
-            "שם": ["תורם א", "תורם ב", "תורם ג", "תורם ד", "תורם ה"],
-            "שקלים": [300, 400, 500, 600, 700],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
-        })
+        self.donations_df = pd.DataFrame(
+            {
+                "שם": ["תורם א", "תורם ב", "תורם ג", "תורם ד", "תורם ה"],
+                "שקלים": [300, 400, 500, 600, 700],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
+            }
+        )
 
-        self.almanot_df = pd.DataFrame({
-            "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג", "אלמנה ד", "אלמנה ה"],
-            "סכום חודשי": [1000, 2000, 3000, 4000, 5000],
-            "עיר": ["תל אביב", "ירושלים", "חיפה", "תל אביב", "ירושלים"]
-        })
+        self.almanot_df = pd.DataFrame(
+            {
+                "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג", "אלמנה ד", "אלמנה ה"],
+                "סכום חודשי": [1000, 2000, 3000, 4000, 5000],
+                "עיר": ["תל אביב", "ירושלים", "חיפה", "תל אביב", "ירושלים"],
+            }
+        )
 
     def test_create_monthly_trends(self):
         """Test monthly trends chart creation"""
@@ -213,12 +236,11 @@ class TestDataVisualization(unittest.TestCase):
             from src.data_visualization import create_monthly_trends
 
             # Mock streamlit components
-            with patch('streamlit.error'), \
-                 patch('streamlit.markdown'):
+            with patch("streamlit.error"), patch("streamlit.markdown"):
                 result = create_monthly_trends(self.expenses_df, self.donations_df)
 
                 # Should return None or a plotly figure
-                self.assertTrue(result is None or hasattr(result, 'data'))
+                self.assertTrue(result is None or hasattr(result, "data"))
 
         except Exception as e:
             self.fail(f"create_monthly_trends failed: {e}")
@@ -229,12 +251,11 @@ class TestDataVisualization(unittest.TestCase):
             from src.data_visualization import create_budget_distribution_chart
 
             # Mock streamlit components
-            with patch('streamlit.error'), \
-                 patch('streamlit.markdown'):
+            with patch("streamlit.error"), patch("streamlit.markdown"):
                 result = create_budget_distribution_chart(self.expenses_df)
 
                 # Should return None or a plotly figure
-                self.assertTrue(result is None or hasattr(result, 'data'))
+                self.assertTrue(result is None or hasattr(result, "data"))
 
         except Exception as e:
             self.fail(f"create_budget_distribution_chart failed: {e}")
@@ -245,12 +266,11 @@ class TestDataVisualization(unittest.TestCase):
             from src.data_visualization import create_donor_contribution_chart
 
             # Mock streamlit components
-            with patch('streamlit.error'), \
-                 patch('streamlit.markdown'):
+            with patch("streamlit.error"), patch("streamlit.markdown"):
                 result = create_donor_contribution_chart(self.donations_df)
 
                 # Should return None or a plotly figure
-                self.assertTrue(result is None or hasattr(result, 'data'))
+                self.assertTrue(result is None or hasattr(result, "data"))
 
         except Exception as e:
             self.fail(f"create_donor_contribution_chart failed: {e}")
@@ -261,15 +281,15 @@ class TestDataVisualization(unittest.TestCase):
             from src.data_visualization import create_widows_support_chart
 
             # Mock streamlit components
-            with patch('streamlit.error'), \
-                 patch('streamlit.markdown'):
+            with patch("streamlit.error"), patch("streamlit.markdown"):
                 result = create_widows_support_chart(self.almanot_df)
 
                 # Should return None or a plotly figure
-                self.assertTrue(result is None or hasattr(result, 'data'))
+                self.assertTrue(result is None or hasattr(result, "data"))
 
         except Exception as e:
             self.fail(f"create_widows_support_chart failed: {e}")
+
 
 class TestServices(unittest.TestCase):
     """Test services functionality"""
@@ -287,6 +307,7 @@ class TestServices(unittest.TestCase):
             self.assertTrue(True, "google_sheets_io imports successfully")
         except Exception as e:
             self.fail(f"google_sheets_io import failed: {e}")
+
 
 class TestErrorHandling(unittest.TestCase):
     """Test error handling and edge cases"""
@@ -319,16 +340,19 @@ class TestErrorHandling(unittest.TestCase):
         df_filled = df.fillna(0)
         self.assertFalse(df_filled["values"].isnull().any())
 
+
 class TestPerformance(unittest.TestCase):
     """Test performance and efficiency"""
 
     def test_large_dataframe_operations(self):
         """Test operations on larger DataFrames"""
         # Create larger DataFrame
-        large_df = pd.DataFrame({
-            "values": range(1000),
-            "categories": (["A", "B", "C"] * 334)[:1000]  # Exactly 1000 rows
-        })
+        large_df = pd.DataFrame(
+            {
+                "values": range(1000),
+                "categories": (["A", "B", "C"] * 334)[:1000],  # Exactly 1000 rows
+            }
+        )
 
         # Test operations
         self.assertEqual(len(large_df), 1000)
@@ -341,15 +365,13 @@ class TestPerformance(unittest.TestCase):
     def test_memory_usage(self):
         """Test memory usage of operations"""
         # Create DataFrame
-        df = pd.DataFrame({
-            "values": range(100),
-            "text": ["text"] * 100
-        })
+        df = pd.DataFrame({"values": range(100), "text": ["text"] * 100})
 
         # Test that operations don't modify original DataFrame
         original_sum = df["values"].sum()
         df.groupby("text")["values"].sum()
         self.assertEqual(df["values"].sum(), original_sum)
+
 
 def run_comprehensive_tests():
     """Run all comprehensive test suites"""
@@ -366,7 +388,7 @@ def run_comprehensive_tests():
         TestDataVisualization,
         TestServices,
         TestErrorHandling,
-        TestPerformance
+        TestPerformance,
     ]
 
     for test_class in test_classes:
@@ -379,18 +401,20 @@ def run_comprehensive_tests():
 
     # Print summary
     print("=" * 60)
-    print(f"📊 Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")
         for test, traceback in result.failures:
-            error_msg = traceback.split('AssertionError: ')[-1].split('\n')[0]
+            error_msg = traceback.split("AssertionError: ")[-1].split("\n")[0]
             print(f"  - {test}: {error_msg}")
 
     if result.errors:
         print(f"💥 {len(result.errors)} tests had errors:")
         for test, traceback in result.errors:
-            error_msg = traceback.split('\n')[-2]
+            error_msg = traceback.split("\n")[-2]
             print(f"  - {test}: {error_msg}")
 
     if result.wasSuccessful():
@@ -399,6 +423,7 @@ def run_comprehensive_tests():
     else:
         print("❌ Some tests failed. Check the errors above.")
         return False
+
 
 if __name__ == "__main__":
     success = run_comprehensive_tests()

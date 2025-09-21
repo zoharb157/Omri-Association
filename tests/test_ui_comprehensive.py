@@ -13,6 +13,7 @@ import pandas as pd
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 class TestTableDisplay(unittest.TestCase):
     """Test table display and formatting"""
 
@@ -23,7 +24,7 @@ class TestTableDisplay(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
             "סכום חודשי": [2000, 2000, 2000],
             "מספר ילדים": [3, 5, 4],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "נגה רוזנטל"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "נגה רוזנטל"],
         }
         df = pd.DataFrame(test_data)
 
@@ -43,7 +44,7 @@ class TestTableDisplay(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [2000, 2000],
             "מספר ילדים": [3, 5],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -61,7 +62,7 @@ class TestTableDisplay(unittest.TestCase):
             "תורם": hebrew_donors,
             "סכום חודשי": [2000, 2000, 2000],
             "מספר ילדים": [3, 5, 4],
-            "שם": hebrew_names
+            "שם": hebrew_names,
         }
         df = pd.DataFrame(test_data)
 
@@ -78,7 +79,7 @@ class TestTableDisplay(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
             "סכום חודשי": [2000, 1500, 3000],
             "מספר ילדים": [3, 5, 4],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "נגה רוזנטל"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "נגה רוזנטל"],
         }
         df = pd.DataFrame(test_data)
 
@@ -148,7 +149,7 @@ class TestDataVisualizationUI(unittest.TestCase):
             test_data = {
                 "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
                 "סכום": [2000, 1500, 1000],
-                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
             }
             df = pd.DataFrame(test_data)
 
@@ -166,7 +167,7 @@ class TestDataVisualizationUI(unittest.TestCase):
             test_data = {
                 "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
                 "סכום": [2000, 1500, 1000],
-                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
             }
             df = pd.DataFrame(test_data)
 
@@ -183,7 +184,7 @@ class TestDataVisualizationUI(unittest.TestCase):
 
             test_data = {
                 "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
-                "סכום": [2000, 1500, 1000]
+                "סכום": [2000, 1500, 1000],
             }
             df = pd.DataFrame(test_data)
 
@@ -219,7 +220,7 @@ class TestErrorHandlingUI(unittest.TestCase):
             # Test with DataFrame missing required columns
             test_data = {
                 "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
-                "תאריך": ["2024-01-01", "2024-01-02"]
+                "תאריך": ["2024-01-01", "2024-01-02"],
                 # Missing amount column
             }
             df = pd.DataFrame(test_data)
@@ -240,7 +241,7 @@ class TestErrorHandlingUI(unittest.TestCase):
             test_data = {
                 "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
                 "סכום": ["invalid", "data"],  # Should be numeric
-                "תאריך": ["2024-01-01", "2024-01-02"]
+                "תאריך": ["2024-01-01", "2024-01-02"],
             }
             df = pd.DataFrame(test_data)
 
@@ -262,7 +263,7 @@ class TestPerformanceUI(unittest.TestCase):
             "תורם": ["פלייטק"] * 1000,
             "סכום חודשי": [2000] * 1000,
             "מספר ילדים": [3] * 1000,
-            "שם": [f"אלמנה {i}" for i in range(1000)]
+            "שם": [f"אלמנה {i}" for i in range(1000)],
         }
         df = pd.DataFrame(large_data)
 
@@ -289,7 +290,7 @@ class TestPerformanceUI(unittest.TestCase):
             "תורם": ["פלייטק"] * 100,
             "סכום חודשי": [2000] * 100,
             "מספר ילדים": [3] * 100,
-            "שם": [f"אלמנה {i}" for i in range(100)]
+            "שם": [f"אלמנה {i}" for i in range(100)],
         }
         df = pd.DataFrame(test_data)
 
@@ -318,7 +319,7 @@ def run_ui_tests():
         TestUIComponents,
         TestDataVisualizationUI,
         TestErrorHandlingUI,
-        TestPerformanceUI
+        TestPerformanceUI,
     ]
 
     for test_class in test_classes:
@@ -331,18 +332,20 @@ def run_ui_tests():
 
     # Print results
     print("=" * 60)
-    print(f"📊 UI Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 UI Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")
         for test, traceback in result.failures:
-            error_msg = traceback.split('AssertionError: ')[-1].split('\n')[0]
+            error_msg = traceback.split("AssertionError: ")[-1].split("\n")[0]
             print(f"  - {test}: {error_msg}")
 
     if result.errors:
         print(f"❌ {len(result.errors)} tests had errors:")
         for test, traceback in result.errors:
-            error_msg = traceback.split('\n')[-2]
+            error_msg = traceback.split("\n")[-2]
             print(f"  - {test}: {error_msg}")
 
     if result.wasSuccessful():

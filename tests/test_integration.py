@@ -20,33 +20,41 @@ class TestDataFlowIntegration(unittest.TestCase):
     def setUp(self):
         """Set up test data that matches real Google Sheets structure"""
         # Real expenses data structure (no category column)
-        self.expenses_df = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02', '2024-01-03', '2024-01-04'],
-            'שם': ['ספק א', 'ספק ב', 'ספק ג', 'ספק א'],
-            'שקלים': [1000, 2000, 1500, 800]
-        })
+        self.expenses_df = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"],
+                "שם": ["ספק א", "ספק ב", "ספק ג", "ספק א"],
+                "שקלים": [1000, 2000, 1500, 800],
+            }
+        )
 
         # Real donations data structure
-        self.donations_df = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02', '2024-01-03'],
-            'שם': ['תורם א', 'תורם ב', 'תורם ג'],
-            'שקלים': [5000, 3000, 4000]
-        })
+        self.donations_df = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "שם": ["תורם א", "תורם ב", "תורם ג"],
+                "שקלים": [5000, 3000, 4000],
+            }
+        )
 
         # Real widows data structure
-        self.widows_df = pd.DataFrame({
-            'שם ': ['אלמנה א', 'אלמנה ב', 'אלמנה ג'],
-            'סכום חודשי': [2000, 1500, 3000],
-            'מספר ילדים': [2, 1, 3],
-            'תורם': ['תורם א', 'תורם ב', 'תורם ג']
-        })
+        self.widows_df = pd.DataFrame(
+            {
+                "שם ": ["אלמנה א", "אלמנה ב", "אלמנה ג"],
+                "סכום חודשי": [2000, 1500, 3000],
+                "מספר ילדים": [2, 1, 3],
+                "תורם": ["תורם א", "תורם ב", "תורם ג"],
+            }
+        )
 
         # Real investors data structure
-        self.investors_df = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02'],
-            'שם': ['משקיע א', 'משקיע ב'],
-            'שקלים': [10000, 15000]
-        })
+        self.investors_df = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02"],
+                "שם": ["משקיע א", "משקיע ב"],
+                "שקלים": [10000, 15000],
+            }
+        )
 
     def test_budget_distribution_chart_with_real_data(self):
         """Test budget distribution chart with real data structure"""
@@ -55,16 +63,18 @@ class TestDataFlowIntegration(unittest.TestCase):
 
             result = create_budget_distribution_chart(self.expenses_df)
 
-            self.assertIsNotNone(result, "Budget distribution chart should be created with real data")
-            self.assertTrue(hasattr(result, 'data'), "Chart should have data attribute")
+            self.assertIsNotNone(
+                result, "Budget distribution chart should be created with real data"
+            )
+            self.assertTrue(hasattr(result, "data"), "Chart should have data attribute")
 
             # Check that it groups by name (supplier) since no category column exists
             chart_data = result.data[0]
-            self.assertIn('labels', chart_data, "Chart should have labels")
-            self.assertIn('values', chart_data, "Chart should have values")
+            self.assertIn("labels", chart_data, "Chart should have labels")
+            self.assertIn("values", chart_data, "Chart should have values")
 
             # Should have 3 unique suppliers
-            self.assertEqual(len(chart_data['labels']), 3, "Should group by unique suppliers")
+            self.assertEqual(len(chart_data["labels"]), 3, "Should group by unique suppliers")
 
             logger.info("✅ Budget distribution chart works with real data structure")
 
@@ -79,7 +89,7 @@ class TestDataFlowIntegration(unittest.TestCase):
             result = create_monthly_trends(self.expenses_df, self.donations_df)
 
             self.assertIsNotNone(result, "Monthly trends chart should be created")
-            self.assertTrue(hasattr(result, 'data'), "Chart should have data attribute")
+            self.assertTrue(hasattr(result, "data"), "Chart should have data attribute")
 
             logger.info("✅ Monthly trends chart works with real data")
 
@@ -94,7 +104,7 @@ class TestDataFlowIntegration(unittest.TestCase):
             result = create_donor_contribution_chart(self.donations_df)
 
             self.assertIsNotNone(result, "Donor contribution chart should be created")
-            self.assertTrue(hasattr(result, 'data'), "Chart should have data attribute")
+            self.assertTrue(hasattr(result, "data"), "Chart should have data attribute")
 
             logger.info("✅ Donor contribution chart works with real data")
 
@@ -109,7 +119,7 @@ class TestDataFlowIntegration(unittest.TestCase):
             result = create_widows_support_chart(self.widows_df)
 
             self.assertIsNotNone(result, "Widows support chart should be created")
-            self.assertTrue(hasattr(result, 'data'), "Chart should have data attribute")
+            self.assertTrue(hasattr(result, "data"), "Chart should have data attribute")
 
             logger.info("✅ Widows support chart works with real data")
 
@@ -128,24 +138,24 @@ class TestDataFlowIntegration(unittest.TestCase):
             # Test donor statistics
             donor_stats = calculate_donor_statistics(self.donations_df)
             self.assertIsInstance(donor_stats, dict)
-            self.assertIn('total_donors', donor_stats)
-            self.assertIn('total_donations', donor_stats)
-            self.assertEqual(donor_stats['total_donors'], 3)
-            self.assertEqual(donor_stats['total_donations'], 12000)
+            self.assertIn("total_donors", donor_stats)
+            self.assertIn("total_donations", donor_stats)
+            self.assertEqual(donor_stats["total_donors"], 3)
+            self.assertEqual(donor_stats["total_donations"], 12000)
 
             # Test widow statistics
             widow_stats = calculate_widow_statistics(self.widows_df)
             self.assertIsInstance(widow_stats, dict)
-            self.assertIn('total_widows', widow_stats)
-            self.assertIn('total_support', widow_stats)
-            self.assertEqual(widow_stats['total_widows'], 3)
-            self.assertEqual(widow_stats['total_support'], 6500)
+            self.assertIn("total_widows", widow_stats)
+            self.assertIn("total_support", widow_stats)
+            self.assertEqual(widow_stats["total_widows"], 3)
+            self.assertEqual(widow_stats["total_support"], 6500)
 
             # Test monthly budget
             budget_stats = calculate_monthly_budget(self.expenses_df, self.donations_df)
             self.assertIsInstance(budget_stats, dict)
-            self.assertIn('total_expenses', budget_stats)
-            self.assertIn('total_donations', budget_stats)
+            self.assertIn("total_expenses", budget_stats)
+            self.assertIn("total_donations", budget_stats)
 
             logger.info("✅ Data processing functions work with real data")
 
@@ -158,14 +168,14 @@ class TestDataFlowIntegration(unittest.TestCase):
             from ui.dashboard_sections import create_budget_section, create_overview_section
 
             # Test overview section
-            donor_stats = {'total_donors': 3, 'total_donations': 12000}
-            widow_stats = {'total_widows': 3, 'total_support': 6500}
+            donor_stats = {"total_donors": 3, "total_donations": 12000}
+            widow_stats = {"total_widows": 3, "total_support": 6500}
 
             # This should not raise an exception
             create_overview_section(self.expenses_df, self.donations_df, donor_stats, widow_stats)
 
             # Test budget section
-            budget_status = {'total_expenses': 5300, 'total_donations': 12000}
+            budget_status = {"total_expenses": 5300, "total_donations": 12000}
             create_budget_section(self.expenses_df, self.donations_df, budget_status, "test")
 
             logger.info("✅ Dashboard sections work with real data")
@@ -201,21 +211,25 @@ class TestDataFlowIntegration(unittest.TestCase):
             from src.data_visualization import create_budget_distribution_chart
 
             # Test with DataFrame missing amount column
-            df_no_amount = pd.DataFrame({
-                'תאריך': ['2024-01-01'],
-                'שם': ['ספק א']
-                # Missing 'שקלים' column
-            })
+            df_no_amount = pd.DataFrame(
+                {
+                    "תאריך": ["2024-01-01"],
+                    "שם": ["ספק א"],
+                    # Missing 'שקלים' column
+                }
+            )
 
             result = create_budget_distribution_chart(df_no_amount)
             self.assertIsNone(result, "Should return None when amount column is missing")
 
             # Test with DataFrame missing name column
-            df_no_name = pd.DataFrame({
-                'תאריך': ['2024-01-01'],
-                'שקלים': [1000]
-                # Missing 'שם' column
-            })
+            df_no_name = pd.DataFrame(
+                {
+                    "תאריך": ["2024-01-01"],
+                    "שקלים": [1000],
+                    # Missing 'שם' column
+                }
+            )
 
             result = create_budget_distribution_chart(df_no_name)
             self.assertIsNone(result, "Should return None when name column is missing")
@@ -229,20 +243,22 @@ class TestDataFlowIntegration(unittest.TestCase):
         """Test that our data structure matches what Google Sheets provides"""
         try:
             # Test expenses data structure
-            self.assertIn('תאריך', self.expenses_df.columns)
-            self.assertIn('שם', self.expenses_df.columns)
-            self.assertIn('שקלים', self.expenses_df.columns)
-            self.assertNotIn('קטגוריה', self.expenses_df.columns, "Expenses should not have category column")
+            self.assertIn("תאריך", self.expenses_df.columns)
+            self.assertIn("שם", self.expenses_df.columns)
+            self.assertIn("שקלים", self.expenses_df.columns)
+            self.assertNotIn(
+                "קטגוריה", self.expenses_df.columns, "Expenses should not have category column"
+            )
 
             # Test donations data structure
-            self.assertIn('תאריך', self.donations_df.columns)
-            self.assertIn('שם', self.donations_df.columns)
-            self.assertIn('שקלים', self.donations_df.columns)
+            self.assertIn("תאריך", self.donations_df.columns)
+            self.assertIn("שם", self.donations_df.columns)
+            self.assertIn("שקלים", self.donations_df.columns)
 
             # Test widows data structure
-            self.assertIn('שם ', self.widows_df.columns)
-            self.assertIn('סכום חודשי', self.widows_df.columns)
-            self.assertIn('מספר ילדים', self.widows_df.columns)
+            self.assertIn("שם ", self.widows_df.columns)
+            self.assertIn("סכום חודשי", self.widows_df.columns)
+            self.assertIn("מספר ילדים", self.widows_df.columns)
 
             logger.info("✅ Data structure matches Google Sheets format")
 
@@ -267,10 +283,7 @@ class TestErrorHandlingIntegration(unittest.TestCase):
             self.assertIsNone(result)
 
             # Test with DataFrame with all zero amounts
-            df_zeros = pd.DataFrame({
-                'שם': ['ספק א', 'ספק ב'],
-                'שקלים': [0, 0]
-            })
+            df_zeros = pd.DataFrame({"שם": ["ספק א", "ספק ב"], "שקלים": [0, 0]})
             result = create_budget_distribution_chart(df_zeros)
             self.assertIsNone(result)
 
@@ -297,7 +310,9 @@ def run_integration_tests():
     result = runner.run(suite)
 
     print("=" * 60)
-    print(f"📊 Integration Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 Integration Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")

@@ -14,6 +14,7 @@ import pandas as pd
 # Add the current directory to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 class TestDashboardImports(unittest.TestCase):
     """Test that all critical modules can be imported"""
 
@@ -45,33 +46,37 @@ class TestDashboardImports(unittest.TestCase):
         except Exception as e:
             self.fail(f"ui.dashboard_layout import failed: {e}")
 
+
 class TestDataProcessing(unittest.TestCase):
     """Test data processing functionality"""
 
     def setUp(self):
         """Set up test data"""
-        self.sample_expenses = pd.DataFrame({
-            "שקלים": [100, 200, 300],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
-            "קטגוריה": ["אוכל", "דלק", "תחבורה"]
-        })
+        self.sample_expenses = pd.DataFrame(
+            {
+                "שקלים": [100, 200, 300],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "קטגוריה": ["אוכל", "דלק", "תחבורה"],
+            }
+        )
 
-        self.sample_donations = pd.DataFrame({
-            "שם": ["תורם א", "תורם ב", "תורם ג"],
-            "שקלים": [300, 400, 500],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
-        })
+        self.sample_donations = pd.DataFrame(
+            {
+                "שם": ["תורם א", "תורם ב", "תורם ג"],
+                "שקלים": [300, 400, 500],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+            }
+        )
 
-        self.sample_almanot = pd.DataFrame({
-            "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג"],
-            "סכום חודשי": [1000, 2000, 3000],
-            "עיר": ["תל אביב", "ירושלים", "חיפה"]
-        })
+        self.sample_almanot = pd.DataFrame(
+            {
+                "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג"],
+                "סכום חודשי": [1000, 2000, 3000],
+                "עיר": ["תל אביב", "ירושלים", "חיפה"],
+            }
+        )
 
-        self.sample_investors = pd.DataFrame({
-            "שם": ["משקיע א", "משקיע ב"],
-            "סכום": [10000, 20000]
-        })
+        self.sample_investors = pd.DataFrame({"שם": ["משקיע א", "משקיע ב"], "סכום": [10000, 20000]})
 
     def test_data_processing_import(self):
         """Test data_processing module imports"""
@@ -94,6 +99,7 @@ class TestDataProcessing(unittest.TestCase):
         except Exception as e:
             self.fail(f"google_sheets_io import failed: {e}")
 
+
 class TestUILayout(unittest.TestCase):
     """Test UI layout components"""
 
@@ -101,8 +107,9 @@ class TestUILayout(unittest.TestCase):
         """Test that main tabs can be created"""
         try:
             from ui.dashboard_layout import create_main_tabs
+
             # Mock streamlit tabs
-            with patch('streamlit.tabs') as mock_tabs:
+            with patch("streamlit.tabs") as mock_tabs:
                 mock_tabs.return_value = ["tab1", "tab2", "tab3", "tab4", "tab5", "tab6"]
                 tabs = create_main_tabs()
                 self.assertEqual(len(tabs), 6, "Should return 6 tabs")
@@ -113,64 +120,63 @@ class TestUILayout(unittest.TestCase):
         """Test that dashboard header can be created"""
         try:
             from ui.dashboard_layout import create_dashboard_header
+
             # Mock streamlit components
-            with patch('streamlit.markdown'), \
-                 patch('streamlit.columns'), \
-                 patch('streamlit.button'), \
-                 patch('streamlit.selectbox'):
+            with patch("streamlit.markdown"), patch("streamlit.columns"), patch(
+                "streamlit.button"
+            ), patch("streamlit.selectbox"):
                 create_dashboard_header()
                 self.assertTrue(True, "create_dashboard_header executed successfully")
         except Exception as e:
             self.fail(f"create_dashboard_header failed: {e}")
+
 
 class TestNetworkSection(unittest.TestCase):
     """Test network section functionality"""
 
     def setUp(self):
         """Set up test data for network section"""
-        self.sample_expenses = pd.DataFrame({
-            "שקלים": [100, 200, 300],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
-        })
+        self.sample_expenses = pd.DataFrame(
+            {"שקלים": [100, 200, 300], "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]}
+        )
 
-        self.sample_donations = pd.DataFrame({
-            "שם": ["תורם א", "תורם ב", "תורם ג"],
-            "שקלים": [300, 400, 500]
-        })
+        self.sample_donations = pd.DataFrame(
+            {"שם": ["תורם א", "תורם ב", "תורם ג"], "שקלים": [300, 400, 500]}
+        )
 
-        self.sample_almanot = pd.DataFrame({
-            "שם": ["אלמנה א", "אלמנה ב", "אלמנה ג"],
-            "סכום חודשי": [1000, 2000, 3000]
-        })
+        self.sample_almanot = pd.DataFrame(
+            {"שם": ["אלמנה א", "אלמנה ב", "אלמנה ג"], "סכום חודשי": [1000, 2000, 3000]}
+        )
 
-        self.sample_investors = pd.DataFrame({
-            "שם": ["משקיע א", "משקיע ב"],
-            "סכום": [10000, 20000]
-        })
+        self.sample_investors = pd.DataFrame({"שם": ["משקיע א", "משקיע ב"], "סכום": [10000, 20000]})
 
     def test_network_section_creation(self):
         """Test that network section can be created without errors"""
         try:
             from ui.dashboard_sections import create_network_section
+
             # Mock streamlit components
-            with patch('streamlit.markdown'), \
-                 patch('streamlit.columns'), \
-                 patch('streamlit.checkbox'), \
-                 patch('streamlit.expander'), \
-                 patch('streamlit.success'), \
-                 patch('streamlit.warning'), \
-                 patch('streamlit.info'), \
-                 patch('streamlit.json'), \
-                 patch('streamlit.error'):
+            with patch("streamlit.markdown"), patch("streamlit.columns"), patch(
+                "streamlit.checkbox"
+            ), patch("streamlit.expander"), patch("streamlit.success"), patch(
+                "streamlit.warning"
+            ), patch(
+                "streamlit.info"
+            ), patch(
+                "streamlit.json"
+            ), patch(
+                "streamlit.error"
+            ):
                 create_network_section(
                     self.sample_expenses,
                     self.sample_donations,
                     self.sample_almanot,
-                    self.sample_investors
+                    self.sample_investors,
                 )
                 self.assertTrue(True, "create_network_section executed successfully")
         except Exception as e:
             self.fail(f"create_network_section failed: {e}")
+
 
 class TestServices(unittest.TestCase):
     """Test services functionality"""
@@ -196,6 +202,7 @@ class TestServices(unittest.TestCase):
         except Exception as e:
             self.fail(f"alerts module import failed: {e}")
 
+
 class TestDesignSystem(unittest.TestCase):
     """Test design system components"""
 
@@ -220,6 +227,7 @@ class TestDesignSystem(unittest.TestCase):
         except Exception as e:
             self.fail(f"theme_manager import failed: {e}")
 
+
 class TestUIComponents(unittest.TestCase):
     """Test UI components"""
 
@@ -237,30 +245,28 @@ class TestUIComponents(unittest.TestCase):
         except Exception as e:
             self.fail(f"ui.components.layout_system import failed: {e}")
 
+
 class TestDataIntegrity(unittest.TestCase):
     """Test data integrity and validation"""
 
     def test_dataframe_operations(self):
         """Test basic DataFrame operations"""
-        df = pd.DataFrame({
-            "name": ["A", "B", "C"],
-            "value": [1, 2, 3]
-        })
+        df = pd.DataFrame({"name": ["A", "B", "C"], "value": [1, 2, 3]})
 
         # Test basic operations
         self.assertEqual(len(df), 3, "DataFrame should have 3 rows")
-        self.assertEqual(list(df.columns), ["name", "value"], "DataFrame should have correct columns")
+        self.assertEqual(
+            list(df.columns), ["name", "value"], "DataFrame should have correct columns"
+        )
         self.assertEqual(df["value"].sum(), 6, "Sum of values should be 6")
 
     def test_hebrew_text_handling(self):
         """Test Hebrew text handling in DataFrames"""
-        df = pd.DataFrame({
-            "שם": ["אלמנה א", "אלמנה ב"],
-            "סכום": [1000, 2000]
-        })
+        df = pd.DataFrame({"שם": ["אלמנה א", "אלמנה ב"], "סכום": [1000, 2000]})
 
         self.assertEqual(len(df), 2, "Hebrew DataFrame should have 2 rows")
         self.assertIn("שם", df.columns, "DataFrame should contain Hebrew column names")
+
 
 class TestErrorHandling(unittest.TestCase):
     """Test error handling and edge cases"""
@@ -273,7 +279,10 @@ class TestErrorHandling(unittest.TestCase):
     def test_missing_columns(self):
         """Test handling of missing columns"""
         df = pd.DataFrame({"col1": [1, 2, 3]})
-        self.assertNotIn("nonexistent", df.columns, "Non-existent column should not be in DataFrame")
+        self.assertNotIn(
+            "nonexistent", df.columns, "Non-existent column should not be in DataFrame"
+        )
+
 
 def run_all_tests():
     """Run all test suites"""
@@ -293,7 +302,7 @@ def run_all_tests():
         TestDesignSystem,
         TestUIComponents,
         TestDataIntegrity,
-        TestErrorHandling
+        TestErrorHandling,
     ]
 
     for test_class in test_classes:
@@ -306,18 +315,20 @@ def run_all_tests():
 
     # Print summary
     print("=" * 60)
-    print(f"📊 Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")
         for test, traceback in result.failures:
-            error_msg = traceback.split('AssertionError: ')[-1].split('\n')[0]
+            error_msg = traceback.split("AssertionError: ")[-1].split("\n")[0]
             print(f"  - {test}: {error_msg}")
 
     if result.errors:
         print(f"💥 {len(result.errors)} tests had errors:")
         for test, traceback in result.errors:
-            error_msg = traceback.split('\n')[-2]
+            error_msg = traceback.split("\n")[-2]
             print(f"  - {test}: {error_msg}")
 
     if result.wasSuccessful():
@@ -326,6 +337,7 @@ def run_all_tests():
     else:
         print("❌ Some tests failed. Check the errors above.")
         return False
+
 
 if __name__ == "__main__":
     success = run_all_tests()

@@ -263,9 +263,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
             # Display table without index and with proper column order
             st.dataframe(
-                sorted_widows[available_columns],
-                use_container_width=True,
-                hide_index=True
+                sorted_widows[available_columns], use_container_width=True, hide_index=True
             )
         else:
             st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
@@ -291,9 +289,7 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
             # Display table without index and with proper column order
             st.dataframe(
-                sorted_widows[available_columns],
-                use_container_width=True,
-                hide_index=True
+                sorted_widows[available_columns], use_container_width=True, hide_index=True
             )
         else:
             st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
@@ -422,7 +418,7 @@ def create_network_section(
             "הצג קשרים קיימים",
             value=True,  # DEFAULT_SHOW_CONNECTED
             help="הצג קשרים בין תורמים לאלמנות - הגדרה חיונית!",
-            key="network_show_connected"  # Protected key
+            key="network_show_connected",  # Protected key
         )
 
     with col2:
@@ -430,7 +426,7 @@ def create_network_section(
             "הצג תורמים ללא קשרים",
             value=True,  # DEFAULT_SHOW_UNCONNECTED_DONORS
             help="הצג תורמים שאין להם קשרים לאלמנות - הגדרה חיונית!",
-            key="network_show_unconnected_donors"  # Protected key
+            key="network_show_unconnected_donors",  # Protected key
         )
 
     with col3:
@@ -438,7 +434,7 @@ def create_network_section(
             "הצג אלמנות ללא קשרים",
             value=True,  # DEFAULT_SHOW_UNCONNECTED_WIDOWS
             help="הצג אלמנות שאין להן קשרים לתורמים - הגדרה חיונית!",
-            key="network_show_unconnected_widows"  # Protected key
+            key="network_show_unconnected_widows",  # Protected key
         )
 
     # Set default values for removed filters

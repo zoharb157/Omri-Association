@@ -14,6 +14,7 @@ import pandas as pd
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 class TestExtremeDataScenarios(unittest.TestCase):
     """Test extreme data scenarios"""
 
@@ -23,7 +24,7 @@ class TestExtremeDataScenarios(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [999999999, 1000000000],
             "מספר ילדים": [3, 5],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -37,7 +38,7 @@ class TestExtremeDataScenarios(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [0.01, 0.02],
             "מספר ילדים": [3, 5],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -51,7 +52,7 @@ class TestExtremeDataScenarios(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [2000, -500],  # Negative value for refund
             "מספר ילדים": [3, 5],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -65,7 +66,7 @@ class TestExtremeDataScenarios(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [0, 2000],
             "מספר ילדים": [0, 5],  # Zero children
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -76,13 +77,15 @@ class TestExtremeDataScenarios(unittest.TestCase):
     def test_very_long_text(self):
         """Test handling of very long text fields"""
         long_name = "סיוון ליבוביץ-הרשקוביץ-קנפו-לוינשטרן-לוטן-עמר-רוזנטל-הרוש-יהלומי-אלמוסנינו"
-        long_donor = "פלייטק+גלים+פלייטיקה+מייקרוסופט+איליון+פאראגון+אליה מולודצקי+סקיישילד+קובי הלפרין"
+        long_donor = (
+            "פלייטק+גלים+פלייטיקה+מייקרוסופט+איליון+פאראגון+אליה מולודצקי+סקיישילד+קובי הלפרין"
+        )
 
         test_data = {
             "תורם": [long_donor, "פלייטיקה"],
             "סכום חודשי": [2000, 1500],
             "מספר ילדים": [3, 5],
-            "שם": [long_name, "הדס הרשקוביץ"]
+            "שם": [long_name, "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -99,7 +102,7 @@ class TestExtremeDataScenarios(unittest.TestCase):
             "תורם": special_donors,
             "סכום חודשי": [2000, 1500, 1000],
             "מספר ילדים": [3, 5, 4],
-            "שם": special_names
+            "שם": special_names,
         }
         df = pd.DataFrame(test_data)
 
@@ -120,7 +123,7 @@ class TestBoundaryConditions(unittest.TestCase):
             "תורם": ["פלייטק"],
             "סכום חודשי": [2000],
             "מספר ילדים": [3],
-            "שם": ["סיוון ליבוביץ"]
+            "שם": ["סיוון ליבוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -134,7 +137,7 @@ class TestBoundaryConditions(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [2000, 1500],
             "מספר ילדים": [20, 15],  # Very high number of children
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -148,7 +151,7 @@ class TestBoundaryConditions(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה", "פלייטק"],
             "סכום חודשי": [2000, 1500, 1000],
             "מספר ילדים": [3, 5, 4],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "סיוון ליבוביץ"]  # Duplicate name
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "סיוון ליבוביץ"],  # Duplicate name
         }
         df = pd.DataFrame(test_data)
 
@@ -162,7 +165,7 @@ class TestBoundaryConditions(unittest.TestCase):
             "תורם": ["פלייטק", 123, None],  # Mixed types
             "סכום חודשי": [2000, "1500", 1000],  # Mixed numeric and string
             "מספר ילדים": [3, 5, 4],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
         }
         df = pd.DataFrame(test_data)
 
@@ -181,7 +184,7 @@ class TestUnusualDataStructures(unittest.TestCase):
             "תורם": ["פלייטק", "", "פלייטיקה"],
             "סכום חודשי": [2000, 1500, 1000],
             "מספר ילדים": [3, 5, 4],
-            "שם": ["סיוון ליבוביץ", "", "ספיר קנפו"]
+            "שם": ["סיוון ליבוביץ", "", "ספיר קנפו"],
         }
         df = pd.DataFrame(test_data)
 
@@ -196,7 +199,7 @@ class TestUnusualDataStructures(unittest.TestCase):
             "תורם": ["פלייטק", "   ", "פלייטיקה"],
             "סכום חודשי": [2000, 1500, 1000],
             "מספר ילדים": [3, 5, 4],
-            "שם": ["סיוון ליבוביץ", "\t\n", "ספיר קנפו"]
+            "שם": ["סיוון ליבוביץ", "\t\n", "ספיר קנפו"],
         }
         df = pd.DataFrame(test_data)
 
@@ -211,7 +214,7 @@ class TestUnusualDataStructures(unittest.TestCase):
             "תורם": ["פלייטק", np.nan, "פלייטיקה"],
             "סכום חודשי": [2000, 1500, np.nan],
             "מספר ילדים": [3, np.nan, 4],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", np.nan]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", np.nan],
         }
         df = pd.DataFrame(test_data)
 
@@ -226,7 +229,7 @@ class TestUnusualDataStructures(unittest.TestCase):
             "תורם": ["פלייטק", "פלייטיקה"],
             "סכום חודשי": [2000, np.inf],
             "מספר ילדים": [3, 5],
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
         }
         df = pd.DataFrame(test_data)
 
@@ -249,11 +252,9 @@ class TestDataProcessingEdgeCases(unittest.TestCase):
             self.assertIsInstance(result, dict)
 
             # Test with single row
-            single_row_df = pd.DataFrame({
-                "תורם": ["פלייטק"],
-                "סכום": [2000],
-                "תאריך": ["2024-01-01"]
-            })
+            single_row_df = pd.DataFrame(
+                {"תורם": ["פלייטק"], "סכום": [2000], "תאריך": ["2024-01-01"]}
+            )
             result = calculate_donor_statistics(single_row_df)
             self.assertIsInstance(result, dict)
 
@@ -271,12 +272,14 @@ class TestDataProcessingEdgeCases(unittest.TestCase):
             self.assertIsInstance(result, dict)
 
             # Test with single row
-            single_row_df = pd.DataFrame({
-                "שם": ["סיוון ליבוביץ"],
-                "מספר ילדים": [3],
-                "סכום חודשי": [2000],
-                "תורם": ["פלייטק"]
-            })
+            single_row_df = pd.DataFrame(
+                {
+                    "שם": ["סיוון ליבוביץ"],
+                    "מספר ילדים": [3],
+                    "סכום חודשי": [2000],
+                    "תורם": ["פלייטק"],
+                }
+            )
             result = calculate_widow_statistics(single_row_df)
             self.assertIsInstance(result, dict)
 
@@ -289,20 +292,24 @@ class TestDataProcessingEdgeCases(unittest.TestCase):
             from src.data_visualization import create_budget_distribution_chart
 
             # Test with all zero amounts
-            zero_amounts_df = pd.DataFrame({
-                "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
-                "סכום": [0, 0],
-                "תאריך": ["2024-01-01", "2024-01-02"]
-            })
+            zero_amounts_df = pd.DataFrame(
+                {
+                    "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
+                    "סכום": [0, 0],
+                    "תאריך": ["2024-01-01", "2024-01-02"],
+                }
+            )
             result = create_budget_distribution_chart(zero_amounts_df)
             self.assertIsNone(result)  # Should return None for zero amounts
 
             # Test with all negative amounts
-            negative_amounts_df = pd.DataFrame({
-                "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
-                "סכום": [-1000, -500],
-                "תאריך": ["2024-01-01", "2024-01-02"]
-            })
+            negative_amounts_df = pd.DataFrame(
+                {
+                    "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
+                    "סכום": [-1000, -500],
+                    "תאריך": ["2024-01-01", "2024-01-02"],
+                }
+            )
             result = create_budget_distribution_chart(negative_amounts_df)
             # Should handle negative amounts gracefully
 
@@ -323,7 +330,7 @@ def run_edge_case_tests():
         TestExtremeDataScenarios,
         TestBoundaryConditions,
         TestUnusualDataStructures,
-        TestDataProcessingEdgeCases
+        TestDataProcessingEdgeCases,
     ]
 
     for test_class in test_classes:
@@ -336,18 +343,20 @@ def run_edge_case_tests():
 
     # Print results
     print("=" * 60)
-    print(f"📊 Edge Case Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 Edge Case Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")
         for test, traceback in result.failures:
-            error_msg = traceback.split('AssertionError: ')[-1].split('\n')[0]
+            error_msg = traceback.split("AssertionError: ")[-1].split("\n")[0]
             print(f"  - {test}: {error_msg}")
 
     if result.errors:
         print(f"❌ {len(result.errors)} tests had errors:")
         for test, traceback in result.errors:
-            error_msg = traceback.split('\n')[-2]
+            error_msg = traceback.split("\n")[-2]
             print(f"  - {test}: {error_msg}")
 
     if result.wasSuccessful():

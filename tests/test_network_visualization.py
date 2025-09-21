@@ -13,35 +13,41 @@ import pandas as pd
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 class TestNetworkVisualization(unittest.TestCase):
     """Test network visualization functionality"""
 
     def test_network_data_structure(self):
         """Test that network data is structured correctly"""
         # Create test data for network visualization
-        expenses_df = pd.DataFrame({
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
-            "סכום": [2000, 1500, 1000],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
-        })
+        expenses_df = pd.DataFrame(
+            {
+                "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
+                "סכום": [2000, 1500, 1000],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+            }
+        )
 
-        donations_df = pd.DataFrame({
-            "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
-            "סכום": [2000, 1500, 1000],
-            "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"]
-        })
+        donations_df = pd.DataFrame(
+            {
+                "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
+                "סכום": [2000, 1500, 1000],
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+            }
+        )
 
-        almanot_df = pd.DataFrame({
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
-            "מספר ילדים": [3, 5, 4],
-            "סכום חודשי": [2000, 1500, 1000],
-            "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"]
-        })
+        almanot_df = pd.DataFrame(
+            {
+                "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
+                "מספר ילדים": [3, 5, 4],
+                "סכום חודשי": [2000, 1500, 1000],
+                "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
+            }
+        )
 
-        investors_df = pd.DataFrame({
-            "שם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
-            "סכום": [2000, 1500, 1000]
-        })
+        investors_df = pd.DataFrame(
+            {"שם": ["פלייטק", "פלייטיקה", "מייקרוסופט"], "סכום": [2000, 1500, 1000]}
+        )
 
         # Test that all DataFrames have required columns
         self.assertIn("שם", expenses_df.columns)
@@ -53,21 +59,21 @@ class TestNetworkVisualization(unittest.TestCase):
     def test_network_connections(self):
         """Test network connection logic"""
         # Test donor-widow connections
-        almanot_df = pd.DataFrame({
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
-            "תורם": ["פלייטק", "פלייטיקה"],
-            "סכום חודשי": [2000, 1500]
-        })
+        almanot_df = pd.DataFrame(
+            {
+                "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
+                "תורם": ["פלייטק", "פלייטיקה"],
+                "סכום חודשי": [2000, 1500],
+            }
+        )
 
         # Test that connections can be established
         connections = []
         for _, row in almanot_df.iterrows():
             if pd.notna(row["תורם"]) and pd.notna(row["שם"]):
-                connections.append({
-                    "donor": row["תורם"],
-                    "widow": row["שם"],
-                    "amount": row["סכום חודשי"]
-                })
+                connections.append(
+                    {"donor": row["תורם"], "widow": row["שם"], "amount": row["סכום חודשי"]}
+                )
 
         self.assertEqual(len(connections), 2)
         self.assertEqual(connections[0]["donor"], "פלייטק")
@@ -79,7 +85,7 @@ class TestNetworkVisualization(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ", "ספיר קנפו"],
             "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
-            "סכום חודשי": [2000, 1500, 500]  # One below threshold
+            "סכום חודשי": [2000, 1500, 500],  # One below threshold
         }
         df = pd.DataFrame(test_data)
 
@@ -96,7 +102,7 @@ class TestNetworkVisualization(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
             "תורם": ["פלייטק", "פלייטיקה"],
-            "סכום חודשי": [2000, 1500]
+            "סכום חודשי": [2000, 1500],
         }
         df = pd.DataFrame(test_data)
 
@@ -123,10 +129,12 @@ class TestNetworkVisualization(unittest.TestCase):
     def test_network_missing_columns(self):
         """Test network handling of missing columns"""
         # Test with missing required columns
-        incomplete_df = pd.DataFrame({
-            "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
-            # Missing "תורם" and "סכום חודשי" columns
-        })
+        incomplete_df = pd.DataFrame(
+            {
+                "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"]
+                # Missing "תורם" and "סכום חודשי" columns
+            }
+        )
 
         # Test that missing columns are handled gracefully
         connections = []
@@ -142,7 +150,7 @@ class TestNetworkVisualization(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", "סיוון ליבוביץ", "הדס הרשקוביץ"],
             "תורם": ["פלייטק", "פלייטק", "פלייטיקה"],
-            "סכום חודשי": [2000, 1500, 1000]
+            "סכום חודשי": [2000, 1500, 1000],
         }
         df = pd.DataFrame(test_data)
 
@@ -164,7 +172,7 @@ class TestNetworkVisualization(unittest.TestCase):
         hebrew_data = {
             "שם": ["סיוון ליבוביץ-ג'ון", "הדס הרשקוביץ'", "ספיר קנפו-סמית'"],
             "תורם": ["פלייטק & גלים", "פלייטיקה (חברה)", "מייקרוסופט [ישראל]"],
-            "סכום חודשי": [2000, 1500, 1000]
+            "סכום חודשי": [2000, 1500, 1000],
         }
         df = pd.DataFrame(hebrew_data)
 
@@ -180,7 +188,7 @@ class TestNetworkVisualization(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
             "תורם": ["פלייטק", "פלייטיקה"],
-            "סכום חודשי": [2000.50, 1500.75]  # Decimal values
+            "סכום חודשי": [2000.50, 1500.75],  # Decimal values
         }
         df = pd.DataFrame(test_data)
 
@@ -195,7 +203,7 @@ class TestNetworkVisualization(unittest.TestCase):
         large_data = {
             "שם": [f"אלמנה {i}" for i in range(1000)],
             "תורם": [f"תורם {i % 100}" for i in range(1000)],
-            "סכום חודשי": [2000 + (i % 100) for i in range(1000)]
+            "סכום חודשי": [2000 + (i % 100) for i in range(1000)],
         }
         df = pd.DataFrame(large_data)
 
@@ -217,16 +225,18 @@ class TestNetworkErrorHandling(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", 123, None],
             "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
-            "סכום חודשי": [2000, "1500", 1000]  # Mixed types
+            "סכום חודשי": [2000, "1500", 1000],  # Mixed types
         }
         df = pd.DataFrame(test_data)
 
         # Test that invalid data types are handled gracefully
         valid_connections = []
         for _, row in df.iterrows():
-            if (isinstance(row["שם"], str) and
-                isinstance(row["תורם"], str) and
-                isinstance(row["סכום חודשי"], (int, float))):
+            if (
+                isinstance(row["שם"], str)
+                and isinstance(row["תורם"], str)
+                and isinstance(row["סכום חודשי"], (int, float))
+            ):
                 valid_connections.append(row)
 
         # Should have 1 valid connection (first row)
@@ -237,16 +247,14 @@ class TestNetworkErrorHandling(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", pd.NA, "ספיר קנפו"],
             "תורם": ["פלייטק", "פלייטיקה", pd.NA],
-            "סכום חודשי": [2000, 1500, 1000]
+            "סכום חודשי": [2000, 1500, 1000],
         }
         df = pd.DataFrame(test_data)
 
         # Test that NaN values are handled gracefully
         valid_connections = []
         for _, row in df.iterrows():
-            if (pd.notna(row["שם"]) and
-                pd.notna(row["תורם"]) and
-                pd.notna(row["סכום חודשי"])):
+            if pd.notna(row["שם"]) and pd.notna(row["תורם"]) and pd.notna(row["סכום חודשי"]):
                 valid_connections.append(row)
 
         # Should have 1 valid connection (first row)
@@ -257,7 +265,7 @@ class TestNetworkErrorHandling(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
             "תורם": ["פלייטק", "פלייטיקה"],
-            "סכום חודשי": [2000, -500]  # Negative value
+            "סכום חודשי": [2000, -500],  # Negative value
         }
         df = pd.DataFrame(test_data)
 
@@ -275,7 +283,7 @@ class TestNetworkErrorHandling(unittest.TestCase):
         test_data = {
             "שם": ["סיוון ליבוביץ", "הדס הרשקוביץ"],
             "תורם": ["פלייטק", "פלייטיקה"],
-            "סכום חודשי": [2000, 0]  # Zero value
+            "סכום חודשי": [2000, 0],  # Zero value
         }
         df = pd.DataFrame(test_data)
 
@@ -298,10 +306,7 @@ def run_network_tests():
     test_suite = unittest.TestSuite()
 
     # Add test classes
-    test_classes = [
-        TestNetworkVisualization,
-        TestNetworkErrorHandling
-    ]
+    test_classes = [TestNetworkVisualization, TestNetworkErrorHandling]
 
     for test_class in test_classes:
         tests = unittest.TestLoader().loadTestsFromTestCase(test_class)
@@ -313,22 +318,26 @@ def run_network_tests():
 
     # Print results
     print("=" * 60)
-    print(f"📊 Network Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 Network Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")
         for test, traceback in result.failures:
-            error_msg = traceback.split('AssertionError: ')[-1].split('\n')[0]
+            error_msg = traceback.split("AssertionError: ")[-1].split("\n")[0]
             print(f"  - {test}: {error_msg}")
 
     if result.errors:
         print(f"❌ {len(result.errors)} tests had errors:")
         for test, traceback in result.errors:
-            error_msg = traceback.split('\n')[-2]
+            error_msg = traceback.split("\n")[-2]
             print(f"  - {test}: {error_msg}")
 
     if result.wasSuccessful():
-        print("✅ All network visualization tests passed! Network functionality is working correctly.")
+        print(
+            "✅ All network visualization tests passed! Network functionality is working correctly."
+        )
     else:
         print("❌ Some network visualization tests failed. Check the errors above.")
 

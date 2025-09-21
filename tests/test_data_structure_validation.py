@@ -20,19 +20,23 @@ class TestDataStructureValidation(unittest.TestCase):
     def setUp(self):
         """Set up test data that matches real Google Sheets structure"""
         # Real expenses data structure (what we actually get from Google Sheets)
-        self.real_expenses_df = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02', '2024-01-03'],
-            'שם': ['ספק א', 'ספק ב', 'ספק ג'],
-            'שקלים': [1000, 2000, 1500]
-        })
+        self.real_expenses_df = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "שם": ["ספק א", "ספק ב", "ספק ג"],
+                "שקלים": [1000, 2000, 1500],
+            }
+        )
 
         # What the old function expected (incorrect assumption)
-        self.expected_with_category_df = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02'],
-            'שם': ['ספק א', 'ספק ב'],
-            'קטגוריה': ['מזון', 'ציוד'],  # This column doesn't exist in real data
-            'שקלים': [1000, 2000]
-        })
+        self.expected_with_category_df = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02"],
+                "שם": ["ספק א", "ספק ב"],
+                "קטגוריה": ["מזון", "ציוד"],  # This column doesn't exist in real data
+                "שקלים": [1000, 2000],
+            }
+        )
 
     def test_old_budget_distribution_function_would_fail(self):
         """Test that the old function would fail with real data structure"""
@@ -62,15 +66,15 @@ class TestDataStructureValidation(unittest.TestCase):
             result = create_budget_distribution_chart(self.real_expenses_df)
 
             self.assertIsNotNone(result, "New function should work with real data")
-            self.assertTrue(hasattr(result, 'data'), "Chart should have data")
+            self.assertTrue(hasattr(result, "data"), "Chart should have data")
 
             # Check that it groups by name (supplier) since no category column exists
             chart_data = result.data[0]
-            self.assertIn('labels', chart_data)
-            self.assertIn('values', chart_data)
+            self.assertIn("labels", chart_data)
+            self.assertIn("values", chart_data)
 
             # Should have 3 unique suppliers
-            self.assertEqual(len(chart_data['labels']), 3)
+            self.assertEqual(len(chart_data["labels"]), 3)
 
             logger.info("✅ New function works correctly with real data")
 
@@ -80,20 +84,27 @@ class TestDataStructureValidation(unittest.TestCase):
     def test_data_structure_assumptions(self):
         """Test our assumptions about data structure"""
         # Test that expenses data doesn't have category column
-        self.assertNotIn('קטגוריה', self.real_expenses_df.columns,
-                        "Expenses data should NOT have category column")
+        self.assertNotIn(
+            "קטגוריה",
+            self.real_expenses_df.columns,
+            "Expenses data should NOT have category column",
+        )
 
         # Test that expenses data has the expected columns
-        expected_columns = ['תאריך', 'שם', 'שקלים']
+        expected_columns = ["תאריך", "שם", "שקלים"]
         for col in expected_columns:
-            self.assertIn(col, self.real_expenses_df.columns,
-                         f"Expenses data should have {col} column")
+            self.assertIn(
+                col, self.real_expenses_df.columns, f"Expenses data should have {col} column"
+            )
 
         # Test that we can group by name (supplier)
-        name_col = 'שם'
-        amount_col = 'שקלים'
+        name_col = "שם"
+        amount_col = "שקלים"
 
-        if name_col in self.real_expenses_df.columns and amount_col in self.real_expenses_df.columns:
+        if (
+            name_col in self.real_expenses_df.columns
+            and amount_col in self.real_expenses_df.columns
+        ):
             grouped = self.real_expenses_df.groupby(name_col)[amount_col].sum()
             self.assertEqual(len(grouped), 3, "Should be able to group by supplier name")
             logger.info("✅ Can group by supplier name as fallback")
@@ -104,12 +115,14 @@ class TestDataStructureValidation(unittest.TestCase):
             from src.data_visualization import create_budget_distribution_chart
 
             # Test with data that has category column (should use category)
-            df_with_category = pd.DataFrame({
-                'תאריך': ['2024-01-01', '2024-01-02'],
-                'שם': ['ספק א', 'ספק ב'],
-                'קטגוריה': ['מזון', 'ציוד'],
-                'שקלים': [1000, 2000]
-            })
+            df_with_category = pd.DataFrame(
+                {
+                    "תאריך": ["2024-01-01", "2024-01-02"],
+                    "שם": ["ספק א", "ספק ב"],
+                    "קטגוריה": ["מזון", "ציוד"],
+                    "שקלים": [1000, 2000],
+                }
+            )
 
             result1 = create_budget_distribution_chart(df_with_category)
             self.assertIsNotNone(result1, "Should work with category column")
@@ -119,8 +132,8 @@ class TestDataStructureValidation(unittest.TestCase):
             self.assertIsNotNone(result2, "Should work without category column")
 
             # Both should create valid charts
-            self.assertTrue(hasattr(result1, 'data'))
-            self.assertTrue(hasattr(result2, 'data'))
+            self.assertTrue(hasattr(result1, "data"))
+            self.assertTrue(hasattr(result2, "data"))
 
             logger.info("✅ Fallback logic works correctly")
 
@@ -138,18 +151,12 @@ class TestDataStructureValidation(unittest.TestCase):
             self.assertIsNone(result, "Should return None for empty DataFrame")
 
             # Test with DataFrame missing amount column
-            df_no_amount = pd.DataFrame({
-                'תאריך': ['2024-01-01'],
-                'שם': ['ספק א']
-            })
+            df_no_amount = pd.DataFrame({"תאריך": ["2024-01-01"], "שם": ["ספק א"]})
             result = create_budget_distribution_chart(df_no_amount)
             self.assertIsNone(result, "Should return None when amount column missing")
 
             # Test with DataFrame missing name column
-            df_no_name = pd.DataFrame({
-                'תאריך': ['2024-01-01'],
-                'שקלים': [1000]
-            })
+            df_no_name = pd.DataFrame({"תאריך": ["2024-01-01"], "שקלים": [1000]})
             result = create_budget_distribution_chart(df_no_name)
             self.assertIsNone(result, "Should return None when name column missing")
 
@@ -166,9 +173,9 @@ class TestRealWorldDataScenarios(unittest.TestCase):
         """Test variations in column names from Google Sheets"""
         # Test different possible column names
         variations = [
-            {'תאריך': ['2024-01-01'], 'שם לקוח': ['ספק א'], 'סכום': [1000]},
-            {'תאריך': ['2024-01-01'], 'שם ספק': ['ספק א'], 'שקלים': [1000]},
-            {'תאריך': ['2024-01-01'], 'שם': ['ספק א'], 'שקלים': [1000]},
+            {"תאריך": ["2024-01-01"], "שם לקוח": ["ספק א"], "סכום": [1000]},
+            {"תאריך": ["2024-01-01"], "שם ספק": ["ספק א"], "שקלים": [1000]},
+            {"תאריך": ["2024-01-01"], "שם": ["ספק א"], "שקלים": [1000]},
         ]
 
         for i, df_data in enumerate(variations):
@@ -177,22 +184,26 @@ class TestRealWorldDataScenarios(unittest.TestCase):
 
                 # Test that our function can handle these variations
                 from src.data_visualization import create_budget_distribution_chart
+
                 result = create_budget_distribution_chart(df)
 
-                if 'שקלים' in df.columns or 'סכום' in df.columns:
+                if "שקלים" in df.columns or "סכום" in df.columns:
                     self.assertIsNotNone(result, f"Should work with variation {i}")
                 else:
                     self.assertIsNone(result, f"Should fail with variation {i}")
 
     def test_data_with_zero_amounts(self):
         """Test data with zero amounts"""
-        df_with_zeros = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02', '2024-01-03'],
-            'שם': ['ספק א', 'ספק ב', 'ספק ג'],
-            'שקלים': [1000, 0, 1500]  # One zero amount
-        })
+        df_with_zeros = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "שם": ["ספק א", "ספק ב", "ספק ג"],
+                "שקלים": [1000, 0, 1500],  # One zero amount
+            }
+        )
 
         from src.data_visualization import create_budget_distribution_chart
+
         result = create_budget_distribution_chart(df_with_zeros)
 
         # Should still work, but only show non-zero amounts
@@ -201,17 +212,20 @@ class TestRealWorldDataScenarios(unittest.TestCase):
         if result:
             chart_data = result.data[0]
             # Should only have 2 labels (excluding zero amount)
-            self.assertEqual(len(chart_data['labels']), 2, "Should exclude zero amounts")
+            self.assertEqual(len(chart_data["labels"]), 2, "Should exclude zero amounts")
 
     def test_data_with_negative_amounts(self):
         """Test data with negative amounts (refunds, etc.)"""
-        df_with_negatives = pd.DataFrame({
-            'תאריך': ['2024-01-01', '2024-01-02', '2024-01-03'],
-            'שם': ['ספק א', 'ספק ב', 'ספק ג'],
-            'שקלים': [1000, -200, 1500]  # One negative amount (refund)
-        })
+        df_with_negatives = pd.DataFrame(
+            {
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "שם": ["ספק א", "ספק ב", "ספק ג"],
+                "שקלים": [1000, -200, 1500],  # One negative amount (refund)
+            }
+        )
 
         from src.data_visualization import create_budget_distribution_chart
+
         result = create_budget_distribution_chart(df_with_negatives)
 
         # Should work and include negative amounts
@@ -220,7 +234,7 @@ class TestRealWorldDataScenarios(unittest.TestCase):
         if result:
             chart_data = result.data[0]
             # Should have all 3 amounts (including negative)
-            self.assertEqual(len(chart_data['labels']), 3, "Should include negative amounts")
+            self.assertEqual(len(chart_data["labels"]), 3, "Should include negative amounts")
 
 
 def run_data_structure_tests():
@@ -240,7 +254,9 @@ def run_data_structure_tests():
     result = runner.run(suite)
 
     print("=" * 60)
-    print(f"📊 Data Structure Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed")
+    print(
+        f"📊 Data Structure Test Results: {result.testsRun - len(result.failures) - len(result.errors)}/{result.testsRun} tests passed"
+    )
 
     if result.failures:
         print(f"❌ {len(result.failures)} tests failed:")

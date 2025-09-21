@@ -10,9 +10,11 @@ from google.oauth2.service_account import Credentials
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
 # Get configuration from environment variables
-SERVICE_ACCOUNT_FILE = os.getenv('SERVICE_ACCOUNT_FILE', 'service_account.json')
-SPREADSHEET_ID = os.getenv('SPREADSHEET_ID', '1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo')
-WIDOW_SPREADSHEET_ID = os.getenv('WIDOW_SPREADSHEET_ID', '1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8')
+SERVICE_ACCOUNT_FILE = os.getenv("SERVICE_ACCOUNT_FILE", "service_account.json")
+SPREADSHEET_ID = os.getenv("SPREADSHEET_ID", "1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo")
+WIDOW_SPREADSHEET_ID = os.getenv(
+    "WIDOW_SPREADSHEET_ID", "1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8"
+)
 
 # Initialize Google Sheets client
 gc = None
