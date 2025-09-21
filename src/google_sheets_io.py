@@ -22,7 +22,16 @@ gc = None
 
 def fix_private_key_formatting(service_account_info):
     """Fix private key formatting by adding missing newlines"""
+    logging.info("=== STARTING PRIVATE KEY FORMATTING FIX ===")
     private_key = service_account_info.get("private_key", "")
+    logging.info(f"Private key length: {len(private_key)}")
+    logging.info(f"Private key starts with: {private_key[:50]}...")
+    logging.info(f"Private key ends with: ...{private_key[-50:]}")
+    newline_check = '\n' in private_key
+    escaped_newline_check = '\\n' in private_key
+    logging.info(f"Private key contains newlines: {newline_check}")
+    logging.info(f"Private key contains escaped newlines: {escaped_newline_check}")
+    
     if not private_key.startswith("-----BEGIN PRIVATE KEY-----\n"):
         logging.info("Connection - Adding missing newlines to private key")
         if (
@@ -37,13 +46,25 @@ def fix_private_key_formatting(service_account_info):
             fixed_key = f"{begin_part}\n{key_content}\n{end_part}\n"
             service_account_info["private_key"] = fixed_key
             logging.info("Connection - Private key fixed with proper newlines")
+            logging.info(f"Fixed private key length: {len(fixed_key)}")
+            logging.info(f"Fixed private key starts with: {fixed_key[:50]}...")
+            logging.info(f"Fixed private key ends with: ...{fixed_key[-50:]}")
+        else:
+            logging.warning("Connection - Private key format not recognized, cannot fix")
+    else:
+        logging.info("Connection - Private key already has proper formatting")
+    
+    logging.info("=== PRIVATE KEY FORMATTING FIX COMPLETED ===")
     return service_account_info
 
 
 def get_google_sheets_client():
     """Get Google Sheets client, initializing it if needed"""
     global gc
+    logging.info("=== STARTING GOOGLE SHEETS CLIENT INITIALIZATION ===")
+    
     if gc is not None:
+        logging.info("Google Sheets client already initialized, returning existing client")
         return gc
 
     try:
@@ -62,66 +83,114 @@ def get_google_sheets_client():
                 )
 
         # Try to get service account from Streamlit secrets first
-        if hasattr(st, "secrets") and (
-            "service_account" in st.secrets
-            or ("secrets" in st.secrets and "service_account" in st.secrets["secrets"])
-        ):
+        logging.info("Checking if we can get service account from Streamlit secrets...")
+        condition1 = hasattr(st, "secrets") and "service_account" in st.secrets
+        condition2 = hasattr(st, "secrets") and "secrets" in st.secrets and "service_account" in st.secrets["secrets"]
+        overall_condition = condition1 or condition2
+        
+        logging.info(f"Condition 1 (service_account in st.secrets): {condition1}")
+        logging.info(f"Condition 2 (secrets in st.secrets and service_account in st.secrets['secrets']): {condition2}")
+        logging.info(f"Overall condition: {overall_condition}")
+        
+        if overall_condition:
+            logging.info("ENTERING secrets processing block")
             import json
 
             # Try service_account first, then fallback to secrets
             if "service_account" in st.secrets:
                 secret_value = st.secrets["service_account"]
+                logging.info("Using service_account from st.secrets directly")
             else:
                 # Check if secrets contains a service_account key
                 if hasattr(st.secrets["secrets"], "service_account"):
                     secret_value = st.secrets["secrets"]["service_account"]
+                    logging.info("Using service_account from st.secrets['secrets']")
                 else:
                     secret_value = st.secrets["secrets"]
+                    logging.info("Using entire st.secrets['secrets']")
+            
+            logging.info(f"secret_value type: {type(secret_value)}")
+            logging.info(f"secret_value preview: {str(secret_value)[:100]}...")
 
             # Handle different secret structures
+            logging.info("Processing secret value...")
             if isinstance(secret_value, str):
+                logging.info("Processing secret as string (JSON)")
                 # If it's a string, try to parse as JSON
                 try:
                     # Clean the JSON string to handle common issues
                     cleaned_json = secret_value.strip()
+                    logging.info(f"Original JSON length: {len(secret_value)}")
+                    logging.info(f"Cleaned JSON length: {len(cleaned_json)}")
                     # Remove any control characters that might cause issues
                     import re
 
                     cleaned_json = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", cleaned_json)
+                    logging.info(f"After control char removal length: {len(cleaned_json)}")
                     service_account_info = json.loads(cleaned_json)
+                    logging.info("Successfully parsed JSON secret")
+                    logging.info(f"Parsed JSON keys: {list(service_account_info.keys())}")
                 except json.JSONDecodeError as e:
                     logging.error(f"Failed to parse secret as JSON: {e}")
                     logging.error(f"JSON content preview: {secret_value[:200]}...")
                     return None
             elif isinstance(secret_value, (dict, type(st.secrets))):
+                logging.info("Processing secret as dict/AttrDict")
                 # If it's already a dict or AttrDict, use it directly
                 service_account_info = secret_value
+                logging.info(f"Dict/AttrDict keys: {list(service_account_info.keys())}")
             else:
                 logging.error(f"Unexpected secret type: {type(secret_value)}")
                 return None
 
             # Fix private key formatting if needed
+            logging.info("Applying private key formatting fix...")
             service_account_info = fix_private_key_formatting(service_account_info)
+            logging.info("Private key formatting fix completed")
 
-            creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
-            gc = gspread.authorize(creds)
-            logging.info(
-                "Google Sheets connection established successfully using Streamlit secrets!"
-            )
+            logging.info("Creating credentials from service account info...")
+            try:
+                creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+                logging.info("Credentials created successfully")
+            except Exception as e:
+                logging.error(f"Failed to create credentials: {e}")
+                logging.error(f"Error type: {type(e)}")
+                return None
+            
+            logging.info("Authorizing with gspread...")
+            try:
+                gc = gspread.authorize(creds)
+                logging.info("Gspread authorization successful")
+            except Exception as e:
+                logging.error(f"Failed to authorize with gspread: {e}")
+                logging.error(f"Error type: {type(e)}")
+                return None
+            
+            logging.info("Google Sheets connection established successfully using Streamlit secrets!")
             return gc
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
             # Fallback to file-based authentication
-            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-            gc = gspread.authorize(creds)
-            logging.info("Google Sheets connection established successfully using file!")
-            return gc
+            logging.info("Falling back to file-based authentication")
+            logging.info(f"Service account file path: {SERVICE_ACCOUNT_FILE}")
+            try:
+                creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+                logging.info("File-based credentials created successfully")
+                gc = gspread.authorize(creds)
+                logging.info("File-based gspread authorization successful")
+                logging.info("Google Sheets connection established successfully using file!")
+                return gc
+            except Exception as e:
+                logging.error(f"File-based authentication failed: {e}")
+                logging.error(f"Error type: {type(e)}")
+                return None
         else:
             logging.warning(
                 "No service account found in secrets or file. Falling back to Excel files."
             )
             return None
     except Exception as e:
-        logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+        logging.error(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+        logging.error(f"Error type: {type(e)}")
         return None
 
 
