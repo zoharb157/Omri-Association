@@ -44,7 +44,7 @@ def get_google_sheets_client():
         # Try to get service account from Streamlit secrets first
         if hasattr(st, "secrets") and (
             "service_account" in st.secrets
-            or ("secrets" in st.secrets and hasattr(st.secrets["secrets"], "service_account"))
+            or ("secrets" in st.secrets and "service_account" in st.secrets["secrets"])
         ):
             import json
 
@@ -181,7 +181,7 @@ def check_service_account_validity():
         # Check Streamlit secrets first
         if hasattr(st, "secrets") and (
             "service_account" in st.secrets
-            or ("secrets" in st.secrets and hasattr(st.secrets["secrets"], "service_account"))
+            or ("secrets" in st.secrets and "service_account" in st.secrets["secrets"])
         ):
             # Try service_account first, then fallback to secrets
             if "service_account" in st.secrets:
