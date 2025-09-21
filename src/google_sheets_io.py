@@ -179,10 +179,17 @@ def check_service_account_validity():
                 )
 
         # Check Streamlit secrets first
-        if hasattr(st, "secrets") and (
-            "service_account" in st.secrets
-            or ("secrets" in st.secrets and "service_account" in st.secrets["secrets"])
-        ):
+        condition1 = "service_account" in st.secrets
+        condition2 = "secrets" in st.secrets and "service_account" in st.secrets["secrets"]
+        logging.info(f"Validation - condition1 (service_account in st.secrets): {condition1}")
+        logging.info(
+            f"Validation - condition2 (secrets in st.secrets and service_account in st.secrets['secrets']): {condition2}"
+        )
+        logging.info(
+            f"Validation - overall condition: {hasattr(st, 'secrets') and (condition1 or condition2)}"
+        )
+
+        if hasattr(st, "secrets") and (condition1 or condition2):
             # Try service_account first, then fallback to secrets
             if "service_account" in st.secrets:
                 secret_value = st.secrets["service_account"]
