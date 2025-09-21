@@ -88,17 +88,17 @@ def get_google_sheets_client():
             return gc
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
             # Fallback to file-based authentication
-        creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-        gc = gspread.authorize(creds)
+            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            gc = gspread.authorize(creds)
             logging.info("Google Sheets connection established successfully using file!")
             return gc
-    else:
+        else:
             logging.warning(
                 "No service account found in secrets or file. Falling back to Excel files."
             )
             return None
-except Exception as e:
-    logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+    except Exception as e:
+        logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
         return None
 
 
@@ -240,25 +240,29 @@ def check_service_account_validity():
                     logging.warning(f"Validation - Missing field in secrets: {field}")
                     show_service_account_upload()
                     return False
-            
+
             # Debug the private key format
             private_key = key_data.get("private_key", "")
             logging.info(f"Validation - Private key length: {len(private_key)}")
             logging.info(f"Validation - Private key starts with: {private_key[:50]}...")
             logging.info(f"Validation - Private key ends with: ...{private_key[-50:]}")
-            newline_check = '\n' in private_key
-            escaped_newline_check = '\\n' in private_key
+            newline_check = "\n" in private_key
+            escaped_newline_check = "\\n" in private_key
             logging.info(f"Validation - Private key contains newlines: {newline_check}")
-            logging.info(f"Validation - Private key contains escaped newlines: {escaped_newline_check}")
-            
+            logging.info(
+                f"Validation - Private key contains escaped newlines: {escaped_newline_check}"
+            )
+
             # Fix private key formatting if needed
             if "\\\\n" in private_key:
                 logging.info("Validation - Fixing escaped newlines in private key")
                 key_data["private_key"] = private_key.replace("\\\\n", "\\n")
             elif "\\n" in private_key and "\n" not in private_key:
-                logging.info("Validation - Converting escaped newlines to actual newlines in private key")
+                logging.info(
+                    "Validation - Converting escaped newlines to actual newlines in private key"
+                )
                 key_data["private_key"] = private_key.replace("\\n", "\n")
-            
+
             # Try to create credentials and get a token
             logging.info("Validation - Creating credentials from service account info")
             try:
@@ -275,19 +279,19 @@ def check_service_account_validity():
             show_service_account_upload()
             return False
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
-        with open(SERVICE_ACCOUNT_FILE, encoding="utf-8") as f:
-            key_data = json.load(f)
-        # Basic checks
-        required_fields = ["type", "private_key", "client_email", "token_uri"]
-        for field in required_fields:
-            if field not in key_data or not key_data[field]:
-                show_service_account_upload()
-                return False
-        # Try to create credentials and get a token
-        creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-        # Try to get a token (will fail if key is invalid/expired)
-        creds.refresh(Request())
-        return True
+            with open(SERVICE_ACCOUNT_FILE, encoding="utf-8") as f:
+                key_data = json.load(f)
+            # Basic checks
+            required_fields = ["type", "private_key", "client_email", "token_uri"]
+            for field in required_fields:
+                if field not in key_data or not key_data[field]:
+                    show_service_account_upload()
+                    return False
+            # Try to create credentials and get a token
+            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            # Try to get a token (will fail if key is invalid/expired)
+            creds.refresh(Request())
+            return True
         else:
             show_service_account_upload()
             return False
