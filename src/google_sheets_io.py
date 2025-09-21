@@ -59,9 +59,16 @@ def get_google_sheets_client():
             if isinstance(secret_value, str):
                 # If it's a string, try to parse as JSON
                 try:
-                    service_account_info = json.loads(secret_value)
+                    # Clean the JSON string to handle common issues
+                    cleaned_json = secret_value.strip()
+                    # Remove any control characters that might cause issues
+                    import re
+
+                    cleaned_json = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", cleaned_json)
+                    service_account_info = json.loads(cleaned_json)
                 except json.JSONDecodeError as e:
                     logging.error(f"Failed to parse secret as JSON: {e}")
+                    logging.error(f"JSON content preview: {secret_value[:200]}...")
                     return None
             elif isinstance(secret_value, (dict, type(st.secrets))):
                 # If it's already a dict or AttrDict, use it directly
@@ -178,9 +185,16 @@ def check_service_account_validity():
             if isinstance(secret_value, str):
                 # If it's a string, try to parse as JSON
                 try:
-                    key_data = json.loads(secret_value)
+                    # Clean the JSON string to handle common issues
+                    cleaned_json = secret_value.strip()
+                    # Remove any control characters that might cause issues
+                    import re
+
+                    cleaned_json = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", cleaned_json)
+                    key_data = json.loads(cleaned_json)
                 except json.JSONDecodeError as e:
                     logging.error(f"Validation - Failed to parse secret as JSON: {e}")
+                    logging.error(f"Validation - JSON content preview: {secret_value[:200]}...")
                     show_service_account_upload()
                     return False
             elif isinstance(secret_value, (dict, type(st.secrets))):
