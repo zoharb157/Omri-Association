@@ -1,8 +1,8 @@
-streamlit==1.40.1
-pandas==2.2.0
-plotly==5.17.0
-numpy==1.26.4
-Pillow==10.4.0
+streamlit>=1.40.0
+pandas>=2.2.0
+plotly>=5.17.0
+numpy>=1.26.0
+Pillow>=10.4.0
 openpyxl==3.1.2
 fpdf==1.7.2
 arabic-reshaper==3.0.0
