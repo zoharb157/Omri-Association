@@ -286,7 +286,10 @@ class TestPerformanceUI(unittest.TestCase):
         """Test memory usage of UI operations"""
         import os
 
-        import psutil
+        try:
+            import psutil
+        except ImportError:
+            self.skipTest("psutil not available - skipping memory test")
 
         # Get initial memory usage
         process = psutil.Process(os.getpid())
