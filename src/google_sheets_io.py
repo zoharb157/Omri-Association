@@ -20,6 +20,26 @@ WIDOW_SPREADSHEET_ID = os.getenv(
 gc = None
 
 
+def fix_private_key_formatting(service_account_info):
+    """Fix private key formatting by adding missing newlines"""
+    private_key = service_account_info.get("private_key", "")
+    if not private_key.startswith("-----BEGIN PRIVATE KEY-----\n"):
+        logging.info("Connection - Adding missing newlines to private key")
+        if (
+            "-----BEGIN PRIVATE KEY-----" in private_key
+            and "-----END PRIVATE KEY-----" in private_key
+        ):
+            begin_part = "-----BEGIN PRIVATE KEY-----"
+            end_part = "-----END PRIVATE KEY-----"
+            start_idx = private_key.find(begin_part) + len(begin_part)
+            end_idx = private_key.find(end_part)
+            key_content = private_key[start_idx:end_idx]
+            fixed_key = f"{begin_part}\n{key_content}\n{end_part}\n"
+            service_account_info["private_key"] = fixed_key
+            logging.info("Connection - Private key fixed with proper newlines")
+    return service_account_info
+
+
 def get_google_sheets_client():
     """Get Google Sheets client, initializing it if needed"""
     global gc
@@ -79,6 +99,9 @@ def get_google_sheets_client():
             else:
                 logging.error(f"Unexpected secret type: {type(secret_value)}")
                 return None
+
+            # Fix private key formatting if needed
+            service_account_info = fix_private_key_formatting(service_account_info)
 
             creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
             gc = gspread.authorize(creds)
