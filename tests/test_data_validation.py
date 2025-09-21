@@ -15,7 +15,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
-class TestDataIntegrity(unittest.TestCase):
+class TestDataIntegrity(unittest.TestCase):  # Force reformat
     """Test data integrity and validation"""
 
     def test_required_columns_exist(self):
