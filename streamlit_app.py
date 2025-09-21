@@ -41,12 +41,12 @@ def main():
     """Main entry point for the dashboard - Updated 2025-01-17"""
     try:
         logger.info("Starting Omri Association Dashboard on Streamlit Cloud")
-        
+
         # Apply global design system
         try:
             from ui.design_tokens import get_global_css
             st.markdown(get_global_css(), unsafe_allow_html=True)
-        except (ImportError, KeyError, ModuleNotFoundError) as e:
+        except (ImportError, KeyError, ModuleNotFoundError):
             # Fallback CSS if design_tokens is not available
             st.markdown(
                 """
@@ -59,7 +59,7 @@ def main():
             """,
                 unsafe_allow_html=True,
             )
-        
+
         # Import and run the working dashboard with all tabs
         from ui.dashboard_core import run_dashboard
 

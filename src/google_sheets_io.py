@@ -31,7 +31,7 @@ def fix_private_key_formatting(service_account_info):
     escaped_newline_check = '\\n' in private_key
     logging.info(f"Private key contains newlines: {newline_check}")
     logging.info(f"Private key contains escaped newlines: {escaped_newline_check}")
-    
+
     if not private_key.startswith("-----BEGIN PRIVATE KEY-----\n"):
         logging.info("Connection - Adding missing newlines to private key")
         if (
@@ -53,7 +53,7 @@ def fix_private_key_formatting(service_account_info):
             logging.warning("Connection - Private key format not recognized, cannot fix")
     else:
         logging.info("Connection - Private key already has proper formatting")
-    
+
     logging.info("=== PRIVATE KEY FORMATTING FIX COMPLETED ===")
     return service_account_info
 
@@ -62,7 +62,7 @@ def get_google_sheets_client():
     """Get Google Sheets client, initializing it if needed"""
     global gc
     logging.info("=== STARTING GOOGLE SHEETS CLIENT INITIALIZATION ===")
-    
+
     if gc is not None:
         logging.info("Google Sheets client already initialized, returning existing client")
         return gc
@@ -87,11 +87,11 @@ def get_google_sheets_client():
         condition1 = hasattr(st, "secrets") and "service_account" in st.secrets
         condition2 = hasattr(st, "secrets") and "secrets" in st.secrets and "service_account" in st.secrets["secrets"]
         overall_condition = condition1 or condition2
-        
+
         logging.info(f"Condition 1 (service_account in st.secrets): {condition1}")
         logging.info(f"Condition 2 (secrets in st.secrets and service_account in st.secrets['secrets']): {condition2}")
         logging.info(f"Overall condition: {overall_condition}")
-        
+
         if overall_condition:
             logging.info("ENTERING secrets processing block")
             import json
@@ -108,7 +108,7 @@ def get_google_sheets_client():
                 else:
                     secret_value = st.secrets["secrets"]
                     logging.info("Using entire st.secrets['secrets']")
-            
+
             logging.info(f"secret_value type: {type(secret_value)}")
             logging.info(f"secret_value preview: {str(secret_value)[:100]}...")
 
@@ -156,7 +156,7 @@ def get_google_sheets_client():
                 logging.error(f"Failed to create credentials: {e}")
                 logging.error(f"Error type: {type(e)}")
                 return None
-            
+
             logging.info("Authorizing with gspread...")
             try:
                 gc = gspread.authorize(creds)
@@ -165,7 +165,7 @@ def get_google_sheets_client():
                 logging.error(f"Failed to authorize with gspread: {e}")
                 logging.error(f"Error type: {type(e)}")
                 return None
-            
+
             logging.info("Google Sheets connection established successfully using Streamlit secrets!")
             return gc
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
