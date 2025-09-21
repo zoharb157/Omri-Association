@@ -122,8 +122,8 @@ def create_budget_distribution_chart(df: pd.DataFrame):
             names_col = name_col
             title = "התפלגות הוצאות לפי ספק/לקוח"
 
-        # Filter out empty or zero amounts
-        category_totals = category_totals[category_totals[amount_col] > 0]
+        # Filter out empty amounts but keep negative amounts (refunds, etc.)
+        category_totals = category_totals[category_totals[amount_col] != 0]
 
         if category_totals.empty:
             logging.warning("No valid data for budget distribution chart")
