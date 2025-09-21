@@ -27,24 +27,7 @@ st.set_page_config(
     },
 )
 
-# Apply global design system
-try:
-    from ui.design_tokens import get_global_css
-
-    st.markdown(get_global_css(), unsafe_allow_html=True)
-except ImportError:
-    # Fallback CSS if design_tokens is not available
-    st.markdown(
-        """
-    <style>
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-    </style>
-    """,
-        unsafe_allow_html=True,
-    )
+# Design system will be applied in main() function
 
 # Version indicator for deployment verification
 st.markdown("<!-- Dashboard Version: 2025-01-17-v3 - FORCE DEPLOY -->", unsafe_allow_html=True)
@@ -58,6 +41,25 @@ def main():
     """Main entry point for the dashboard - Updated 2025-01-17"""
     try:
         logger.info("Starting Omri Association Dashboard on Streamlit Cloud")
+        
+        # Apply global design system
+        try:
+            from ui.design_tokens import get_global_css
+            st.markdown(get_global_css(), unsafe_allow_html=True)
+        except (ImportError, KeyError, ModuleNotFoundError) as e:
+            # Fallback CSS if design_tokens is not available
+            st.markdown(
+                """
+            <style>
+            .main .block-container {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+            </style>
+            """,
+                unsafe_allow_html=True,
+            )
+        
         # Import and run the working dashboard with all tabs
         from ui.dashboard_core import run_dashboard
 
