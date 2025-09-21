@@ -27,8 +27,8 @@ def fix_private_key_formatting(service_account_info):
     logging.info(f"Private key length: {len(private_key)}")
     logging.info(f"Private key starts with: {private_key[:50]}...")
     logging.info(f"Private key ends with: ...{private_key[-50:]}")
-    newline_check = '\n' in private_key
-    escaped_newline_check = '\\n' in private_key
+    newline_check = "\n" in private_key
+    escaped_newline_check = "\\n" in private_key
     logging.info(f"Private key contains newlines: {newline_check}")
     logging.info(f"Private key contains escaped newlines: {escaped_newline_check}")
 
@@ -85,11 +85,17 @@ def get_google_sheets_client():
         # Try to get service account from Streamlit secrets first
         logging.info("Checking if we can get service account from Streamlit secrets...")
         condition1 = hasattr(st, "secrets") and "service_account" in st.secrets
-        condition2 = hasattr(st, "secrets") and "secrets" in st.secrets and "service_account" in st.secrets["secrets"]
+        condition2 = (
+            hasattr(st, "secrets")
+            and "secrets" in st.secrets
+            and "service_account" in st.secrets["secrets"]
+        )
         overall_condition = condition1 or condition2
 
         logging.info(f"Condition 1 (service_account in st.secrets): {condition1}")
-        logging.info(f"Condition 2 (secrets in st.secrets and service_account in st.secrets['secrets']): {condition2}")
+        logging.info(
+            f"Condition 2 (secrets in st.secrets and service_account in st.secrets['secrets']): {condition2}"
+        )
         logging.info(f"Overall condition: {overall_condition}")
 
         if overall_condition:
@@ -166,7 +172,9 @@ def get_google_sheets_client():
                 logging.error(f"Error type: {type(e)}")
                 return None
 
-            logging.info("Google Sheets connection established successfully using Streamlit secrets!")
+            logging.info(
+                "Google Sheets connection established successfully using Streamlit secrets!"
+            )
             return gc
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
             # Fallback to file-based authentication

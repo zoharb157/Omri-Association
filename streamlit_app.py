@@ -45,6 +45,7 @@ def main():
         # Apply global design system
         try:
             from ui.design_tokens import get_global_css
+
             st.markdown(get_global_css(), unsafe_allow_html=True)
         except (ImportError, KeyError, ModuleNotFoundError):
             # Fallback CSS if design_tokens is not available

@@ -143,9 +143,9 @@ def show_login_form() -> None:
 
         col1, col2 = st.columns(2)
         with col1:
-            submit = st.form_submit_button("🚪 התחבר", width='stretch')
+            submit = st.form_submit_button("🚪 התחבר", width="stretch")
         with col2:
-            if st.form_submit_button("❌ ביטול", width='stretch'):
+            if st.form_submit_button("❌ ביטול", width="stretch"):
                 st.rerun()
 
         if submit:
