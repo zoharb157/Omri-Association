@@ -43,7 +43,23 @@ def get_google_sheets_client():
 
             # Try service_account first, then fallback to secrets
             secret_key = "service_account" if "service_account" in st.secrets else "secrets"
-            service_account_info = json.loads(st.secrets[secret_key])
+            secret_value = st.secrets[secret_key]
+            
+            # Handle different secret structures
+            if isinstance(secret_value, str):
+                # If it's a string, try to parse as JSON
+                try:
+                    service_account_info = json.loads(secret_value)
+                except json.JSONDecodeError as e:
+                    logging.error(f"Failed to parse secret as JSON: {e}")
+                    return None
+            elif isinstance(secret_value, dict):
+                # If it's already a dict, use it directly
+                service_account_info = secret_value
+            else:
+                logging.error(f"Unexpected secret type: {type(secret_value)}")
+                return None
+                
             creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
             gc = gspread.authorize(creds)
             logging.info(
@@ -134,7 +150,25 @@ def check_service_account_validity():
         if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
             # Try service_account first, then fallback to secrets
             secret_key = "service_account" if "service_account" in st.secrets else "secrets"
-            key_data = json.loads(st.secrets[secret_key])
+            secret_value = st.secrets[secret_key]
+            
+            # Handle different secret structures
+            if isinstance(secret_value, str):
+                # If it's a string, try to parse as JSON
+                try:
+                    key_data = json.loads(secret_value)
+                except json.JSONDecodeError as e:
+                    logging.error(f"Validation - Failed to parse secret as JSON: {e}")
+                    show_service_account_upload()
+                    return False
+            elif isinstance(secret_value, dict):
+                # If it's already a dict, use it directly
+                key_data = secret_value
+            else:
+                logging.error(f"Validation - Unexpected secret type: {type(secret_value)}")
+                show_service_account_upload()
+                return False
+                
             # Basic checks
             required_fields = ["type", "private_key", "client_email", "token_uri"]
             for field in required_fields:
