@@ -116,7 +116,7 @@ class TestDataProcessing(unittest.TestCase):
     def test_calculate_monthly_budget(self):
         """Test monthly budget calculation"""
         try:
-            from data_processing import calculate_monthly_budget
+            from src.data_processing import calculate_monthly_budget
 
             result = calculate_monthly_budget(self.expenses_df, self.donations_df)
 
@@ -140,7 +140,7 @@ class TestDataProcessing(unittest.TestCase):
     def test_calculate_donor_statistics(self):
         """Test donor statistics calculation"""
         try:
-            from data_processing import calculate_donor_statistics
+            from src.data_processing import calculate_donor_statistics
 
             result = calculate_donor_statistics(self.donations_df)
 
@@ -164,7 +164,7 @@ class TestDataProcessing(unittest.TestCase):
     def test_calculate_widow_statistics(self):
         """Test widow statistics calculation"""
         try:
-            from data_processing import calculate_widow_statistics
+            from src.data_processing import calculate_widow_statistics
 
             result = calculate_widow_statistics(self.almanot_df)
 
@@ -210,7 +210,7 @@ class TestDataVisualization(unittest.TestCase):
     def test_create_monthly_trends(self):
         """Test monthly trends chart creation"""
         try:
-            from data_visualization import create_monthly_trends
+            from src.data_visualization import create_monthly_trends
 
             # Mock streamlit components
             with patch('streamlit.error'), \
@@ -226,7 +226,7 @@ class TestDataVisualization(unittest.TestCase):
     def test_create_budget_distribution_chart(self):
         """Test budget distribution chart creation"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Mock streamlit components
             with patch('streamlit.error'), \
@@ -242,7 +242,7 @@ class TestDataVisualization(unittest.TestCase):
     def test_create_donor_contribution_chart(self):
         """Test donor contribution chart creation"""
         try:
-            from data_visualization import create_donor_contribution_chart
+            from src.data_visualization import create_donor_contribution_chart
 
             # Mock streamlit components
             with patch('streamlit.error'), \
@@ -258,7 +258,7 @@ class TestDataVisualization(unittest.TestCase):
     def test_create_widows_support_chart(self):
         """Test widows support chart creation"""
         try:
-            from data_visualization import create_widows_support_chart
+            from src.data_visualization import create_widows_support_chart
 
             # Mock streamlit components
             with patch('streamlit.error'), \

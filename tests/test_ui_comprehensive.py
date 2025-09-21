@@ -142,7 +142,7 @@ class TestDataVisualizationUI(unittest.TestCase):
     def test_budget_distribution_chart_ui(self):
         """Test budget distribution chart UI handling"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with real data structure (no category column)
             test_data = {
@@ -161,7 +161,7 @@ class TestDataVisualizationUI(unittest.TestCase):
     def test_donor_contribution_chart_ui(self):
         """Test donor contribution chart UI handling"""
         try:
-            from data_visualization import create_donor_contribution_chart
+            from src.data_visualization import create_donor_contribution_chart
 
             test_data = {
                 "תורם": ["פלייטק", "פלייטיקה", "מייקרוסופט"],
@@ -179,7 +179,7 @@ class TestDataVisualizationUI(unittest.TestCase):
     def test_monthly_trends_chart_ui(self):
         """Test monthly trends chart UI handling"""
         try:
-            from data_visualization import create_monthly_trends
+            from src.data_visualization import create_monthly_trends
 
             test_data = {
                 "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
@@ -200,7 +200,7 @@ class TestErrorHandlingUI(unittest.TestCase):
     def test_empty_dataframe_handling(self):
         """Test UI handling of empty DataFrames"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with empty DataFrame
             empty_df = pd.DataFrame()
@@ -214,7 +214,7 @@ class TestErrorHandlingUI(unittest.TestCase):
     def test_missing_columns_handling(self):
         """Test UI handling of missing columns"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with DataFrame missing required columns
             test_data = {
@@ -234,7 +234,7 @@ class TestErrorHandlingUI(unittest.TestCase):
     def test_invalid_data_types_handling(self):
         """Test UI handling of invalid data types"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with invalid data types
             test_data = {

@@ -12,10 +12,10 @@ install-dev: ## Install development dependencies
 	pip3 install -r requirements-dev.txt
 
 run: ## Run the dashboard
-	python3 -m streamlit run dashboard.py
+	python3 -m streamlit run streamlit_app.py
 
 run-port: ## Run on specific port (usage: make run-port PORT=8080)
-	python3 -m streamlit run dashboard.py --server.port $(PORT)
+	python3 -m streamlit run streamlit_app.py --server.port $(PORT)
 
 test: ## Run tests
 	pytest

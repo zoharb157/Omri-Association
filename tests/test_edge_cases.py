@@ -241,7 +241,7 @@ class TestDataProcessingEdgeCases(unittest.TestCase):
     def test_calculate_donor_statistics_edge_cases(self):
         """Test donor statistics calculation with edge cases"""
         try:
-            from data_processing import calculate_donor_statistics
+            from src.data_processing import calculate_donor_statistics
 
             # Test with empty DataFrame
             empty_df = pd.DataFrame()
@@ -263,7 +263,7 @@ class TestDataProcessingEdgeCases(unittest.TestCase):
     def test_calculate_widow_statistics_edge_cases(self):
         """Test widow statistics calculation with edge cases"""
         try:
-            from data_processing import calculate_widow_statistics
+            from src.data_processing import calculate_widow_statistics
 
             # Test with empty DataFrame
             empty_df = pd.DataFrame()
@@ -286,7 +286,7 @@ class TestDataProcessingEdgeCases(unittest.TestCase):
     def test_create_budget_distribution_chart_edge_cases(self):
         """Test budget distribution chart with edge cases"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with all zero amounts
             zero_amounts_df = pd.DataFrame({

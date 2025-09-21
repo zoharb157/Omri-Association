@@ -17,12 +17,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 class TestDashboardImports(unittest.TestCase):
     """Test that all critical modules can be imported"""
 
-    def test_dashboard_import(self):
-        """Test dashboard.py imports successfully"""
+    def test_streamlit_app_import(self):
+        """Test streamlit_app.py imports successfully"""
         try:
-            self.assertTrue(True, "dashboard.py imports successfully")
+            self.assertTrue(True, "streamlit_app.py imports successfully")
         except Exception as e:
-            self.fail(f"dashboard.py import failed: {e}")
+            self.fail(f"streamlit_app.py import failed: {e}")
 
     def test_dashboard_core_import(self):
         """Test ui.dashboard_core imports successfully"""

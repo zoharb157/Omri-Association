@@ -51,7 +51,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_budget_distribution_chart_with_real_data(self):
         """Test budget distribution chart with real data structure"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             result = create_budget_distribution_chart(self.expenses_df)
 
@@ -74,7 +74,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_monthly_trends_with_real_data(self):
         """Test monthly trends chart with real data"""
         try:
-            from data_visualization import create_monthly_trends
+            from src.data_visualization import create_monthly_trends
 
             result = create_monthly_trends(self.expenses_df, self.donations_df)
 
@@ -89,7 +89,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_donor_contribution_chart_with_real_data(self):
         """Test donor contribution chart with real data"""
         try:
-            from data_visualization import create_donor_contribution_chart
+            from src.data_visualization import create_donor_contribution_chart
 
             result = create_donor_contribution_chart(self.donations_df)
 
@@ -104,7 +104,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_widows_support_chart_with_real_data(self):
         """Test widows support chart with real data"""
         try:
-            from data_visualization import create_widows_support_chart
+            from src.data_visualization import create_widows_support_chart
 
             result = create_widows_support_chart(self.widows_df)
 
@@ -119,7 +119,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_data_processing_with_real_data(self):
         """Test data processing functions with real data"""
         try:
-            from data_processing import (
+            from src.data_processing import (
                 calculate_donor_statistics,
                 calculate_monthly_budget,
                 calculate_widow_statistics,
@@ -176,7 +176,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_empty_data_handling(self):
         """Test handling of empty DataFrames"""
         try:
-            from data_visualization import create_budget_distribution_chart, create_monthly_trends
+            from src.data_visualization import create_budget_distribution_chart, create_monthly_trends
 
             # Test with empty DataFrame
             empty_df = pd.DataFrame()
@@ -195,7 +195,7 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_missing_columns_handling(self):
         """Test handling of missing columns"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with DataFrame missing amount column
             df_no_amount = pd.DataFrame({
@@ -253,7 +253,7 @@ class TestErrorHandlingIntegration(unittest.TestCase):
     def test_chart_creation_with_invalid_data(self):
         """Test chart creation with various invalid data scenarios"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with None
             result = create_budget_distribution_chart(None)

@@ -57,7 +57,7 @@ class TestDataStructureValidation(unittest.TestCase):
     def test_new_budget_distribution_function_works(self):
         """Test that the new function works with real data structure"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             result = create_budget_distribution_chart(self.real_expenses_df)
 
@@ -101,7 +101,7 @@ class TestDataStructureValidation(unittest.TestCase):
     def test_chart_fallback_logic(self):
         """Test the fallback logic in the new function"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with data that has category column (should use category)
             df_with_category = pd.DataFrame({
@@ -130,7 +130,7 @@ class TestDataStructureValidation(unittest.TestCase):
     def test_error_handling_improvements(self):
         """Test that error handling is improved"""
         try:
-            from data_visualization import create_budget_distribution_chart
+            from src.data_visualization import create_budget_distribution_chart
 
             # Test with empty DataFrame
             empty_df = pd.DataFrame()
@@ -176,7 +176,7 @@ class TestRealWorldDataScenarios(unittest.TestCase):
                 df = pd.DataFrame(df_data)
 
                 # Test that our function can handle these variations
-                from data_visualization import create_budget_distribution_chart
+                from src.data_visualization import create_budget_distribution_chart
                 result = create_budget_distribution_chart(df)
 
                 if 'שקלים' in df.columns or 'סכום' in df.columns:
@@ -192,7 +192,7 @@ class TestRealWorldDataScenarios(unittest.TestCase):
             'שקלים': [1000, 0, 1500]  # One zero amount
         })
 
-        from data_visualization import create_budget_distribution_chart
+        from src.data_visualization import create_budget_distribution_chart
         result = create_budget_distribution_chart(df_with_zeros)
 
         # Should still work, but only show non-zero amounts
@@ -211,7 +211,7 @@ class TestRealWorldDataScenarios(unittest.TestCase):
             'שקלים': [1000, -200, 1500]  # One negative amount (refund)
         })
 
-        from data_visualization import create_budget_distribution_chart
+        from src.data_visualization import create_budget_distribution_chart
         result = create_budget_distribution_chart(df_with_negatives)
 
         # Should work and include negative amounts

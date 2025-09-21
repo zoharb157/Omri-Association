@@ -12,7 +12,7 @@ cd Omri-Association
 # 3. Run the dashboard (choose one):
 ./run_dashboard.sh                    # macOS/Linux (recommended)
 # OR
-python3 -m streamlit run dashboard.py # Direct command
+python3 -m streamlit run streamlit_app.py # Direct command
 
 # 4. Open browser to: http://localhost:8501
 ```
@@ -50,7 +50,7 @@ chmod +x run_dashboard.sh
 ./run_dashboard.sh
 
 # Option 2: Direct command
-python3 -m streamlit run dashboard.py
+python3 -m streamlit run streamlit_app.py
 ```
 
 #### For Windows:
@@ -76,7 +76,7 @@ Press `Ctrl+C` in the terminal where it's running.
 If you see "Port 8501 is already in use":
 ```bash
 # Kill existing Streamlit processes
-pkill -f "streamlit run dashboard.py"
+pkill -f "streamlit run streamlit_app.py"
 # Then run again
 ./run_dashboard.sh
 ```
@@ -112,7 +112,7 @@ chmod +x run_dashboard.sh
 
 ```
 Omri-Association/
-├── dashboard.py              # Main dashboard file
+├── streamlit_app.py          # Main dashboard file
 ├── google_sheets_io.py       # Google Sheets read/write functions
 ├── data_loading.py           # Data loading
 ├── data_processing.py        # Data processing and statistics
