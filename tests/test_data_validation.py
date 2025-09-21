@@ -393,3 +393,4 @@ def run_data_validation_tests():
 
 if __name__ == "__main__":
     run_data_validation_tests()
+# Black formatting verification
