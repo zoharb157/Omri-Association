@@ -3,7 +3,6 @@
 Data Validation Tests for Omri Association Dashboard
 Tests data integrity, validation, and business logic
 """
-# Force reformat trigger - this should trigger Black to reformat
 
 import os
 import sys
