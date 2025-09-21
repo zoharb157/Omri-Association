@@ -10,11 +10,11 @@ from google.oauth2.service_account import Credentials
 LOG_LEVEL = os.getenv("LOG_LEVEL", "ERROR").upper()  # Default to ERROR to hide most logs
 logging.basicConfig(
     level=getattr(logging, LOG_LEVEL, logging.ERROR),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler('google_sheets.log'),
+        logging.FileHandler("google_sheets.log"),
         # No StreamHandler to hide from Streamlit interface
-    ]
+    ],
 )
 
 # Define the scope

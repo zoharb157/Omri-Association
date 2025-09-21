@@ -13,11 +13,11 @@ import streamlit as st
 # Configure logging - hide from Streamlit interface
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler('dashboard.log'),
+        logging.FileHandler("dashboard.log"),
         # Remove StreamHandler to hide logs from Streamlit interface
-    ]
+    ],
 )
 logger = logging.getLogger(__name__)
 
