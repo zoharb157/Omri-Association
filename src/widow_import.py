@@ -10,7 +10,7 @@ from typing import Dict, List, Tuple
 import pandas as pd
 import streamlit as st
 
-from google_sheets_io import read_widow_support_data
+from src.google_sheets_io import read_widow_support_data
 
 
 class WidowImportManager:

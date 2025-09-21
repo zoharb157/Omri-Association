@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 # Config import moved to avoid circular imports
-from google_sheets_io import load_all_data
+from src.google_sheets_io import load_all_data
 
 LOGGER = logging.getLogger(__name__)
 

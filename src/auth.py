@@ -10,7 +10,7 @@ from typing import Any, Dict, Optional
 
 import streamlit as st
 
-from config import Config
+from config.config import Config
 
 
 class AuthManager:

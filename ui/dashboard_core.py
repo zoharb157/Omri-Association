@@ -11,18 +11,18 @@ import pandas as pd
 import streamlit as st
 
 # Config import moved to avoid circular imports
-from alerts import (
+from src.alerts import (
     check_budget_alerts,
     check_data_quality_alerts,
     check_donations_alerts,
     check_widows_alerts,
 )
-from data_processing import (
+from src.data_processing import (
     calculate_donor_statistics,
     calculate_monthly_budget,
     calculate_widow_statistics,
 )
-from google_sheets_io import check_service_account_validity
+from src.google_sheets_io import check_service_account_validity
 from services.sheets import fetch_dashboard_frames
 from ui.dashboard_layout import (
     create_dashboard_header,
