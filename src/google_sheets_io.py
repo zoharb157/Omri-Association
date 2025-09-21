@@ -32,6 +32,10 @@ def get_google_sheets_client():
         if hasattr(st, "secrets"):
             logging.info(f"Secrets keys: {list(st.secrets.keys()) if hasattr(st.secrets, 'keys') else 'No keys method'}")
             logging.info(f"Service account in secrets: {'service_account' in st.secrets}")
+            logging.info(f"'secrets' key in secrets: {'secrets' in st.secrets}")
+            if 'secrets' in st.secrets:
+                logging.info(f"'secrets' key type: {type(st.secrets['secrets'])}")
+                logging.info(f"'secrets' key content preview: {str(st.secrets['secrets'])[:100]}...")
         
         # Try to get service account from Streamlit secrets first
         if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
@@ -121,6 +125,10 @@ def check_service_account_validity():
         if hasattr(st, "secrets"):
             logging.info(f"Validation - Secrets keys: {list(st.secrets.keys()) if hasattr(st.secrets, 'keys') else 'No keys method'}")
             logging.info(f"Validation - Service account in secrets: {'service_account' in st.secrets}")
+            logging.info(f"Validation - 'secrets' key in secrets: {'secrets' in st.secrets}")
+            if 'secrets' in st.secrets:
+                logging.info(f"Validation - 'secrets' key type: {type(st.secrets['secrets'])}")
+                logging.info(f"Validation - 'secrets' key content preview: {str(st.secrets['secrets'])[:100]}...")
         
         # Check Streamlit secrets first
         if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
