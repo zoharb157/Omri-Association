@@ -59,8 +59,8 @@ def get_google_sheets_client():
                 except json.JSONDecodeError as e:
                     logging.error(f"Failed to parse secret as JSON: {e}")
                     return None
-            elif isinstance(secret_value, dict):
-                # If it's already a dict, use it directly
+            elif isinstance(secret_value, (dict, type(st.secrets))):
+                # If it's already a dict or AttrDict, use it directly
                 service_account_info = secret_value
             else:
                 logging.error(f"Unexpected secret type: {type(secret_value)}")
@@ -173,8 +173,8 @@ def check_service_account_validity():
                     logging.error(f"Validation - Failed to parse secret as JSON: {e}")
                     show_service_account_upload()
                     return False
-            elif isinstance(secret_value, dict):
-                # If it's already a dict, use it directly
+            elif isinstance(secret_value, (dict, type(st.secrets))):
+                # If it's already a dict or AttrDict, use it directly
                 key_data = secret_value
             else:
                 logging.error(f"Validation - Unexpected secret type: {type(secret_value)}")
