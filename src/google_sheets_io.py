@@ -190,18 +190,26 @@ def check_service_account_validity():
         )
 
         if hasattr(st, "secrets") and (condition1 or condition2):
+            logging.info("Validation - ENTERING validation block - secrets found!")
             # Try service_account first, then fallback to secrets
             if "service_account" in st.secrets:
                 secret_value = st.secrets["service_account"]
+                logging.info("Validation - Using direct service_account from st.secrets")
             else:
                 # Check if secrets contains a service_account key
                 if hasattr(st.secrets["secrets"], "service_account"):
                     secret_value = st.secrets["secrets"]["service_account"]
+                    logging.info("Validation - Using service_account from st.secrets['secrets']")
                 else:
                     secret_value = st.secrets["secrets"]
+                    logging.info("Validation - Using entire st.secrets['secrets']")
+
+            logging.info(f"Validation - secret_value type: {type(secret_value)}")
+            logging.info(f"Validation - secret_value preview: {str(secret_value)[:100]}...")
 
             # Handle different secret structures
             if isinstance(secret_value, str):
+                logging.info("Validation - Processing secret as string (JSON)")
                 # If it's a string, try to parse as JSON
                 try:
                     # Clean the JSON string to handle common issues
@@ -211,6 +219,7 @@ def check_service_account_validity():
 
                     cleaned_json = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", cleaned_json)
                     key_data = json.loads(cleaned_json)
+                    logging.info("Validation - Successfully parsed JSON secret")
                 except json.JSONDecodeError as e:
                     logging.error(f"Validation - Failed to parse secret as JSON: {e}")
                     logging.error(f"Validation - JSON content preview: {secret_value[:200]}...")
@@ -232,8 +241,11 @@ def check_service_account_validity():
                     show_service_account_upload()
                     return False
             # Try to create credentials and get a token
+            logging.info("Validation - Creating credentials from service account info")
             creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
+            logging.info("Validation - Credentials created successfully")
             # Try to get a token (will fail if key is invalid/expired)
+            logging.info("Validation - Refreshing credentials token")
             creds.refresh(Request())
             logging.info("Validation - Service account from secrets is valid!")
             return True
