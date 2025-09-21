@@ -171,6 +171,12 @@ def check_service_account_validity():
                 logging.info(
                     f"Validation - 'secrets' key content preview: {str(st.secrets['secrets'])[:100]}..."
                 )
+                logging.info(
+                    f"Validation - 'service_account' in st.secrets['secrets']: {'service_account' in st.secrets['secrets']}"
+                )
+                logging.info(
+                    f"Validation - hasattr(st.secrets['secrets'], 'service_account'): {hasattr(st.secrets['secrets'], 'service_account')}"
+                )
 
         # Check Streamlit secrets first
         if hasattr(st, "secrets") and (
