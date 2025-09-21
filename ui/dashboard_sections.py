@@ -165,7 +165,7 @@ def create_budget_section(
         monthly_trends_fig = create_monthly_trends(expenses_df, donations_df)
         if monthly_trends_fig:
             st.plotly_chart(
-                monthly_trends_fig, use_container_width=True, key=f"{context}_monthly_trends"
+                monthly_trends_fig, width='stretch', key=f"{context}_monthly_trends"
             )
         else:
             st.warning("⚠️ לא ניתן לטעון גרף מגמות חודשיות")
@@ -173,7 +173,7 @@ def create_budget_section(
         budget_dist_fig = create_budget_distribution_chart(expenses_df)
         if budget_dist_fig:
             st.plotly_chart(
-                budget_dist_fig, use_container_width=True, key=f"{context}_distribution"
+                budget_dist_fig, width='stretch', key=f"{context}_distribution"
             )
         else:
             st.warning("⚠️ לא ניתן לטעון גרף התפלגות תקציב")
@@ -191,7 +191,7 @@ def create_donors_section(donations_df: pd.DataFrame, donor_stats: Dict):
     try:
         donor_fig = create_donor_contribution_chart(donations_df)
         if donor_fig:
-            st.plotly_chart(donor_fig, use_container_width=True, key="donor_contributions")
+            st.plotly_chart(donor_fig, width='stretch', key="donor_contributions")
         else:
             st.warning("⚠️ לא ניתן לטעון גרף תרומות תורמים")
     except Exception as e:
@@ -209,7 +209,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     st.markdown("#### 📥 ייבוא נתוני אלמנות חדשות")
     st.markdown("ייבוא נתונים מהגיליון החדש עם שיוך תורמים")
     # Import widow data button
-    if st.button("📥 ייבא נתוני אלמנות חדשות", use_container_width=True):
+    if st.button("📥 ייבא נתוני אלמנות חדשות", width='stretch'):
         try:
             from widow_import import create_widow_import_section
 
@@ -241,7 +241,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
     try:
         widows_fig = create_widows_support_chart(almanot_df)
         if widows_fig:
-            st.plotly_chart(widows_fig, use_container_width=True, key="widows_support")
+            st.plotly_chart(widows_fig, width='stretch', key="widows_support")
         else:
             st.warning("⚠️ לא ניתן לטעון גרף תמיכה אלמנות")
     except Exception as e:
@@ -263,7 +263,7 @@ def create_widows_section(almanot_df: pd.DataFrame, widow_stats: Dict):
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
             # Display table without index and with proper column order
             st.dataframe(
-                sorted_widows[available_columns], use_container_width=True, hide_index=True
+                sorted_widows[available_columns], width='stretch', hide_index=True
             )
         else:
             st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
@@ -289,7 +289,7 @@ def create_widows_table_section(almanot_df: pd.DataFrame):
             sorted_widows = almanot_df.sort_values("סכום חודשי", ascending=False)
             # Display table without index and with proper column order
             st.dataframe(
-                sorted_widows[available_columns], use_container_width=True, hide_index=True
+                sorted_widows[available_columns], width='stretch', hide_index=True
             )
         else:
             st.warning("⚠️ לא ניתן לטעון טבלת אלמנות")
@@ -353,7 +353,7 @@ def create_residential_breakdown_section(almanot_df: pd.DataFrame, donations_df:
             fig_widows.update_layout(
                 title_x=0.5, font=dict(family="Arial", size=12), xaxis_tickangle=-45
             )
-            st.plotly_chart(fig_widows, use_container_width=True, key="residential_widows_chart")
+            st.plotly_chart(fig_widows, width='stretch', key="residential_widows_chart")
 
         with col2:
             # Support amount by area chart
@@ -364,7 +364,7 @@ def create_residential_breakdown_section(almanot_df: pd.DataFrame, donations_df:
                 color_discrete_sequence=px.colors.qualitative.Set3,
             )
             fig_support.update_layout(title_x=0.5, font=dict(family="Arial", size=12))
-            st.plotly_chart(fig_support, use_container_width=True, key="residential_support_chart")
+            st.plotly_chart(fig_support, width='stretch', key="residential_support_chart")
 
     except ImportError:
         st.warning("⚠️ Plotly לא זמין - לא ניתן להציג גרפים")

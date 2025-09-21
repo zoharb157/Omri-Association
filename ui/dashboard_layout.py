@@ -224,7 +224,7 @@ def create_reports_section(
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        if st.button("📊 ייצוא סקירה כללית", use_container_width=True):
+        if st.button("📊 ייצוא סקירה כללית", width='stretch'):
             try:
                 # Create summary data
                 donations_amount_col = _get_amount_column(donations_df)
@@ -270,7 +270,7 @@ def create_reports_section(
                 st.error(f"שגיאה בייצוא: {e}")
 
     with col2:
-        if st.button("👥 ייצוא נתוני תורמים", use_container_width=True):
+        if st.button("👥 ייצוא נתוני תורמים", width='stretch'):
             try:
                 if not donations_df.empty:
                     csv = donations_df.to_csv(index=False, encoding="utf-8-sig")
@@ -286,7 +286,7 @@ def create_reports_section(
                 st.error(f"שגיאה בייצוא: {e}")
 
     with col3:
-        if st.button("👩 ייצוא נתוני אלמנות", use_container_width=True):
+        if st.button("👩 ייצוא נתוני אלמנות", width='stretch'):
             try:
                 if not almanot_df.empty:
                     csv = almanot_df.to_csv(index=False, encoding="utf-8-sig")
@@ -308,7 +308,7 @@ def create_reports_section(
     col1, col2 = create_two_column_layout()
 
     with col1:
-        if st.button("📊 דוח חודשי מפורט", use_container_width=True):
+        if st.button("📊 דוח חודשי מפורט", width='stretch'):
             try:
                 from reports.reports import generate_monthly_report
 
@@ -324,7 +324,7 @@ def create_reports_section(
             except Exception:
                 st.error("שגיאה ביצירת דוח חודשי")
 
-        if st.button("👥 דוח תורמים מפורט", use_container_width=True):
+        if st.button("👥 דוח תורמים מפורט", width='stretch'):
             try:
                 from reports.reports import generate_donor_report
 
@@ -341,7 +341,7 @@ def create_reports_section(
                 st.error("שגיאה ביצירת דוח תורמים")
 
     with col2:
-        if st.button("👩 דוח אלמנות מפורט", use_container_width=True):
+        if st.button("👩 דוח אלמנות מפורט", width='stretch'):
             try:
                 from reports.reports import generate_widows_report
 
@@ -357,7 +357,7 @@ def create_reports_section(
             except Exception:
                 st.error("שגיאה ביצירת דוח אלמנות")
 
-        if st.button("💰 דוח תקציב מפורט", use_container_width=True):
+        if st.button("💰 דוח תקציב מפורט", width='stretch'):
             try:
                 from reports.reports import generate_budget_report
 

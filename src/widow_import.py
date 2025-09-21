@@ -253,7 +253,7 @@ class WidowImportManager:
             if available_columns:
                 st.dataframe(
                     filtered_df[available_columns],
-                    use_container_width=True,
+                    width='stretch',
                     hide_index=True,
                     column_config={
                         "widow_name": "שם",

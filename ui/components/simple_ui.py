@@ -32,11 +32,15 @@ def create_simple_metric_row(metrics: list, columns: int = 4):
 
         for i, metric in enumerate(metrics):
             with cols[i % len(cols)]:
-                # Extract metric data
-                label = metric.get("label", "")
+                # Extract metric data - support both 'label' and 'title' keys
+                label = metric.get("label", metric.get("title", ""))
                 value = metric.get("value", "")
                 help_text = metric.get("help", "")
                 trend = metric.get("trend", None)
+
+                # Ensure label is not empty for accessibility
+                if not label:
+                    label = "מדד"
 
                 # Create metric card
                 create_simple_metric_card(label, value, help_text, trend)

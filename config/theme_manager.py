@@ -263,7 +263,7 @@ class ThemeManager:
         with col1:
             if st.button(
                 "☀️ עיצוב בהיר",
-                use_container_width=True,
+                width='stretch',
                 type="primary" if current_theme == "light" else "secondary",
             ):
                 self.switch_theme("light")
@@ -273,7 +273,7 @@ class ThemeManager:
         with col2:
             if st.button(
                 "🌙 עיצוב כהה",
-                use_container_width=True,
+                width='stretch',
                 type="primary" if current_theme == "dark" else "secondary",
             ):
                 self.switch_theme("dark")
@@ -283,7 +283,7 @@ class ThemeManager:
         with col3:
             if st.button(
                 "🔵 עיצוב כחול",
-                use_container_width=True,
+                width='stretch',
                 type="primary" if current_theme == "blue" else "secondary",
             ):
                 self.switch_theme("blue")
