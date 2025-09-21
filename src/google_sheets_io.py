@@ -242,13 +242,19 @@ def check_service_account_validity():
                     return False
             # Try to create credentials and get a token
             logging.info("Validation - Creating credentials from service account info")
-            creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
-            logging.info("Validation - Credentials created successfully")
-            # Try to get a token (will fail if key is invalid/expired)
-            logging.info("Validation - Refreshing credentials token")
-            creds.refresh(Request())
-            logging.info("Validation - Service account from secrets is valid!")
-            return True
+            try:
+                creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
+                logging.info("Validation - Credentials created successfully")
+                # Try to get a token (will fail if key is invalid/expired)
+                logging.info("Validation - Refreshing credentials token")
+                creds.refresh(Request())
+                logging.info("Validation - Service account from secrets is valid!")
+                return True
+            except Exception as e:
+                logging.error(f"Validation - Error creating credentials or refreshing token: {e}")
+                logging.error(f"Validation - Error type: {type(e)}")
+                show_service_account_upload()
+                return False
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
             with open(SERVICE_ACCOUNT_FILE, encoding="utf-8") as f:
                 key_data = json.load(f)
