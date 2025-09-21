@@ -160,9 +160,11 @@ class TestNetworkSection(unittest.TestCase):
             mock_col.__enter__ = MagicMock(return_value=mock_col)
             mock_col.__exit__ = MagicMock(return_value=None)
 
-            with patch("streamlit.markdown"), patch("streamlit.columns", return_value=[mock_col, mock_col, mock_col]), patch(
-                "streamlit.checkbox"
-            ), patch("streamlit.expander"), patch("streamlit.success"), patch(
+            with patch("streamlit.markdown"), patch(
+                "streamlit.columns", return_value=[mock_col, mock_col, mock_col]
+            ), patch("streamlit.checkbox"), patch("streamlit.expander"), patch(
+                "streamlit.success"
+            ), patch(
                 "streamlit.warning"
             ), patch(
                 "streamlit.info"
