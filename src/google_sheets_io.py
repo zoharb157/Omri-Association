@@ -42,8 +42,14 @@ def get_google_sheets_client():
             import json
 
             # Try service_account first, then fallback to secrets
-            secret_key = "service_account" if "service_account" in st.secrets else "secrets"
-            secret_value = st.secrets[secret_key]
+            if "service_account" in st.secrets:
+                secret_value = st.secrets["service_account"]
+            else:
+                # Check if secrets contains a service_account key
+                if hasattr(st.secrets["secrets"], "service_account"):
+                    secret_value = st.secrets["secrets"]["service_account"]
+                else:
+                    secret_value = st.secrets["secrets"]
             
             # Handle different secret structures
             if isinstance(secret_value, str):
@@ -149,8 +155,14 @@ def check_service_account_validity():
         # Check Streamlit secrets first
         if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
             # Try service_account first, then fallback to secrets
-            secret_key = "service_account" if "service_account" in st.secrets else "secrets"
-            secret_value = st.secrets[secret_key]
+            if "service_account" in st.secrets:
+                secret_value = st.secrets["service_account"]
+            else:
+                # Check if secrets contains a service_account key
+                if hasattr(st.secrets["secrets"], "service_account"):
+                    secret_value = st.secrets["secrets"]["service_account"]
+                else:
+                    secret_value = st.secrets["secrets"]
             
             # Handle different secret structures
             if isinstance(secret_value, str):
