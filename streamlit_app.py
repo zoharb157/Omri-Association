@@ -28,7 +28,7 @@ st.set_page_config(
     }
 )
 
-# Apply global CSS
+# Apply global design system
 try:
     from ui.design_tokens import get_global_css
     st.markdown(get_global_css(), unsafe_allow_html=True)
@@ -43,15 +43,27 @@ except ImportError:
     </style>
     """, unsafe_allow_html=True)
 
+# Version indicator for deployment verification
+st.markdown("<!-- Dashboard Version: 2025-01-17-v3 - FORCE DEPLOY -->", unsafe_allow_html=True)
+
+# Force deployment refresh - this should trigger the modern UI
+if st.session_state.get("force_refresh", False):
+    st.rerun()
+
 def main():
-    """Main function to run the dashboard"""
+    """Main entry point for the dashboard - Updated 2025-01-17"""
     try:
         logger.info("Starting Omri Association Dashboard on Streamlit Cloud")
+        # Import and run the working dashboard with all tabs
+        from ui.dashboard_core import run_dashboard
         run_dashboard()
+    except ImportError as e:
+        st.error(f"❌ שגיאה בטעינת מודולים: {str(e)}")
+        st.info("אנא ודא שכל הקבצים הנדרשים קיימים")
+        logger.error(f"Import error: {e}")
     except Exception as e:
-        logger.error(f"Error running dashboard: {e}")
-        st.error(f"שגיאה בהפעלת הדשבורד: {str(e)}")
-        st.info("אנא רענן את הדף או פנה לתמיכה")
+        st.error(f"❌ שגיאה כללית: {str(e)}")
+        logger.error(f"General error: {e}")
 
 if __name__ == "__main__":
     main()
