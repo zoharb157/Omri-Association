@@ -6,6 +6,17 @@ import pandas as pd
 import streamlit as st
 from google.oauth2.service_account import Credentials
 
+# Set logging level - hide verbose logs from Streamlit interface
+LOG_LEVEL = os.getenv("LOG_LEVEL", "ERROR").upper()  # Default to ERROR to hide most logs
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL, logging.ERROR),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('google_sheets.log'),
+        # No StreamHandler to hide from Streamlit interface
+    ]
+)
+
 # Define the scope
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 

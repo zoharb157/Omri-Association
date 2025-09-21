@@ -10,8 +10,15 @@ import streamlit as st
 
 # Import will be done inside main() function to avoid circular imports
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging - hide from Streamlit interface
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('dashboard.log'),
+        # Remove StreamHandler to hide logs from Streamlit interface
+    ]
+)
 logger = logging.getLogger(__name__)
 
 # Set page config for Streamlit Cloud
