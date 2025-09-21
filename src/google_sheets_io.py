@@ -9,7 +9,7 @@ from google.oauth2.service_account import Credentials
 # Define the scope
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
-# Get configuration from environment variables
+# Get configuration from environment variables and Streamlit secrets
 SERVICE_ACCOUNT_FILE = os.getenv("SERVICE_ACCOUNT_FILE", "service_account.json")
 SPREADSHEET_ID = os.getenv("SPREADSHEET_ID", "1zo3Rnmmykvd55owzQyGPSjx6cYfy4SB3SZc-Ku7UcOo")
 WIDOW_SPREADSHEET_ID = os.getenv(
@@ -19,13 +19,20 @@ WIDOW_SPREADSHEET_ID = os.getenv(
 # Initialize Google Sheets client
 gc = None
 try:
-    if os.path.exists(SERVICE_ACCOUNT_FILE):
-        # Authenticate and create a client
+    # Try to get service account from Streamlit secrets first
+    if hasattr(st, 'secrets') and 'service_account' in st.secrets:
+        import json
+        service_account_info = json.loads(st.secrets['service_account'])
+        creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+        gc = gspread.authorize(creds)
+        logging.info("Google Sheets connection established successfully using Streamlit secrets!")
+    elif os.path.exists(SERVICE_ACCOUNT_FILE):
+        # Fallback to file-based authentication
         creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
         gc = gspread.authorize(creds)
-        logging.info("Google Sheets connection established successfully!")
+        logging.info("Google Sheets connection established successfully using file!")
     else:
-        logging.warning("service_account.json not found. Falling back to Excel files.")
+        logging.warning("No service account found in secrets or file. Falling back to Excel files.")
 except Exception as e:
     logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
 
@@ -84,22 +91,37 @@ def check_service_account_validity():
     from google.auth.transport.requests import Request
 
     try:
-        if not os.path.exists(SERVICE_ACCOUNT_FILE):
+        # Check Streamlit secrets first
+        if hasattr(st, 'secrets') and 'service_account' in st.secrets:
+            key_data = json.loads(st.secrets['service_account'])
+            # Basic checks
+            required_fields = ["type", "private_key", "client_email", "token_uri"]
+            for field in required_fields:
+                if field not in key_data or not key_data[field]:
+                    show_service_account_upload()
+                    return False
+            # Try to create credentials and get a token
+            creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
+            # Try to get a token (will fail if key is invalid/expired)
+            creds.refresh(Request())
+            return True
+        elif os.path.exists(SERVICE_ACCOUNT_FILE):
+            with open(SERVICE_ACCOUNT_FILE, encoding="utf-8") as f:
+                key_data = json.load(f)
+            # Basic checks
+            required_fields = ["type", "private_key", "client_email", "token_uri"]
+            for field in required_fields:
+                if field not in key_data or not key_data[field]:
+                    show_service_account_upload()
+                    return False
+            # Try to create credentials and get a token
+            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            # Try to get a token (will fail if key is invalid/expired)
+            creds.refresh(Request())
+            return True
+        else:
             show_service_account_upload()
             return False
-        with open(SERVICE_ACCOUNT_FILE, encoding="utf-8") as f:
-            key_data = json.load(f)
-        # Basic checks
-        required_fields = ["type", "private_key", "client_email", "token_uri"]
-        for field in required_fields:
-            if field not in key_data or not key_data[field]:
-                show_service_account_upload()
-                return False
-        # Try to create credentials and get a token
-        creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-        # Try to get a token (will fail if key is invalid/expired)
-        creds.refresh(Request())
-        return True
     except Exception:
         show_service_account_upload()
         return False
