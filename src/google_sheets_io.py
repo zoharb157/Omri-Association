@@ -36,7 +36,7 @@ def get_google_sheets_client():
             if 'secrets' in st.secrets:
                 logging.info(f"'secrets' key type: {type(st.secrets['secrets'])}")
                 logging.info(f"'secrets' key content preview: {str(st.secrets['secrets'])[:100]}...")
-        
+
         # Try to get service account from Streamlit secrets first
         if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
             import json
@@ -50,7 +50,7 @@ def get_google_sheets_client():
                     secret_value = st.secrets["secrets"]["service_account"]
                 else:
                     secret_value = st.secrets["secrets"]
-            
+
             # Handle different secret structures
             if isinstance(secret_value, str):
                 # If it's a string, try to parse as JSON
@@ -65,7 +65,7 @@ def get_google_sheets_client():
             else:
                 logging.error(f"Unexpected secret type: {type(secret_value)}")
                 return None
-                
+
             creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
             gc = gspread.authorize(creds)
             logging.info(
@@ -151,7 +151,7 @@ def check_service_account_validity():
             if 'secrets' in st.secrets:
                 logging.info(f"Validation - 'secrets' key type: {type(st.secrets['secrets'])}")
                 logging.info(f"Validation - 'secrets' key content preview: {str(st.secrets['secrets'])[:100]}...")
-        
+
         # Check Streamlit secrets first
         if hasattr(st, "secrets") and ("service_account" in st.secrets or "secrets" in st.secrets):
             # Try service_account first, then fallback to secrets
@@ -163,7 +163,7 @@ def check_service_account_validity():
                     secret_value = st.secrets["secrets"]["service_account"]
                 else:
                     secret_value = st.secrets["secrets"]
-            
+
             # Handle different secret structures
             if isinstance(secret_value, str):
                 # If it's a string, try to parse as JSON
@@ -180,7 +180,7 @@ def check_service_account_validity():
                 logging.error(f"Validation - Unexpected secret type: {type(secret_value)}")
                 show_service_account_upload()
                 return False
-                
+
             # Basic checks
             required_fields = ["type", "private_key", "client_email", "token_uri"]
             for field in required_fields:
