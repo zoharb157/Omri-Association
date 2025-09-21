@@ -182,14 +182,21 @@ class TestDataVisualizationUI(unittest.TestCase):
         try:
             from src.data_visualization import create_monthly_trends
 
-            test_data = {
+            # Create test data for both expenses and donations
+            expenses_data = {
                 "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
-                "סכום": [2000, 1500, 1000],
+                "שקלים": [2000, 1500, 1000],
             }
-            df = pd.DataFrame(test_data)
+            expenses_df = pd.DataFrame(expenses_data)
+
+            donations_data = {
+                "תאריך": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "שקלים": [3000, 2500, 2000],
+            }
+            donations_df = pd.DataFrame(donations_data)
 
             # Should not raise exception
-            create_monthly_trends(df)
+            create_monthly_trends(expenses_df, donations_df)
             self.assertTrue(True)
         except Exception as e:
             self.fail(f"Monthly trends chart UI failed: {e}")
