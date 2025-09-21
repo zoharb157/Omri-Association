@@ -19,20 +19,24 @@ WIDOW_SPREADSHEET_ID = os.getenv(
 # Global Google Sheets client - will be initialized when needed
 gc = None
 
+
 def get_google_sheets_client():
     """Get Google Sheets client, initializing it if needed"""
     global gc
     if gc is not None:
         return gc
-    
+
     try:
         # Try to get service account from Streamlit secrets first
-        if hasattr(st, 'secrets') and 'service_account' in st.secrets:
+        if hasattr(st, "secrets") and "service_account" in st.secrets:
             import json
-            service_account_info = json.loads(st.secrets['service_account'])
+
+            service_account_info = json.loads(st.secrets["service_account"])
             creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
             gc = gspread.authorize(creds)
-            logging.info("Google Sheets connection established successfully using Streamlit secrets!")
+            logging.info(
+                "Google Sheets connection established successfully using Streamlit secrets!"
+            )
             return gc
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
             # Fallback to file-based authentication
@@ -41,7 +45,9 @@ def get_google_sheets_client():
             logging.info("Google Sheets connection established successfully using file!")
             return gc
         else:
-            logging.warning("No service account found in secrets or file. Falling back to Excel files.")
+            logging.warning(
+                "No service account found in secrets or file. Falling back to Excel files."
+            )
             return None
     except Exception as e:
         logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
@@ -103,8 +109,8 @@ def check_service_account_validity():
 
     try:
         # Check Streamlit secrets first
-        if hasattr(st, 'secrets') and 'service_account' in st.secrets:
-            key_data = json.loads(st.secrets['service_account'])
+        if hasattr(st, "secrets") and "service_account" in st.secrets:
+            key_data = json.loads(st.secrets["service_account"])
             # Basic checks
             required_fields = ["type", "private_key", "client_email", "token_uri"]
             for field in required_fields:
