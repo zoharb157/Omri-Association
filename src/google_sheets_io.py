@@ -16,25 +16,36 @@ WIDOW_SPREADSHEET_ID = os.getenv(
     "WIDOW_SPREADSHEET_ID", "1FQRFhChBVUI8G7GrJW8BZInxJ2F25UhMT-fj-O6odv8"
 )
 
-# Initialize Google Sheets client
+# Global Google Sheets client - will be initialized when needed
 gc = None
-try:
-    # Try to get service account from Streamlit secrets first
-    if hasattr(st, 'secrets') and 'service_account' in st.secrets:
-        import json
-        service_account_info = json.loads(st.secrets['service_account'])
-        creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
-        gc = gspread.authorize(creds)
-        logging.info("Google Sheets connection established successfully using Streamlit secrets!")
-    elif os.path.exists(SERVICE_ACCOUNT_FILE):
-        # Fallback to file-based authentication
-        creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-        gc = gspread.authorize(creds)
-        logging.info("Google Sheets connection established successfully using file!")
-    else:
-        logging.warning("No service account found in secrets or file. Falling back to Excel files.")
-except Exception as e:
-    logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+
+def get_google_sheets_client():
+    """Get Google Sheets client, initializing it if needed"""
+    global gc
+    if gc is not None:
+        return gc
+    
+    try:
+        # Try to get service account from Streamlit secrets first
+        if hasattr(st, 'secrets') and 'service_account' in st.secrets:
+            import json
+            service_account_info = json.loads(st.secrets['service_account'])
+            creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+            gc = gspread.authorize(creds)
+            logging.info("Google Sheets connection established successfully using Streamlit secrets!")
+            return gc
+        elif os.path.exists(SERVICE_ACCOUNT_FILE):
+            # Fallback to file-based authentication
+            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            gc = gspread.authorize(creds)
+            logging.info("Google Sheets connection established successfully using file!")
+            return gc
+        else:
+            logging.warning("No service account found in secrets or file. Falling back to Excel files.")
+            return None
+    except Exception as e:
+        logging.warning(f"Could not connect to Google Sheets: {e}. Falling back to Excel files.")
+        return None
 
 
 def show_service_account_upload():
@@ -312,6 +323,7 @@ def _map_columns_to_expected(df, sheet_name):
 
 def read_sheet(sheet_name: str) -> pd.DataFrame:
     """Read a worksheet from Google Sheets and return as a DataFrame."""
+    gc = get_google_sheets_client()
     if gc is None:
         # No Excel fallback - return empty DataFrame with expected columns
         logging.warning("Google Sheets not available - returning empty DataFrame")
@@ -430,6 +442,7 @@ def read_sheet(sheet_name: str) -> pd.DataFrame:
 
 def write_sheet(sheet_name: str, df: pd.DataFrame) -> None:
     """Write a DataFrame to a worksheet in Google Sheets (overwrites existing data)."""
+    gc = get_google_sheets_client()
     if gc is None:
         # No Excel fallback - just print error
         logging.warning("Google Sheets not available - cannot save data")
@@ -448,6 +461,7 @@ def write_sheet(sheet_name: str, df: pd.DataFrame) -> None:
 
 def load_all_data():
     """Load ALL data from ALL sheets in the Google Spreadsheet."""
+    gc = get_google_sheets_client()
     if gc is None:
         logging.warning("Google Sheets not available")
         return {}
@@ -525,6 +539,7 @@ def load_all_data():
 
 def read_widow_support_data() -> pd.DataFrame:
     """Read widow support data from the new widow support spreadsheet."""
+    gc = get_google_sheets_client()
     if gc is None:
         logging.warning("Google Sheets not available - returning empty DataFrame")
         return pd.DataFrame(
