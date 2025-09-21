@@ -176,7 +176,10 @@ class TestDataFlowIntegration(unittest.TestCase):
     def test_empty_data_handling(self):
         """Test handling of empty DataFrames"""
         try:
-            from src.data_visualization import create_budget_distribution_chart, create_monthly_trends
+            from src.data_visualization import (
+                create_budget_distribution_chart,
+                create_monthly_trends,
+            )
 
             # Test with empty DataFrame
             empty_df = pd.DataFrame()

@@ -10,6 +10,8 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 import streamlit as st
 
+from services.sheets import fetch_dashboard_frames
+
 # Config import moved to avoid circular imports
 from src.alerts import (
     check_budget_alerts,
@@ -23,7 +25,6 @@ from src.data_processing import (
     calculate_widow_statistics,
 )
 from src.google_sheets_io import check_service_account_validity
-from services.sheets import fetch_dashboard_frames
 from ui.dashboard_layout import (
     create_dashboard_header,
     create_main_tabs,

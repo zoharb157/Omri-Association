@@ -8,8 +8,7 @@ import logging
 
 import streamlit as st
 
-# Import the main dashboard function
-from ui.dashboard_core import run_dashboard
+# Import will be done inside main() function to avoid circular imports
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

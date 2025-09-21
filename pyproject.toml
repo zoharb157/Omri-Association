@@ -17,14 +17,16 @@ include = "\\.(py|pyi)$"
 [tool.ruff]
 line-length = 100
 target-version = "py38"
-select = ["E", "F", "W", "B", "I", "UP"]
-ignore = ["E203", "E266", "E501"]
 exclude = [
   "omri-dashboard-frontend",
   "omri-dashboard-web",
   "omri-dashboard-tunnel",
   "lib",
 ]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP"]
+ignore = ["E203", "E266", "E501"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
