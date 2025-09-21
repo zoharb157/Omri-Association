@@ -7,7 +7,7 @@ Tests all critical components and functionality
 import os
 import sys
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pandas as pd
 
@@ -156,7 +156,11 @@ class TestNetworkSection(unittest.TestCase):
             from ui.dashboard_sections import create_network_section
 
             # Mock streamlit components
-            with patch("streamlit.markdown"), patch("streamlit.columns"), patch(
+            mock_col = MagicMock()
+            mock_col.__enter__ = MagicMock(return_value=mock_col)
+            mock_col.__exit__ = MagicMock(return_value=None)
+            
+            with patch("streamlit.markdown"), patch("streamlit.columns", return_value=[mock_col, mock_col, mock_col]), patch(
                 "streamlit.checkbox"
             ), patch("streamlit.expander"), patch("streamlit.success"), patch(
                 "streamlit.warning"
