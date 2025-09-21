@@ -156,9 +156,7 @@ def create_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.D
             name_col = (
                 "שם"
                 if "שם" in donations_df.columns
-                else "שם התורם"
-                if "שם התורם" in donations_df.columns
-                else None
+                else "שם התורם" if "שם התורם" in donations_df.columns else None
             )
             amount_col = _get_amount_column(donations_df)
             if name_col and amount_col:
@@ -189,9 +187,7 @@ def create_recent_activity_section(expenses_df: pd.DataFrame, donations_df: pd.D
             name_col = (
                 "שם"
                 if "שם" in expenses_df.columns
-                else "שם לקוח"
-                if "שם לקוח" in expenses_df.columns
-                else None
+                else "שם לקוח" if "שם לקוח" in expenses_df.columns else None
             )
             amount_col = _get_amount_column(expenses_df)
             if name_col and amount_col:
@@ -248,9 +244,7 @@ def create_reports_section(
                 donor_name_col = (
                     "שם"
                     if "שם" in donations_df.columns
-                    else "שם התורם"
-                    if "שם התורם" in donations_df.columns
-                    else None
+                    else "שם התורם" if "שם התורם" in donations_df.columns else None
                 )
                 summary_data = {
                     "סך תרומות": [total_donations],
