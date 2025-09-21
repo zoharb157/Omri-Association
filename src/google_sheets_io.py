@@ -27,6 +27,12 @@ def get_google_sheets_client():
         return gc
 
     try:
+        # Debug: Check what's available in Streamlit secrets
+        logging.info(f"Streamlit secrets available: {hasattr(st, 'secrets')}")
+        if hasattr(st, "secrets"):
+            logging.info(f"Secrets keys: {list(st.secrets.keys()) if hasattr(st.secrets, 'keys') else 'No keys method'}")
+            logging.info(f"Service account in secrets: {'service_account' in st.secrets}")
+        
         # Try to get service account from Streamlit secrets first
         if hasattr(st, "secrets") and "service_account" in st.secrets:
             import json
@@ -108,6 +114,12 @@ def check_service_account_validity():
     from google.auth.transport.requests import Request
 
     try:
+        # Debug: Check what's available in Streamlit secrets
+        logging.info(f"Validation - Streamlit secrets available: {hasattr(st, 'secrets')}")
+        if hasattr(st, "secrets"):
+            logging.info(f"Validation - Secrets keys: {list(st.secrets.keys()) if hasattr(st.secrets, 'keys') else 'No keys method'}")
+            logging.info(f"Validation - Service account in secrets: {'service_account' in st.secrets}")
+        
         # Check Streamlit secrets first
         if hasattr(st, "secrets") and "service_account" in st.secrets:
             key_data = json.loads(st.secrets["service_account"])
@@ -115,12 +127,14 @@ def check_service_account_validity():
             required_fields = ["type", "private_key", "client_email", "token_uri"]
             for field in required_fields:
                 if field not in key_data or not key_data[field]:
+                    logging.warning(f"Validation - Missing field in secrets: {field}")
                     show_service_account_upload()
                     return False
             # Try to create credentials and get a token
             creds = Credentials.from_service_account_info(key_data, scopes=SCOPES)
             # Try to get a token (will fail if key is invalid/expired)
             creds.refresh(Request())
+            logging.info("Validation - Service account from secrets is valid!")
             return True
         elif os.path.exists(SERVICE_ACCOUNT_FILE):
             with open(SERVICE_ACCOUNT_FILE, encoding="utf-8") as f:
